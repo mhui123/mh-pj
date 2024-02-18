@@ -1,0 +1,14 @@
+{
+  "configurations": [
+    {
+      "type": "java",
+      "name": "Spring Boot-MhProjectApplication<mhkProject_back>",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "mainClass": "com.bandi.mhProject.MhProjectApplication",
+      "projectName": "mhkProject_back",
+      "args": "",
+      "envFile": "${workspaceFolder}/.env"
+    }
+  ]
+}
