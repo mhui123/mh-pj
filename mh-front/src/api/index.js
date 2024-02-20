@@ -10,4 +10,8 @@ function loginUser(userData) {
   return instance.post('login', userData);
 }
 
-export { registerUser, loginUser };
+async function testAPI(obj) {
+  const res = await instance.post('api/test', obj);
+  console.log(res.data);
+}
+export { registerUser, loginUser, testAPI };
