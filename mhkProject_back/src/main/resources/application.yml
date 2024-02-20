@@ -3,7 +3,7 @@ server:
 
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3456/security #jdbc:mysql://192.168.11.131:9777/bdBase
+    url: jdbc:mysql://localhost:3456/mh_db #jdbc:mysql://192.168.11.131:9777/bdBase
     username: cos #mhui123
     password: cos1234 #1234
     driver-class-name: com.mysql.cj.jdbc.Driver #org.h2.Driver

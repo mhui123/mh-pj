@@ -10,9 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Getter
-@Setter
 @NoArgsConstructor
+@Getter
 @ToString(of={"id", "pw"})
 public class User extends TimeEntity {
     @Id @Column(name="user_id")
@@ -29,7 +28,7 @@ public class User extends TimeEntity {
         this.id = id;
         this.pw = pw;
     }
-
+    @Builder
     public User(String id, String pw, String role) {
         this.id = id;
         this.pw = pw;
