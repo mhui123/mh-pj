@@ -25,14 +25,16 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .csrf((csrf) -> csrf.disable())
-                .authorizeHttpRequests((authz) ->
-                        authz
+                .authorizeHttpRequests((auth) ->
+                        auth
                         .requestMatchers("/user/**").authenticated()
                         .requestMatchers("/admin/**").hasAnyRole("ADMIN")
                         .anyRequest().permitAll()
                 )
                 .formLogin((formLogin) -> formLogin
-                        .loginPage("/login")
+                        .usernameParameter("id")
+                        .passwordParameter("pw")
+                        .loginPage("/api/login")
                         .loginProcessingUrl("/loginProc")
                         .defaultSuccessUrl("/")
                 );
@@ -43,9 +45,9 @@ public class SecurityConfig {
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
     }
-
-    @Bean
-    public Encoder encoder(PasswordEncoder ec){
-        return new Encoder(ec);
-    }
+//
+//    @Bean
+//    public Encoder encoder(PasswordEncoder ec){
+//        return new Encoder(ec);
+//    }
 }

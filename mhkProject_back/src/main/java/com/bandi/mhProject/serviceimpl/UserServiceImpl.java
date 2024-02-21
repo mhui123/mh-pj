@@ -8,26 +8,27 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl implements UserService, UserDetailsService {
     private final UserRepository userRepo;
     @PersistenceContext
     EntityManager em;
     @Autowired
-    private Encoder encoder;
+    private PasswordEncoder encoder;
     @Override
     public boolean login(User user) {
         String id = user.getId();
         String pw = user.getPw();
         User foundUser = userRepo.findByid(id);
-
         if(foundUser != null){
-            return encoder.matchPwWithCompare(pw, foundUser.getPw());
+//            return encoder.matchPwWithCompare(pw, foundUser.getPw());
+            return encoder.matches(pw, foundUser.getPw());
         }
         return false;
     }
@@ -36,8 +37,8 @@ public class UserServiceImpl implements UserService {
     public boolean signin(User user) {
         try {
             String id = user.getId();
-            String pw = user.getPw();
-            String encoderedPw = encoder.encryptPw(pw);
+            String pw = user.getPw(); //asdfasdfasdf
+            String encoderedPw = encoder.encode(pw);
             String role = user.getRole() == null ? "ROLE_USER" : user.getRole();
 //            User user1 = new User(id, encoderedPw, role);
             User user1 = User.builder()
@@ -50,4 +51,6 @@ public class UserServiceImpl implements UserService {
         }
         return true;
     }
+
+
 }

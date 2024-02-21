@@ -14,12 +14,13 @@ import java.util.Map;
 public class ApiController {
     @Autowired
     private UserServiceImpl impl;
+    @Autowired
+    private final RestTemplate restTemplate;
     public ApiController(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
     }
 
-    @Autowired
-    private final RestTemplate restTemplate;
+
     @PostMapping("/test")
     @ResponseBody
     public String test(@RequestBody Map<String, Object> obj){
@@ -30,5 +31,28 @@ public class ApiController {
         System.out.println(user);
         impl.signin(user);
         return "hahaha";
+    }
+
+    @PostMapping("/login")
+    @ResponseBody
+    //@RequestBody Map<String, Object> data
+    public String login(){
+        System.out.println("login : ");
+//        String id = String.valueOf(data.get("id"));
+//        String pw = String.valueOf(data.get("pw"));
+//        User user = User.builder().id(id).pw(pw).build();
+//        impl.login(user);
+        return "login";
+    }
+
+    @PostMapping("/signup")
+    @ResponseBody
+    public String signup(@RequestBody Map<String, Object> data){
+        System.out.println("signin : " + data);
+        String id = String.valueOf(data.get("id"));
+        String pw = String.valueOf(data.get("pw"));
+        User user = User.builder().id(id).pw(pw).build();
+        impl.signin(user);
+        return "signin";
     }
 }

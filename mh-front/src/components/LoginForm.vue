@@ -18,7 +18,7 @@
 
 <script>
 import { validateEmail } from '@/utils/validation';
-import { testAPI } from '@/api/index';
+import { testAPI, loginUser } from '@/api/index';
 export default {
   data() {
     return {
@@ -32,7 +32,10 @@ export default {
     },
   },
   methods: {
-    submitForm() {},
+    async submitForm() {
+      const userData = { id: this.username, pw: this.password };
+      await loginUser(userData);
+    },
     test() {
       testAPI({ username: 123, password: 456 });
     },

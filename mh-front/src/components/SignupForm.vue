@@ -4,11 +4,11 @@
     <form @submit.prevent="submitForm">
       <div>
         <label for="username">id :</label>
-        <input type="text" id="username" v-model="username" />
+        <input type="text" id="username" name="username" v-model="username" />
       </div>
       <div>
         <label for="password">pw :</label>
-        <input type="text" id="password" v-model="password" />
+        <input type="password" id="password" name="password" v-model="password" />
       </div>
       <button type="submit" :disabled="!isUsernameValid || !password">회원가입</button>
     </form>
@@ -17,6 +17,7 @@
 
 <script>
 import { validateEmail } from '@/utils/validation';
+import { registerUser } from '@/api/index';
 export default {
   data() {
     return {
@@ -30,7 +31,9 @@ export default {
     },
   },
   methods: {
-    submitForm() {},
+    submitForm() {
+      registerUser({ id: this.username, pw: this.password });
+    },
   },
 };
 </script>
