@@ -1,9 +1,13 @@
 package com.bandi.mhProject.config;
 
+import com.bandi.mhProject.service.UserService;
+import com.bandi.mhProject.serviceimpl.UserServiceImpl;
 import com.bandi.mhProject.util.Encoder;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.SecurityBuilder;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.WebSecurityConfigurer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -17,6 +21,7 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+//    @Autowired private UserServiceImpl impl;
 //    @Bean
 //    public WebSecurityCustomizer webSecurityCustomizer() {
 //        return (web) -> web.ignoring().requestMatchers("/user/login", "/user/signin");
@@ -45,6 +50,12 @@ public class SecurityConfig {
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
     }
+
+//    @Bean
+//    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+//        System.out.println("configure");
+//        auth.userDetailsService(impl);
+//    }
 //
 //    @Bean
 //    public Encoder encoder(PasswordEncoder ec){

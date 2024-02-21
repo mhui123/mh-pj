@@ -4,6 +4,7 @@ import com.bandi.mhProject.entity.User;
 import com.bandi.mhProject.serviceimpl.UserServiceImpl;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
@@ -36,13 +37,13 @@ public class ApiController {
     @PostMapping("/login")
     @ResponseBody
     //@RequestBody Map<String, Object> data
-    public String login(){
-        System.out.println("login : ");
-//        String id = String.valueOf(data.get("id"));
-//        String pw = String.valueOf(data.get("pw"));
-//        User user = User.builder().id(id).pw(pw).build();
-//        impl.login(user);
-        return "login";
+    public UserDetails login(@RequestBody Map<String, Object> data){
+        System.out.println("login");
+        String id = String.valueOf(data.get("id"));
+        String pw = String.valueOf(data.get("pw"));
+        User user = User.builder().id(id).pw(pw).build();
+
+        return impl.login(user);
     }
 
     @PostMapping("/signup")

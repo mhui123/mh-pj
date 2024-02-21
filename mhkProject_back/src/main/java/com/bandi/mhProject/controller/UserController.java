@@ -33,12 +33,6 @@ public class UserController {
         boolean result = impl.signin(user);
         return "signin";
     }
-    @PostMapping("/login")
-    @ResponseBody
-    public boolean login(@RequestBody User user){
-        System.out.println("login!!!!!!!!!!!!");
-        return impl.login(user);
-    }
 
 //    @PostConstruct
 //    public void init(){

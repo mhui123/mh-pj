@@ -1,5 +1,6 @@
 package com.bandi.mhProject.serviceimpl;
 
+import com.bandi.mhProject.config.auth.PrincipalDetail;
 import com.bandi.mhProject.entity.User;
 import com.bandi.mhProject.repository.UserRepository;
 import com.bandi.mhProject.service.UserService;
@@ -8,6 +9,9 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,15 +26,16 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Autowired
     private PasswordEncoder encoder;
     @Override
-    public boolean login(User user) {
+    public UserDetails login(User user) {
         String id = user.getId();
         String pw = user.getPw();
         User foundUser = userRepo.findByid(id);
         if(foundUser != null){
 //            return encoder.matchPwWithCompare(pw, foundUser.getPw());
-            return encoder.matches(pw, foundUser.getPw());
+//            return encoder.matches(pw, foundUser.getPw());
+            return new PrincipalDetail(foundUser);
         }
-        return false;
+        return null;
     }
 
     @Override
@@ -52,5 +57,13 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         return true;
     }
 
-
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        System.out.println("asdfasdf");
+        User entity = userRepo.findByid(username);
+        if(entity != null){
+            return new PrincipalDetail(entity);
+        }
+        return null;
+    }
 }

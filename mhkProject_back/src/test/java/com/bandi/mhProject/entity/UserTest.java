@@ -25,15 +25,6 @@ class UserTest {
     @Autowired
     UserServiceImpl impl;
 
-    @Test
-    public void test(){
-        String id = "admin2";
-        String pw = "bandisnc01!";
-        String encodedPw = encoder.encryptPw(pw);
-        User admin = new User( id, pw);
-        boolean result = impl.login(admin);
-        System.out.println("result !!!! " + result);
-    }
 
     @Test
     public void signinTest(){
