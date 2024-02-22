@@ -12,7 +12,7 @@
         </div>
         <div>
           <label for="password">pw :</label>
-          <input type="password" id="password" name="password" v-model="password" @keyup.enter="submitForm" />
+          <input type="password" id="password" name="password" v-model="password" />
         </div>
         <div class="btn-groups">
           <button class="btn" type="submit" :disabled="!isUsernameValid || !password">회원가입</button>

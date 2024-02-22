@@ -15,11 +15,13 @@ public class UserDto {
     private String role;
     private List<Info> infos = new ArrayList<>();
     private boolean authorized = false;
+    private Long state = 0L;
     @Builder
-    public UserDto(String id, String role, List<Info> infos, boolean authorized) {
+    public UserDto(String id, String role, List<Info> infos, boolean authorized, Long state) {
         this.id = id;
         this.role = role;
         this.infos = infos;
         this.authorized = authorized;
+        this.state = state;
     }
 }

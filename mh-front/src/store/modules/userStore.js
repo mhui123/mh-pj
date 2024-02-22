@@ -1,6 +1,7 @@
 import { loginUser } from '@/api/index';
+import { saveUserToCookie, getUserFromCookie, deleteCookie } from '@/utils/cookies';
 const state = {
-  username: '',
+  username: getUserFromCookie() || '',
   token: '',
 };
 const mutations = {
@@ -31,12 +32,15 @@ const actions = {
     console.log(data);
     if (data === null) {
       return null;
+    } else if (data.state === 200) {
+      commit('setUsername', data.id);
+      saveUserToCookie(data.id);
     }
-    commit('setUsername', data.id);
     return data;
   },
   async LOGOUT({ commit }) {
     commit('clearUsername');
+    deleteCookie('mh_user');
   },
 };
 

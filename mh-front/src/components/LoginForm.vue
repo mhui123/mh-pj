@@ -29,6 +29,7 @@ export default {
     return {
       username: '',
       password: '',
+      isLoading: false,
     };
   },
   computed: {
@@ -40,10 +41,17 @@ export default {
     ...mapActions(['LOGIN']),
     async submitForm() {
       const userData = { username: this.username, password: this.password };
-      const result = await this.LOGIN(userData);
-      console.log(result);
+      const { state } = await this.LOGIN(userData);
       // await loginTest(userData);
-      this.$router.push('/main');
+      if (state === 200) {
+        console.log('login');
+        this.emitter.emit('show:toast', 'LOGIN SUCCESS');
+        this.$router.push('/main');
+      } else if (state === 500) {
+        this.emitter.emit('show:toast', 'PASSWORD IS NOT MATCHED');
+      } else {
+        this.emitter.emit('show:toast', 'ID IS NOT EXIST');
+      }
     },
     test() {
       // testAPI({ username: 123, password: 456 });

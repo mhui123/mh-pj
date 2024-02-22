@@ -5,8 +5,6 @@
 </template>
 
 <script>
-import bus from '@/utils/bus.js';
-
 let toastTimer;
 
 export default {
@@ -33,10 +31,10 @@ export default {
     },
   },
   created() {
-    bus.$on('show:toast', this.showToast);
+    this.emitter.on('show:toast', this.showToast);
   },
-  beforeDestroy() {
-    bus.$off('show:toast', this.showToast);
+  beforeUnmount() {
+    this.emitter.off('show:toast', this.showToast);
   },
 };
 </script>

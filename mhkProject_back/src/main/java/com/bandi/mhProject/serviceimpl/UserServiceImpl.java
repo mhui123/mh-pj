@@ -35,7 +35,7 @@ public class UserServiceImpl implements UserService {
         String id = user.getId();
         String pw = user.getPw();
         User foundUser = userRepo.findByid(id);
-        UserDto dto;
+        UserDto dto = UserDto.builder().build();
         if(foundUser != null){
 //            return encoder.matchPwWithCompare(pw, foundUser.getPw());
             boolean result = encoder.matches(pw, foundUser.getPw());
@@ -43,11 +43,15 @@ public class UserServiceImpl implements UserService {
                 id = foundUser.getId();
                 String role = foundUser.getRole();
                 List<Info> infos = foundUser.getInfos();
-                dto = UserDto.builder().id(id).role(role).infos(infos).authorized(true).build();
+                dto = UserDto.builder().id(id).role(role).infos(infos).authorized(true).state(200L).build();
                 return dto;
             }
+            else {
+                //500 : PASSWORD NOT MATCHED
+                dto = UserDto.builder().state(500L).build();
+            }
         }
-        return null;
+        return dto;
     }
 
     @Override

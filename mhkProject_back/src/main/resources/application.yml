@@ -3,9 +3,10 @@ server:
 
 spring:
   datasource:
-    url: jdbc:mysql://192.168.11.135:3456/bdBase #jdbc:mysql://localhost:3456/mh_db
-    username: mhui123 #cos
-    password: 1234 #cos1234
+    #jdbc:mysql://localhost:3456/mh_db cos cos1234
+    url: jdbc:mysql://localhost:3456/mh_db  #jdbc:mysql://192.168.11.135:3456/bdBase mhui123 1234
+    username: cos
+    password: cos1234
     driver-class-name: com.mysql.cj.jdbc.Driver #org.h2.Driver
   jpa:
     hibernate:
