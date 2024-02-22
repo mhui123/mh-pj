@@ -4,7 +4,7 @@
       <h1 class="page-header">용어사전</h1>
       <LoadingSpinner v-if="isLoading"></LoadingSpinner>
       <ul v-else>
-        <PostListItem v-for="postItem in postItems" :key="postItem._id" :item="postItem" @refresh="fetchData"></PostListItem>
+        <!-- <PostListItem v-for="postItem in postItems" :key="postItem._id" :item="postItem" @refresh="fetchData"></PostListItem> -->
       </ul>
     </div>
     <router-link to="/add" class="create-button">
@@ -14,7 +14,13 @@
 </template>
 
 <script>
-export default {};
+export default {
+  data() {
+    return {
+      isLoading: false,
+    };
+  },
+};
 </script>
 
 <style></style>
