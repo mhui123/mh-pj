@@ -6,10 +6,13 @@
 </template>
 
 <script>
-import AppHeader from '@/components/AppHeader.vue';
+import AppHeader from '@/components/common/AppHeader.vue';
 export default {
   components: { AppHeader },
 };
 </script>
 
-<style></style>
+<style>
+@import './css/reset.css';
+@import './css/common.css';
+</style>

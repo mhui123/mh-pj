@@ -1,6 +1,8 @@
 package com.bandi.mhProject.serviceimpl;
 
 import com.bandi.mhProject.config.auth.PrincipalDetail;
+import com.bandi.mhProject.dto.UserDto;
+import com.bandi.mhProject.entity.Info;
 import com.bandi.mhProject.entity.User;
 import com.bandi.mhProject.repository.UserRepository;
 import com.bandi.mhProject.service.UserService;
@@ -16,24 +18,34 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.Map;
+
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class UserServiceImpl implements UserService, UserDetailsService {
+public class UserServiceImpl implements UserService {
     private final UserRepository userRepo;
     @PersistenceContext
     EntityManager em;
     @Autowired
     private PasswordEncoder encoder;
     @Override
-    public UserDetails login(User user) {
+    public UserDto login(User user) {
         String id = user.getId();
         String pw = user.getPw();
         User foundUser = userRepo.findByid(id);
+        UserDto dto;
         if(foundUser != null){
 //            return encoder.matchPwWithCompare(pw, foundUser.getPw());
-//            return encoder.matches(pw, foundUser.getPw());
-            return new PrincipalDetail(foundUser);
+            boolean result = encoder.matches(pw, foundUser.getPw());
+            if(result){
+                id = foundUser.getId();
+                String role = foundUser.getRole();
+                List<Info> infos = foundUser.getInfos();
+                dto = UserDto.builder().id(id).role(role).infos(infos).authorized(true).build();
+                return dto;
+            }
         }
         return null;
     }
@@ -55,15 +67,5 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             return false;
         }
         return true;
-    }
-
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        System.out.println("asdfasdf");
-        User entity = userRepo.findByid(username);
-        if(entity != null){
-            return new PrincipalDetail(entity);
-        }
-        return null;
     }
 }

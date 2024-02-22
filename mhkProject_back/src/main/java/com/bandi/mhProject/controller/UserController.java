@@ -13,7 +13,7 @@ import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
-//@RequestMapping("/user")
+@RequestMapping("/user")
 public class UserController {
     @Autowired
     UserServiceImpl impl;
@@ -25,17 +25,4 @@ public class UserController {
        dummy.put("sample", "hahaha");
        return dummy;
     }
-    
-    @PostMapping("/signin")
-    @ResponseBody
-    public String signin(@RequestBody User user){
-        System.out.println("signin!!!!!!!!!!!!");
-        boolean result = impl.signin(user);
-        return "signin";
-    }
-
-//    @PostConstruct
-//    public void init(){
-//        impl.signin(new User("admin", "admin01!", "admin"));
-//    }
 }

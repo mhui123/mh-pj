@@ -1,5 +1,6 @@
 package com.bandi.mhProject.controller;
 
+import com.bandi.mhProject.dto.UserDto;
 import com.bandi.mhProject.entity.User;
 import com.bandi.mhProject.serviceimpl.UserServiceImpl;
 import lombok.NoArgsConstructor;
@@ -36,14 +37,14 @@ public class ApiController {
 
     @PostMapping("/login")
     @ResponseBody
-    //@RequestBody Map<String, Object> data
-    public UserDetails login(@RequestBody Map<String, Object> data){
-        System.out.println("login");
-        String id = String.valueOf(data.get("id"));
-        String pw = String.valueOf(data.get("pw"));
+    public UserDto login(@RequestBody Map<String, Object> data){
+        System.out.println("login ");
+        String id = String.valueOf(data.get("username"));
+        String pw = String.valueOf(data.get("password"));
         User user = User.builder().id(id).pw(pw).build();
-
-        return impl.login(user);
+        UserDto result = impl.login(user);
+        System.out.println(result);
+        return result;
     }
 
     @PostMapping("/signup")

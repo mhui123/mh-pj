@@ -10,6 +10,10 @@ module.exports = defineConfig({
         changeOrigin: true,
         // pathRewrite: {'^/user': ''}
       },
+      '/user': {
+        target: 'http://localhost:9900',
+        changeOrigin: true,
+      },
     },
   },
 });
