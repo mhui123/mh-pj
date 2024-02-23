@@ -6,7 +6,7 @@
         <div>
           <label for="titme">Title:</label>
           <input type="text" id="title" v-model="title" @keyup="titleEvent" />
-          <p class="validation-text warning" v-if="titleInvalid">제목을 입력해주세요</p>
+          <p class="validation-text warning" v-if="!titleInvalid">제목을 입력해주세요</p>
         </div>
         <div>
           <label for="contents">Contents:</label>
@@ -49,11 +49,14 @@ export default {
     },
     async submitForm() {
       try {
-        const response = await addWord({ id: this.getUsername, title: this.title, contents: this.contents });
-        console.log(`[addWord] : ${response}`);
+        const { data } = await addWord({ id: this.getUsername, title: this.title, contents: this.contents });
+        this.callToast(data.result_description);
+        if (data.result === 200) {
+          this.$router.push('/main');
+        }
         // this.callToast('작성완료');
       } catch (err) {
-        this.callToast(err.response.data.message);
+        this.callToast(err.message);
       }
     },
     callToast(msg) {

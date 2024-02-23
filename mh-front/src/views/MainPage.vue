@@ -2,6 +2,7 @@
   <div>
     <div class="main list-container contents">
       <h1 class="page-header">용어사전</h1>
+      <SearchForm></SearchForm>
       <LoadingSpinner v-if="isLoading"></LoadingSpinner>
       <ul v-else>
         <WordListItem v-for="info in infoList" :key="info.id" :item="info" @refresh="fetchData"></WordListItem>
@@ -17,6 +18,7 @@
 import { getList } from '@/api/index';
 import WordListItem from '@/components/words/WordListItem.vue';
 import LoadingSpinner from '@/components/common/LoadingSpinner.vue';
+import SearchForm from '@/components/SearchForm.vue';
 export default {
   data() {
     return {
@@ -27,6 +29,7 @@ export default {
   components: {
     WordListItem,
     LoadingSpinner,
+    SearchForm,
   },
   created() {
     this.fetchData();

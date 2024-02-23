@@ -15,6 +15,7 @@
           <input type="password" id="password" name="password" v-model="password" />
         </div>
         <div class="btn-groups">
+          <button @click="goBack" class="btn2">돌아가기</button>
           <button class="btn" type="submit" :disabled="!isUsernameValid || !password">회원가입</button>
         </div>
       </form>
@@ -52,6 +53,9 @@ export default {
           this.$router.push('/login');
         }
       }
+    },
+    goBack() {
+      this.$router.push('/login');
     },
   },
 };

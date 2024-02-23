@@ -3,6 +3,7 @@ import { saveUserToCookie, getUserFromCookie, deleteCookie } from '@/utils/cooki
 const state = {
   username: getUserFromCookie() || '',
   token: '',
+  pageGubun: '',
 };
 const mutations = {
   setUsername(state, username) {
@@ -11,11 +12,17 @@ const mutations = {
   setToken(state, token) {
     state.token = token;
   },
+  setGubun(state, gubun) {
+    state.gubun = gubun;
+  },
   clearUsername(state) {
     state.username = '';
   },
   clearToken(state) {
     state.token = '';
+  },
+  clearGubun(state) {
+    state.gubun = '';
   },
 };
 const getters = {
@@ -24,6 +31,9 @@ const getters = {
   },
   getUsername(state) {
     return state.username;
+  },
+  getGubun(state) {
+    return state.gubun;
   },
 };
 const actions = {

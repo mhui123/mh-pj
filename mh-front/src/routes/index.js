@@ -8,6 +8,8 @@ const routes = [
   { path: '/user', component: () => import('@/views/UserPage.vue'), meta: { auth: true } },
   { path: '/main', component: () => import('@/views/MainPage.vue') },
   { path: '/add', component: () => import('@/views/WordAddPage.vue'), meta: { auth: true } },
+  { path: '/fetch', component: () => import('@/views/FetchPage.vue') },
+  //fetchPage
   // { path: '*', component: () => import('@/views/NotFoundPage.vue') },
 ];
 

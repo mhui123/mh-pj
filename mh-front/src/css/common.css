@@ -97,15 +97,23 @@ body {
   .form div:nth-last-child(2) {
     margin-bottom: 0.5rem;
   }
-  .form .btn-groups{
+  /* .form .btn-groups{
     text-align: right;
-  }
+  } */
   .form .btn-groups .suggestJoin{
     display:block;
     color:lightskyblue;
   }
   .btn {
     background: #FE9616;
+    padding: 0.5rem 1.5rem;
+    font-weight: 700;
+    border-radius: .25rem;
+    border: 0 solid #dae1e7;
+    color:white
+  }
+  .btn2 {
+    background: #80613b;
     padding: 0.5rem 1.5rem;
     font-weight: 700;
     border-radius: .25rem;
@@ -207,3 +215,7 @@ body {
     background-color: #21b314;
     display:flex
   }
+
+  /* [class^="btn"]{
+    margin-left:1rem
+  } */

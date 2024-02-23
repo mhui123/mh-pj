@@ -4,16 +4,22 @@
       <h1 class="page-header">로그인</h1>
       <form @submit.prevent="submitForm" class="form">
         <div>
-          <label for="username">id :</label>
+          <label for="username">id</label>
           <input type="text" id="username" v-model="username" />
         </div>
         <div>
-          <label for="password">pw :</label>
+          <label for="password">pw</label>
           <input type="password" id="password" v-model="password" />
         </div>
         <div class="btn-groups">
           <button class="btn" type="submit" :disabled="!isUsernameValid || !password">로그인</button>
-          <router-link to="/signup" class="suggestJoin">아직 계정이 없으신가요?</router-link>
+          <div class="link-narashi">
+            <li class="suggestJoin" @click="fetchInfo('id')">아이디 찾기</li>
+            <span class="gubun-bar">|</span>
+            <li class="suggestJoin" @click="fetchInfo('pw')">비밀번호 찾기</li>
+            <span class="gubun-bar">|</span>
+            <router-link to="/signup" class="suggestJoin">회원가입</router-link>
+          </div>
         </div>
       </form>
     </div>
@@ -23,7 +29,7 @@
 <script>
 import { validateEmail } from '@/utils/validation';
 // import { testAPI, loginUser } from '@/api/index';
-import { mapActions } from 'vuex';
+import { mapActions, mapMutations } from 'vuex';
 export default {
   data() {
     return {
@@ -38,6 +44,7 @@ export default {
     },
   },
   methods: {
+    ...mapMutations(['setGubun']),
     ...mapActions(['LOGIN']),
     async submitForm() {
       const userData = { username: this.username, password: this.password };
@@ -53,11 +60,36 @@ export default {
         this.emitter.emit('show:toast', 'ID IS NOT EXIST');
       }
     },
-    test() {
+    fetchInfo(value) {
+      this.setGubun(value);
+      this.$router.push('/fetch');
       // testAPI({ username: 123, password: 456 });
     },
   },
 };
 </script>
 
-<style></style>
+<style scoped>
+.btn-groups .link-narashi {
+  display: flex;
+  justify-content: center;
+}
+.gubun-bar {
+  color: gray;
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
+}
+.btn {
+  background: #fe9616;
+  padding: 0.5rem 1.5rem;
+  font-weight: 700;
+  border-radius: 0.25rem;
+  border: 0 solid #dae1e7;
+  color: white;
+  width: 100%;
+  margin-bottom: 0.5rem;
+}
+[class^='btn'] {
+  margin-left: 0rem;
+}
+</style>

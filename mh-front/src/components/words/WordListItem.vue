@@ -6,13 +6,17 @@
     <div class="post-time">
       <!-- {{ item['updateDate'] }} -->
       {{ this.$filters.dateFilter(item['updateDate']) }}
-      <i class="icon ion-md-create"></i>
-      <i class="icon ion-md-trash"></i>
+      <span v-show="getUsername === item['creator']">
+        <i class="icon ion-md-create"></i>
+        <i class="icon ion-md-trash"></i>
+      </span>
     </div>
+    <a @click="onClikeRedirect(item['link'], item['infokey'])" class="link">{{ item['link'] ?? 'wiki' }}</a>
   </li>
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
 export default {
   props: {
     item: Object,
@@ -21,6 +25,18 @@ export default {
     return {
       description: this.item.description,
     };
+  },
+  computed: {
+    ...mapGetters(['getUsername']),
+    nowUser() {
+      return this.getUsername;
+    },
+  },
+  methods: {
+    onClikeRedirect(link, keyword) {
+      link = link ?? `https://ko.wikipedia.org/wiki/${keyword}`;
+      window.open(link, '_blank');
+    },
   },
 };
 </script>
