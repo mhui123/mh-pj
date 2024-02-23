@@ -18,6 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -42,8 +43,8 @@ public class UserServiceImpl implements UserService {
             if(result){
                 id = foundUser.getId();
                 String role = foundUser.getRole();
-                List<Info> infos = foundUser.getInfos();
-                dto = UserDto.builder().id(id).role(role).infos(infos).authorized(true).state(200L).build();
+//                List<Info> infos = foundUser.getInfos();
+                dto = UserDto.builder().id(id).role(role).authorized(true).state(200L).build();
                 return dto;
             }
             else {
@@ -55,21 +56,26 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean signin(User user) {
+    public UserDto signin(User user) {
+        UserDto dto = UserDto.builder().build();
         try {
             String id = user.getId();
             String pw = user.getPw(); //asdfasdfasdf
-            String encoderedPw = encoder.encode(pw);
-            String role = user.getRole() == null ? "ROLE_USER" : user.getRole();
-//            User user1 = new User(id, encoderedPw, role);
-            User user1 = User.builder()
-                    .id(id).pw(encoderedPw).role(role)
-                    .build();
-            em.persist(user1);
+            User foundUser = userRepo.findByid(id);
+            if(foundUser == null){
+                String encoderedPw = encoder.encode(pw);
+                String role = user.getRole() == null ? "ROLE_USER" : user.getRole();
+                User user1 = User.builder()
+                        .id(id).pw(encoderedPw).role(role)
+                        .build();
+                em.persist(user1);
+                return UserDto.builder().state(201L).build(); //회원가입 성공
+            } else {
+                return UserDto.builder().state(501L).build(); //기존 아이디 존재
+            }
         } catch(Exception e){
             e.printStackTrace();
-            return false;
+            return UserDto.builder().state(990L).build(); //에러
         }
-        return true;
     }
 }

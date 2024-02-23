@@ -9,5 +9,5 @@ import java.util.Map;
 
 public interface UserService {
     UserDto login(User user);
-    boolean signin(User user);
+    UserDto signin(User user);
 }

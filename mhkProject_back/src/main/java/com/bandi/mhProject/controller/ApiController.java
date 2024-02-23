@@ -1,14 +1,18 @@
 package com.bandi.mhProject.controller;
 
+import com.bandi.mhProject.dto.InfoDto;
 import com.bandi.mhProject.dto.UserDto;
+import com.bandi.mhProject.entity.Info;
 import com.bandi.mhProject.entity.User;
 import com.bandi.mhProject.serviceimpl.UserServiceImpl;
+import com.bandi.mhProject.serviceimpl.WordServiceImpl;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -16,6 +20,8 @@ import java.util.Map;
 public class ApiController {
     @Autowired
     private UserServiceImpl impl;
+    @Autowired
+    private WordServiceImpl wordImpl;
     @Autowired
     private final RestTemplate restTemplate;
     public ApiController(RestTemplate restTemplate) {
@@ -43,18 +49,32 @@ public class ApiController {
         String pw = String.valueOf(data.get("password"));
         User user = User.builder().id(id).pw(pw).build();
         UserDto result = impl.login(user);
-        System.out.println(result);
         return result;
     }
 
     @PostMapping("/signup")
     @ResponseBody
-    public String signup(@RequestBody Map<String, Object> data){
+    public UserDto signup(@RequestBody Map<String, Object> data){
         System.out.println("signin : " + data);
         String id = String.valueOf(data.get("id"));
         String pw = String.valueOf(data.get("pw"));
         User user = User.builder().id(id).pw(pw).build();
-        impl.signin(user);
-        return "signin";
+        UserDto result = impl.signin(user);
+        return result;
     }
+
+    @PostMapping("/addWord")
+    @ResponseBody
+    public Map<String, Object> addWord(@RequestBody Map<String, Object> data){
+        Map<String, Object> result = wordImpl.addWord(data);
+
+        return result;
+    }
+
+    @PostMapping("/getList")
+    @ResponseBody
+    public List<InfoDto> getList(){
+        return wordImpl.getInfoList();
+    }
+
 }
