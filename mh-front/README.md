@@ -41,3 +41,7 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 - Vetur
 - Vue 3 Snippets
 - Vue Language Features
+
+
+### 0223 sidebar추가
+-  npm install node-sass sass-loader --save-dev

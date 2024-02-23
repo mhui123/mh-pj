@@ -2,9 +2,7 @@ import axios from 'axios';
 const instance = axios.create({
   baseURL: process.env.VUE_APP_API_URL,
 });
-const forSecure = axios.create({
-  baseURL: process.env.VUE_APP_SEC_URL,
-});
+
 function registerUser(userData) {
   return instance.post('signup', userData);
 }
@@ -12,13 +10,18 @@ function registerUser(userData) {
 function loginUser(userData) {
   return instance.post('login', userData);
 }
+// const forSecure = axios.create({
+//   baseURL: process.env.VUE_APP_SEC_URL,
+// });
+// async function loginTest(userData) {
+//   return forSecure.post('/loginProc', userData);
+// }
 
-async function testAPI() {
-  console.log(process.env.VUE_APP_API_URL, process.env.SEC_URL, process.env.USER_URL);
-  const res = await instance.post('/test');
-  console.log(res.data);
+function addWord(wordData) {
+  return instance.post('addWord', wordData);
 }
-async function loginTest(userData) {
-  return forSecure.post('/loginProc', userData);
+
+function getList() {
+  return instance.post('getList');
 }
-export { registerUser, loginUser, testAPI, loginTest };
+export { registerUser, loginUser, addWord, getList };

@@ -6,13 +6,8 @@
 </template>
 
 <script>
-import { testAPI } from '@/api/index';
 export default {
-  methods: {
-    test() {
-      testAPI();
-    },
-  },
+  methods: {},
 };
 </script>
 

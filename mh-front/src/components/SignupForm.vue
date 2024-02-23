@@ -38,9 +38,19 @@ export default {
     },
   },
   methods: {
-    submitForm() {
+    async submitForm() {
       if (this.isUsernameValid || this.password) {
-        registerUser({ id: this.username, pw: this.password });
+        const { data } = await registerUser({ id: this.username, pw: this.password });
+        console.log(data);
+        const statuses = {
+          201: 'SIGNIN SUCCESS',
+          501: 'DUPLICATE ID',
+          990: 'OTHER ERROR',
+        };
+        this.emitter.emit('show:toast', statuses[data.state]);
+        if (data.state === 201) {
+          this.$router.push('/login');
+        }
       }
     },
   },

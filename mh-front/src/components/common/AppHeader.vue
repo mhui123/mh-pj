@@ -51,7 +51,7 @@ header {
   justify-content: space-between;
   align-items: center;
   padding: 10px 20px;
-  background-color: #927dfc;
+  background-color: #2e4cb1;
   z-index: 2;
   box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.05);
 }
