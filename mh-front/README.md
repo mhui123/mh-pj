@@ -42,6 +42,10 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 - Vue 3 Snippets
 - Vue Language Features
 
-
 ### 0223 sidebar추가
--  npm install node-sass sass-loader --save-dev
+
+- npm install node-sass sass-loader --save-dev
+
+### 아이콘 찾기
+
+- https://ionic.io/ionicons/v4 에서 원하는 아이콘을 검색 > 하단 usage > 최하단 Basic usage
