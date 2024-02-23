@@ -144,6 +144,7 @@ body {
   /*--- LIST ---*/
   .list-container {
       padding-top: 13px;
+      padding-left: 83px
   }
   .list-container.sticky {
       margin-top: 76px;
