@@ -24,4 +24,8 @@ function addWord(wordData) {
 function getList() {
   return instance.post('getList');
 }
-export { registerUser, loginUser, addWord, getList };
+
+function removeWord(id) {
+  return instance.delete(`delete/${id}`);
+}
+export { registerUser, loginUser, addWord, getList, removeWord };

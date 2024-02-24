@@ -5,7 +5,7 @@
       <SearchForm></SearchForm>
       <LoadingSpinner v-if="isLoading"></LoadingSpinner>
       <ul v-else>
-        <WordListItem v-for="info in infoList" :key="info.id" :item="info" @refresh="fetchData"></WordListItem>
+        <WordListItem v-for="info in infoList" :key="info.id" :item="info" @change="changeData"></WordListItem>
       </ul>
     </div>
     <router-link to="/add" class="create-button">
@@ -19,6 +19,7 @@ import { getList } from '@/api/index';
 import WordListItem from '@/components/words/WordListItem.vue';
 import LoadingSpinner from '@/components/common/LoadingSpinner.vue';
 import SearchForm from '@/components/SearchForm.vue';
+import { mapGetters, mapMutations } from 'vuex';
 export default {
   data() {
     return {
@@ -34,13 +35,23 @@ export default {
   created() {
     this.fetchData();
   },
+  computed: {
+    ...mapGetters(['getWordList']),
+  },
   methods: {
+    ...mapMutations(['pushToWordList']),
     async fetchData() {
       this.isLoading = true;
       const { data } = await getList();
+      console.log('listData : ', data);
       this.isLoading = false;
-      console.log('getList reseponse', data);
-      this.infoList = [...data];
+      data.forEach(e => this.infoList.push(e));
+      // this.infoList = [...data];
+      this.pushToWordList(this.infoList);
+    },
+    changeData() {
+      this.infoList = [];
+      this.infoList = this.getWordList;
     },
   },
 };

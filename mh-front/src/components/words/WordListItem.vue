@@ -8,7 +8,7 @@
       {{ this.$filters.dateFilter(item['updateDate']) }}
       <span v-show="getUsername === item['creator']">
         <i class="icon ion-md-create"></i>
-        <i class="icon ion-md-trash"></i>
+        <i class="icon ion-md-trash" @click="deleteWord(item['id'])"></i>
       </span>
     </div>
     <a @click="onClikeRedirect(item['link'], item['infokey'])" class="link">{{ item['link'] ?? 'wiki' }}</a>
@@ -16,7 +16,8 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+import { mapGetters, mapMutations } from 'vuex';
+import { removeWord } from '@/api/index';
 export default {
   props: {
     item: Object,
@@ -27,15 +28,29 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(['getUsername']),
+    ...mapGetters(['getUsername', 'getWordList']),
     nowUser() {
       return this.getUsername;
     },
   },
   methods: {
+    ...mapMutations(['spliceWordList']),
     onClikeRedirect(link, keyword) {
       link = link ?? `https://ko.wikipedia.org/wiki/${keyword}`;
       window.open(link, '_blank');
+    },
+    async deleteWord(itemId) {
+      itemId;
+      // console.log(this.getWordList);
+      let arr = this.getWordList;
+      let idx = arr.map(m => m.id).indexOf(itemId);
+
+      const { data } = await removeWord(itemId);
+      if (data.result === 200) {
+        console.log(data.result_description);
+        this.spliceWordList(idx);
+        this.$emit('change');
+      }
     },
   },
 };

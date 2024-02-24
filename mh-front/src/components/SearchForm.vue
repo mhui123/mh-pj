@@ -39,5 +39,6 @@ export default {
   font-weight: 700;
   border-radius: 0.25rem;
   padding: 1rem;
+  background-color: white;
 }
 </style>

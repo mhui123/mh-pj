@@ -6,14 +6,17 @@
         <div>
           <label for="titme">Title:</label>
           <input type="text" id="title" v-model="title" @keyup="titleEvent" />
-          <p class="validation-text warning" v-if="!titleInvalid">제목을 입력해주세요</p>
+          <p class="validation-text warning" v-if="title.length > 0 && !isTitleValid">제목을 입력해주세요</p>
         </div>
         <div>
           <label for="contents">Contents:</label>
           <textarea type="text" id="contents" v-model="contents" rows="5" />
-          <p class="validation-text warning" v-if="!isContentsValid">Text is too long</p>
+          <p class="validation-text warning" v-if="contents.length > 0 && !isContentsValid">Text is too long</p>
         </div>
-        <button type="submit" class="btn" :disabled="!title || !contents">Create</button>
+        <div class="btn-groups">
+          <button type="submit" class="btn" :disabled="!title || !contents">Create</button>
+          <button class="btn2" @click="goBack">돌아가기</button>
+        </div>
       </form>
     </div>
   </div>
@@ -27,15 +30,16 @@ export default {
     return {
       title: '',
       contents: '',
-      titleInvalid: false,
+      titleValid: false,
+      contentsValid: false,
     };
   },
   computed: {
     isContentsValid() {
-      return this.contents.length > 0 && this.contents.length < 200;
+      return this.contents.length < 200;
     },
     isTitleValid() {
-      return this.title.length > 0 && this.title.length < 50;
+      return this.title.length < 50;
     },
     ...mapGetters(['getUsername']),
   },
@@ -62,8 +66,19 @@ export default {
     callToast(msg) {
       this.emitter.emit('show:toast', msg);
     },
+    goBack() {
+      this.$router.push('/main');
+    },
   },
 };
 </script>
 
-<style></style>
+<style scoped>
+form {
+  width: 100%;
+}
+[class^='btn'] {
+  width: 100%;
+  margin-bottom: 0.5rem;
+}
+</style>

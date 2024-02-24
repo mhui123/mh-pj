@@ -9,4 +9,5 @@ import java.util.Map;
 public interface WordService {
     public List<InfoDto> getInfoList();
     Map<String, Object> addWord(Map<String, Object> data);
+    Map<String, Object> deleteWord(String id);
 }

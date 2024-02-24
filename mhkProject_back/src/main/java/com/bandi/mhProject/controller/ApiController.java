@@ -77,4 +77,10 @@ public class ApiController {
         return wordImpl.getInfoList();
     }
 
+    @DeleteMapping("/delete/{id}")
+    @ResponseBody
+    public Map<String, Object> deleteWord(@PathVariable String id){
+        return wordImpl.deleteWord(id);
+    }
+
 }

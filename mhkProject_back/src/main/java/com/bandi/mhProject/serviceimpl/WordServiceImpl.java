@@ -69,4 +69,20 @@ public class WordServiceImpl implements WordService {
 
         return result;
     }
+
+    @Override
+    public Map<String, Object> deleteWord(String id) {
+        Map<String,Object> result = new HashMap();
+        try{
+            infoRepo.deleteById(id);
+            result.put("result", 200);
+            result.put("result_description", "delete complete");
+        }catch(Exception e){
+            String errMsg = e.getMessage();
+            result.put("result", 902);
+            result.put("result_description", errMsg);
+            return result;
+        }
+        return result;
+    }
 }
