@@ -39,8 +39,9 @@ export default {
     ...mapGetters(['getWordList']),
   },
   methods: {
-    ...mapMutations(['pushToWordList']),
+    ...mapMutations(['pushToWordList', 'clearWordList']),
     async fetchData() {
+      this.clearWordList();
       this.isLoading = true;
       const { data } = await getList();
       console.log('listData : ', data);
@@ -50,6 +51,7 @@ export default {
       this.pushToWordList(this.infoList);
     },
     changeData() {
+      console.log('changeData', this.getWordList);
       this.infoList = [];
       this.infoList = this.getWordList;
     },

@@ -7,11 +7,11 @@
       <!-- {{ item['updateDate'] }} -->
       {{ this.$filters.dateFilter(item['updateDate']) }}
       <span v-show="getUsername === item['creator']">
-        <i class="icon ion-md-create"></i>
+        <i class="icon ion-md-create" @click="editWord(item['id'])"></i>
         <i class="icon ion-md-trash" @click="deleteWord(item['id'])"></i>
       </span>
     </div>
-    <a @click="onClikeRedirect(item['link'], item['infokey'])" class="link">{{ item['link'] ?? 'wiki' }}</a>
+    <a @click="onClikeRedirect(item['link'], item['infokey'])" class="link">{{ item['link'] ?? '참고링크' }}</a>
   </li>
 </template>
 
@@ -49,8 +49,12 @@ export default {
       if (data.result === 200) {
         console.log(data.result_description);
         this.spliceWordList(idx);
+        console.log(this.getWordList);
         this.$emit('change');
       }
+    },
+    async editWord(itemId) {
+      this.$router.push(`/word/${itemId}`, itemId);
     },
   },
 };

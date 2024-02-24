@@ -12,10 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -84,5 +81,48 @@ public class WordServiceImpl implements WordService {
             return result;
         }
         return result;
+    }
+
+    @Override
+    public Map<String, Object> editWord(Map<String, Object> data) {
+        Map<String,Object> result = new HashMap();
+        try{
+            String infoId = String.valueOf(data.get("id"));
+            String title = String.valueOf(data.get("title"));
+            String contents = String.valueOf(data.get("contents"));
+            Info info = infoRepo.findById(infoId).orElse(null);
+            if(info != null){
+                info.setInfokey(title);
+                info.setDescription(contents);
+                result.put("result", 200);
+                result.put("result_description", "complete");
+            } else {
+                result.put("result", 904);
+                result.put("result_description", "업데이트된 내용 없음");
+            }
+        }catch(Exception e){
+            String errMsg = e.getMessage();
+            result.put("result", 903);
+            result.put("result_description", errMsg);
+            return result;
+        }
+        return result;
+    }
+
+    @Override
+    public InfoDto getWordById(String id) {
+        InfoDto dto = null;
+        try {
+            Info rawInfo = infoRepo.findById(id).orElse(null);
+            if(rawInfo != null){
+                dto = InfoDto.builder().id(rawInfo.getId()).infokey(rawInfo.getInfokey())
+                        .info_kr(rawInfo.getInfo_kr()).link(rawInfo.getLink())
+                        .description(rawInfo.getDescription()).build();
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return dto;
     }
 }

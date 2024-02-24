@@ -83,4 +83,16 @@ public class ApiController {
         return wordImpl.deleteWord(id);
     }
 
+    @PutMapping("/edit")
+    @ResponseBody
+    public Map<String, Object> editWord(@RequestBody Map<String, Object> data){
+        return wordImpl.editWord(data);
+    }
+
+    @PostMapping("/getWordById")
+    @ResponseBody
+    public InfoDto getWordById(@RequestParam String id){
+        return wordImpl.getWordById(id);
+    }
+
 }

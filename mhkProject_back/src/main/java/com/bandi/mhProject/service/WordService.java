@@ -10,4 +10,7 @@ public interface WordService {
     public List<InfoDto> getInfoList();
     Map<String, Object> addWord(Map<String, Object> data);
     Map<String, Object> deleteWord(String id);
+    Map<String, Object> editWord(Map<String, Object> data);
+
+    InfoDto getWordById(String id);
 }

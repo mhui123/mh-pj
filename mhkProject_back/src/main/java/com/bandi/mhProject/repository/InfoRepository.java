@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface InfoRepository extends JpaRepository<Info, String> {
+    Info findByCreator(String creator);
 }

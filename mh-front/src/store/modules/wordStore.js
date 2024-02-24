@@ -3,9 +3,7 @@ const state = {
 };
 const mutations = {
   pushToWordList(state, arr) {
-    console.log('pushToWordList', arr);
     arr.forEach(e => {
-      console.log(e);
       state.wordList.push(e);
     });
     // if (state.wordList.length > 0) {
@@ -18,6 +16,9 @@ const mutations = {
   },
   spliceWordList(state, idx) {
     state.wordList.splice(idx, 1);
+  },
+  clearWordList(state) {
+    state.wordList = [];
   },
 };
 const getters = {

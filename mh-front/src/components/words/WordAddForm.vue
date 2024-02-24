@@ -1,8 +1,9 @@
 <template>
   <div class="contents">
-    <h1 class="page-header">생성페이지</h1>
+    <h1 class="page-header">{{ pageTitle }}</h1>
     <div class="form-wrapper">
-      <form @submit.prevent="submitForm" class="form">
+      <!-- <form @submit.prevent="submitForm" class="form"> -->
+      <form class="form" @submit.prevent>
         <div>
           <label for="titme">Title:</label>
           <input type="text" id="title" v-model="title" @keyup="titleEvent" />
@@ -14,7 +15,8 @@
           <p class="validation-text warning" v-if="contents.length > 0 && !isContentsValid">Text is too long</p>
         </div>
         <div class="btn-groups">
-          <button type="submit" class="btn" :disabled="!title || !contents">Create</button>
+          <button class="btn" :disabled="!title || !contents" v-if="mode === 'create'" @click="submitForm">Create</button>
+          <button class="btn" v-if="mode === 'edit'" @click="editWord">Edit</button>
           <button class="btn2" @click="goBack">돌아가기</button>
         </div>
       </form>
@@ -23,15 +25,17 @@
 </template>
 
 <script>
-import { addWord } from '@/api/index';
+import { addWord, getWord } from '@/api/index';
 import { mapGetters } from 'vuex';
 export default {
   data() {
     return {
+      pageTitle: '',
       title: '',
       contents: '',
       titleValid: false,
       contentsValid: false,
+      mode: 'create',
     };
   },
   computed: {
@@ -42,6 +46,18 @@ export default {
       return this.title.length < 50;
     },
     ...mapGetters(['getUsername']),
+  },
+  async created() {
+    const id = this.$route.params['id'];
+    if (id) {
+      this.mode = 'edit';
+      this.pageTitle = '수정';
+      const { data } = await getWord(id);
+      this.setOrigin(data);
+    } else {
+      console.log('here is create page');
+      this.pageTitle = '생성';
+    }
   },
   methods: {
     titleEvent() {
@@ -68,6 +84,13 @@ export default {
     },
     goBack() {
       this.$router.push('/main');
+    },
+    setOrigin(data) {
+      this.title = data.infokey;
+      this.contents = data.description;
+    },
+    editWord() {
+      console.log('edit');
     },
   },
 };

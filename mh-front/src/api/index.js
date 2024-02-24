@@ -28,4 +28,10 @@ function getList() {
 function removeWord(id) {
   return instance.delete(`delete/${id}`);
 }
-export { registerUser, loginUser, addWord, getList, removeWord };
+function getWord(id) {
+  return instance.post('getWordById', null, { params: { id: id } });
+}
+function editWord(wordData) {
+  return instance.put('edit', wordData);
+}
+export { registerUser, loginUser, addWord, getList, removeWord, editWord, getWord };
