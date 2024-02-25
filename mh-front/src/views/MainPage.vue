@@ -2,7 +2,7 @@
   <div>
     <div class="main list-container contents">
       <h1 class="page-header">용어사전</h1>
-      <SearchForm @change="changeData"></SearchForm>
+      <SearchForm></SearchForm>
       <LoadingSpinner v-if="isLoading"></LoadingSpinner>
       <ul v-else>
         <WordListItem v-for="info in infoList" :key="info.id" :item="info" @change="changeData"></WordListItem>
@@ -32,9 +32,9 @@ export default {
     LoadingSpinner,
     SearchForm,
   },
-  // created() {
-  //   this.fetchData();
-  // },
+  created() {
+    this.fetchData();
+  },
   computed: {
     ...mapGetters(['getWordList']),
     infoList() {
@@ -44,20 +44,15 @@ export default {
   methods: {
     ...mapMutations(['pushToWordList', 'clearWordList']),
     async fetchData() {
-      this.clearWordList();
       this.isLoading = true;
       const { data } = await getList();
       console.log('listData : ', data);
       this.isLoading = false;
-      // data.forEach(e => this.infoList.push(e));
-      // this.infoList = [...data];
-      this.pushToWordList(this.infoList);
+      this.clearWordList();
+      this.pushToWordList(data);
     },
     changeData() {
       console.log('changeData', this.getWordList);
-      this.infoList = [];
-      this.infoList = this.getWordList;
-      console.log(this.infoList);
     },
   },
 };

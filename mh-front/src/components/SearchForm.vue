@@ -29,7 +29,6 @@ export default {
         console.log(data);
         this.clearWordList();
         this.pushToWordList(data);
-        this.$emit('search');
         this.callToast(`검색결과 : ${data.length}건`);
       }
     },

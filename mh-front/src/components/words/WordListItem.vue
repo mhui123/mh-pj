@@ -50,11 +50,14 @@ export default {
         console.log(data.result_description);
         this.spliceWordList(idx);
         console.log(this.getWordList);
-        this.$emit('change');
+        this.callToast(data.result_description);
       }
     },
     async editWord(itemId) {
       this.$router.push(`/word/${itemId}`, itemId);
+    },
+    callToast(msg) {
+      this.emitter.emit('show:toast', msg);
     },
   },
 };
