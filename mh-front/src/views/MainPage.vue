@@ -2,7 +2,7 @@
   <div>
     <div class="main list-container contents">
       <h1 class="page-header">용어사전</h1>
-      <SearchForm></SearchForm>
+      <SearchForm @change="changeData"></SearchForm>
       <LoadingSpinner v-if="isLoading"></LoadingSpinner>
       <ul v-else>
         <WordListItem v-for="info in infoList" :key="info.id" :item="info" @change="changeData"></WordListItem>
@@ -24,7 +24,7 @@ export default {
   data() {
     return {
       isLoading: false,
-      infoList: [],
+      // infoList: [],
     };
   },
   components: {
@@ -32,11 +32,14 @@ export default {
     LoadingSpinner,
     SearchForm,
   },
-  created() {
-    this.fetchData();
-  },
+  // created() {
+  //   this.fetchData();
+  // },
   computed: {
     ...mapGetters(['getWordList']),
+    infoList() {
+      return this.getWordList;
+    },
   },
   methods: {
     ...mapMutations(['pushToWordList', 'clearWordList']),
@@ -46,7 +49,7 @@ export default {
       const { data } = await getList();
       console.log('listData : ', data);
       this.isLoading = false;
-      data.forEach(e => this.infoList.push(e));
+      // data.forEach(e => this.infoList.push(e));
       // this.infoList = [...data];
       this.pushToWordList(this.infoList);
     },
@@ -54,6 +57,7 @@ export default {
       console.log('changeData', this.getWordList);
       this.infoList = [];
       this.infoList = this.getWordList;
+      console.log(this.infoList);
     },
   },
 };

@@ -6,6 +6,8 @@
 </template>
 
 <script>
+import { searchWord } from '@/api/index';
+import { mapMutations } from 'vuex';
 export default {
   data() {
     return {
@@ -18,10 +20,21 @@ export default {
     },
   },
   methods: {
-    searchKeyword() {
-      if (this.isPossibleSearch) {
-        console.log(`키워드 ${this.keyword}로 검색합니다.`);
+    ...mapMutations(['clearWordList', 'pushToWordList']),
+    async searchKeyword() {
+      console.log(`키워드 ${this.keyword}로 검색합니다.`);
+      const res = await searchWord(this.keyword);
+      const { data, status } = res;
+      if (status === 200) {
+        console.log(data);
+        this.clearWordList();
+        this.pushToWordList(data);
+        this.$emit('search');
+        this.callToast(`검색결과 : ${data.length}건`);
       }
+    },
+    callToast(msg) {
+      this.emitter.emit('show:toast', msg);
     },
   },
 };

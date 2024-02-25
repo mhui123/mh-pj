@@ -13,4 +13,5 @@ public interface WordService {
     Map<String, Object> editWord(Map<String, Object> data);
 
     InfoDto getWordById(String id);
+    List<InfoDto> getWordList(String keyword);
 }

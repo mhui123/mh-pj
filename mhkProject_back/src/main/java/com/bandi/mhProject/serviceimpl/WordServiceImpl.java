@@ -87,7 +87,7 @@ public class WordServiceImpl implements WordService {
     public Map<String, Object> editWord(Map<String, Object> data) {
         Map<String,Object> result = new HashMap();
         try{
-            String infoId = String.valueOf(data.get("id"));
+            String infoId = String.valueOf(data.get("wordId"));
             String title = String.valueOf(data.get("title"));
             String contents = String.valueOf(data.get("contents"));
             Info info = infoRepo.findById(infoId).orElse(null);
@@ -124,5 +124,33 @@ public class WordServiceImpl implements WordService {
         }
 
         return dto;
+    }
+
+    @Override
+    public List<InfoDto> getWordList(String keyword) {
+        List<InfoDto> infoList= new ArrayList<>();
+        try{
+            List<Info> rawList = new ArrayList<>();
+            if(keyword.isBlank()){
+                rawList = infoRepo.findAll();
+            }else {
+                rawList = infoRepo.findInfoByKeyword(keyword);
+            }
+            for(Info i : rawList){
+                System.out.println(i.getInfokey()+":"+i.getDescription());
+                InfoDto dto = InfoDto.builder()
+                        .id(i.getId())
+                        .infokey(i.getInfokey()).info_kr(i.getInfo_kr())
+                        .description(i.getDescription()).link(i.getLink())
+                        .creator(i.getCreator()).updator(i.getUpdator())
+                        .createDate(i.getCreateDate()).updateDate(i.getUpdateDate())
+                        .build();
+                infoList.add(dto);
+            }
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+        return infoList;
     }
 }

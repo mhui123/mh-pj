@@ -31,7 +31,10 @@ function removeWord(id) {
 function getWord(id) {
   return instance.post('getWordById', null, { params: { id: id } });
 }
+function searchWord(keyword) {
+  return instance.post('getWordListByKeyword', null, { params: { keyword: keyword } });
+}
 function editWord(wordData) {
   return instance.put('edit', wordData);
 }
-export { registerUser, loginUser, addWord, getList, removeWord, editWord, getWord };
+export { registerUser, loginUser, addWord, getList, removeWord, editWord, getWord, searchWord };

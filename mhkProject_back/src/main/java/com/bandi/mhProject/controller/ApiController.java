@@ -12,6 +12,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -86,7 +87,9 @@ public class ApiController {
     @PutMapping("/edit")
     @ResponseBody
     public Map<String, Object> editWord(@RequestBody Map<String, Object> data){
+        System.out.println(data);
         return wordImpl.editWord(data);
+//        return new HashMap<>();
     }
 
     @PostMapping("/getWordById")
@@ -95,4 +98,9 @@ public class ApiController {
         return wordImpl.getWordById(id);
     }
 
+    @PostMapping("/getWordListByKeyword")
+    @ResponseBody
+    public List<InfoDto> getWordListByKeyword(@RequestParam String keyword){
+        return wordImpl.getWordList(keyword);
+    }
 }

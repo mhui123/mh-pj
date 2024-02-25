@@ -16,7 +16,7 @@
         </div>
         <div class="btn-groups">
           <button class="btn" :disabled="!title || !contents" v-if="mode === 'create'" @click="submitForm">Create</button>
-          <button class="btn" v-if="mode === 'edit'" @click="editWord">Edit</button>
+          <button class="btn" :disabled="!title || !contents" v-if="mode === 'edit'" @click="submitForm">Edit</button>
           <button class="btn2" @click="goBack">돌아가기</button>
         </div>
       </form>
@@ -25,7 +25,7 @@
 </template>
 
 <script>
-import { addWord, getWord } from '@/api/index';
+import { addWord, getWord, editWord } from '@/api/index';
 import { mapGetters } from 'vuex';
 export default {
   data() {
@@ -36,6 +36,7 @@ export default {
       titleValid: false,
       contentsValid: false,
       mode: 'create',
+      wordId: '',
     };
   },
   computed: {
@@ -48,11 +49,11 @@ export default {
     ...mapGetters(['getUsername']),
   },
   async created() {
-    const id = this.$route.params['id'];
-    if (id) {
+    this.wordId = this.$route.params['id'];
+    if (this.wordId) {
       this.mode = 'edit';
       this.pageTitle = '수정';
-      const { data } = await getWord(id);
+      const { data } = await getWord(this.wordId);
       this.setOrigin(data);
     } else {
       console.log('here is create page');
@@ -68,10 +69,18 @@ export default {
       }
     },
     async submitForm() {
+      let result;
       try {
-        const { data } = await addWord({ id: this.getUsername, title: this.title, contents: this.contents });
-        this.callToast(data.result_description);
-        if (data.result === 200) {
+        if (this.mode === 'edit') {
+          let { data } = await editWord({ editor: this.getUsername, title: this.title, contents: this.contents, wordId: this.wordId });
+          result = data;
+        } else {
+          let { data } = await addWord({ id: this.getUsername, title: this.title, contents: this.contents });
+          result = data;
+        }
+        // const { data } = await addWord({ id: this.getUsername, title: this.title, contents: this.contents });
+        this.callToast(result.result_description);
+        if (result.result === 200) {
           this.$router.push('/main');
         }
         // this.callToast('작성완료');
