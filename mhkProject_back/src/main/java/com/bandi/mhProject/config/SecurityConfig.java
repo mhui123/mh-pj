@@ -1,5 +1,7 @@
 package com.bandi.mhProject.config;
 
+import com.bandi.mhProject.component.JwtTokenProvider;
+import com.bandi.mhProject.config.auth.JwtAuthenticationFilter;
 import com.bandi.mhProject.service.UserService;
 import com.bandi.mhProject.serviceimpl.UserServiceImpl;
 import com.bandi.mhProject.util.Encoder;
@@ -24,6 +26,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import java.util.Collection;
 
@@ -37,6 +40,12 @@ public class SecurityConfig {
 //    public WebSecurityCustomizer webSecurityCustomizer() {
 //        return (web) -> web.ignoring().requestMatchers("/user/login", "/user/signin");
 //    }
+    private final JwtTokenProvider jwtTokenProvider;
+
+    public SecurityConfig(JwtTokenProvider jwtTokenProvider) {
+        this.jwtTokenProvider = jwtTokenProvider;
+    }
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
@@ -58,6 +67,7 @@ public class SecurityConfig {
 //                )
                 .formLogin(AbstractHttpConfigurer::disable) //Spring Security 기본 fromLogin 사용안함
                 .httpBasic(AbstractHttpConfigurer::disable) //Spring Security 기본 httpBasic 사용안함
+                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
         ;
         return http.build();
     }

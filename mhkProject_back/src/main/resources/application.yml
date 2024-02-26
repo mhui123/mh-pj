@@ -1,18 +1,20 @@
 server:
   port: 9900
+jwt:
+  secret: 6158b0e1443afadfd0538986e2a135025349bd59045b6c11da7fdc04194f1043
 
 spring:
   datasource:
 #    #집
-    url: jdbc:mysql://localhost:3456/mh_db
-    username: cos
-    password: cos1234
-    driver-class-name: com.mysql.cj.jdbc.Driver #org.h2.Driver
-    #회사
-#    url: jdbc:mysql://192.168.11.135:3456/bdBase
-#    username: mhui123
-#    password: 1234
+#    url: jdbc:mysql://localhost:3456/mh_db
+#    username: cos
+#    password: cos1234
 #    driver-class-name: com.mysql.cj.jdbc.Driver #org.h2.Driver
+    #회사
+    url: jdbc:mysql://192.168.11.135:3456/bdBase
+    username: mhui123
+    password: 1234
+    driver-class-name: com.mysql.cj.jdbc.Driver #org.h2.Driver
   jpa:
     hibernate:
       ddl-auto: update #create create-drop, update, validate, none
@@ -22,6 +24,7 @@ spring:
         show_sql: true
         format_sql: true
   #        use_sql_comments: true #쿼리 추가정보 출력
+
   data:
     web:
       pageable:

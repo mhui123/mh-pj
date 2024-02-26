@@ -1,6 +1,8 @@
 package com.bandi.mhProject.serviceimpl;
 
+import com.bandi.mhProject.component.JwtTokenProvider;
 import com.bandi.mhProject.config.auth.PrincipalDetail;
+import com.bandi.mhProject.dto.JwtToken;
 import com.bandi.mhProject.dto.UserDto;
 import com.bandi.mhProject.entity.Info;
 import com.bandi.mhProject.entity.User;
@@ -10,7 +12,11 @@ import com.bandi.mhProject.util.Encoder;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -22,20 +28,25 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepo;
+    private final AuthenticationManagerBuilder authBuilder;
+    private final JwtTokenProvider jwtTokenProvider;
     @PersistenceContext
     EntityManager em;
     @Autowired
     private PasswordEncoder encoder;
     @Override
-    public UserDto login(User user) {
+    public JwtToken login(User user) {
         String id = user.getId();
         String pw = user.getPw();
         User foundUser = userRepo.findByid(id);
+        JwtToken token = null;
+
         UserDto dto = UserDto.builder().build();
         if(foundUser != null){
 //            return encoder.matchPwWithCompare(pw, foundUser.getPw());
@@ -45,14 +56,17 @@ public class UserServiceImpl implements UserService {
                 String role = foundUser.getRole();
 //                List<Info> infos = foundUser.getInfos();
                 dto = UserDto.builder().id(id).role(role).authorized(true).state(200L).build();
-                return dto;
+                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(id, pw);
+                Authentication authentication = authBuilder.getObject().authenticate(authToken);
+                token = jwtTokenProvider.generateToken(authentication);
+                log.info("generated token : ", token);
             }
             else {
                 //500 : PASSWORD NOT MATCHED
                 dto = UserDto.builder().state(500L).build();
             }
         }
-        return dto;
+        return token;
     }
 
     @Override

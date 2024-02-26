@@ -1,6 +1,7 @@
 package com.bandi.mhProject.controller;
 
 import com.bandi.mhProject.dto.InfoDto;
+import com.bandi.mhProject.dto.JwtToken;
 import com.bandi.mhProject.dto.UserDto;
 import com.bandi.mhProject.entity.Info;
 import com.bandi.mhProject.entity.User;
@@ -8,6 +9,7 @@ import com.bandi.mhProject.serviceimpl.UserServiceImpl;
 import com.bandi.mhProject.serviceimpl.WordServiceImpl;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
@@ -44,13 +46,14 @@ public class ApiController {
 
     @PostMapping("/login")
     @ResponseBody
-    public UserDto login(@RequestBody Map<String, Object> data){
+    public ResponseEntity<JwtToken> login(@RequestBody Map<String, Object> data){
         System.out.println("login ");
         String id = String.valueOf(data.get("username"));
         String pw = String.valueOf(data.get("password"));
         User user = User.builder().id(id).pw(pw).build();
-        UserDto result = impl.login(user);
-        return result;
+        JwtToken token = impl.login(user);
+//        UserDto result = impl.login(user);
+        return ResponseEntity.ok(token);
     }
 
     @PostMapping("/signup")
