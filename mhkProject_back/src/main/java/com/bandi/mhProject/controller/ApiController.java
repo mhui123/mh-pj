@@ -53,6 +53,12 @@ public class ApiController {
         User user = User.builder().id(id).pw(pw).build();
         return impl.login(user);
     }
+    @PostMapping("/logout")
+    @ResponseBody
+    public String logout(){
+        System.out.println("logout");
+        return "logout";
+    }
 
     @PostMapping("/signup")
     @ResponseBody

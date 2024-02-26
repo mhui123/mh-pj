@@ -10,6 +10,9 @@ function registerUser(userData) {
 function loginUser(userData) {
   return instance.post('login', userData);
 }
+function logoutUser() {
+  return instance.post('logout');
+}
 // const forSecure = axios.create({
 //   baseURL: process.env.VUE_APP_SEC_URL,
 // });
@@ -37,4 +40,4 @@ function searchWord(keyword) {
 function editWord(wordData) {
   return instance.put('edit', wordData);
 }
-export { registerUser, loginUser, addWord, getList, removeWord, editWord, getWord, searchWord };
+export { registerUser, loginUser, addWord, getList, removeWord, editWord, getWord, searchWord, logoutUser };

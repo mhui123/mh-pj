@@ -27,6 +27,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import java.util.Collection;
 
@@ -68,7 +69,13 @@ public class SecurityConfig {
                 .formLogin(AbstractHttpConfigurer::disable) //Spring Security 기본 fromLogin 사용안함
                 .httpBasic(AbstractHttpConfigurer::disable) //Spring Security 기본 httpBasic 사용안함
 //                .addFilter(new JwtAuthenticationFilter(jwtTokenProvider))
+                .logout((logout) -> logout
+                        .logoutRequestMatcher(new AntPathRequestMatcher("/api/logout"))
+                        .logoutSuccessUrl("/main")
+                        .invalidateHttpSession(true)
+                        .permitAll())
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)//보안 필터 이전에 추가해 인증이나 권한부여 전 추가로직 수행
+
         ;
         return http.build();
     }
