@@ -3,16 +3,11 @@ const state = {
 };
 const mutations = {
   pushToWordList(state, arr) {
-    arr.forEach(e => {
-      state.wordList.push(e);
-    });
-    // if (state.wordList.length > 0) {
-    //   arr.forEach(e => {
-    //     state.wordList.push(e);
-    //   });
-    // } else {
-    //   state.wordList = arr;
-    // }
+    if (Array.isArray(arr)) {
+      arr.forEach(e => {
+        state.wordList.push(e);
+      });
+    }
   },
   spliceWordList(state, idx) {
     state.wordList.splice(idx, 1);
