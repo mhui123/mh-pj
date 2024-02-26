@@ -16,12 +16,14 @@ public class UserDto {
     private List<Info> infos = new ArrayList<>();
     private boolean authorized = false;
     private Long state = 0L;
+    private JwtToken token = null;
     @Builder
-    public UserDto(String id, String role, List<Info> infos, boolean authorized, Long state) {
+    public UserDto(String id, String role, List<Info> infos, boolean authorized, Long state, JwtToken token) {
         this.id = id;
         this.role = role;
         this.infos = infos;
         this.authorized = authorized;
         this.state = state;
+        this.token = token;
     }
 }

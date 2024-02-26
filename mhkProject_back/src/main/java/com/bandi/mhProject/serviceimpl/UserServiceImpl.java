@@ -52,7 +52,7 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private PasswordEncoder encoder;
     @Override
-    public JwtToken login(User user) {
+    public UserDto login(User user) {
         String id = user.getId();
         String pw = user.getPw();
         User foundUser = userRepo.findByid(id);
@@ -65,11 +65,10 @@ public class UserServiceImpl implements UserService {
             if(result){
                 id = foundUser.getId();
                 String role = foundUser.getRole();
-//                List<Info> infos = foundUser.getInfos();
-                dto = UserDto.builder().id(id).role(role).authorized(true).state(200L).build();
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(id, pw);
                 Authentication authentication = authBuilder.getObject().authenticate(authToken); //authenticationManager.authenticate(authToken);
                 token = jwtTokenProvider.generateToken(authentication);
+                dto = UserDto.builder().id(id).role(role).authorized(true).state(200L).token(token).build();
                 System.out.println("generated token : "+ token);
             }
             else {
@@ -77,7 +76,7 @@ public class UserServiceImpl implements UserService {
                 dto = UserDto.builder().state(500L).build();
             }
         }
-        return token;
+        return dto;
     }
 
     @Override

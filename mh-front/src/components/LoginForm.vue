@@ -48,12 +48,14 @@ export default {
     ...mapActions(['LOGIN']),
     async submitForm() {
       const userData = { username: this.username, password: this.password };
-      const { state } = await this.LOGIN(userData);
+      const response = await this.LOGIN(userData);
+      const { state, token } = response;
+      console.log(token);
       // await loginTest(userData);
       if (state === 200) {
         console.log('login');
         this.emitter.emit('show:toast', 'LOGIN SUCCESS');
-        this.$router.push('/main');
+        // this.$router.push('/main');
       } else if (state === 500) {
         this.emitter.emit('show:toast', 'PASSWORD IS NOT MATCHED');
       } else {

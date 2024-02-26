@@ -46,14 +46,12 @@ public class ApiController {
 
     @PostMapping("/login")
     @ResponseBody
-    public ResponseEntity<JwtToken> login(@RequestBody Map<String, Object> data){
+    public UserDto login(@RequestBody Map<String, Object> data){
         System.out.println("login ");
         String id = String.valueOf(data.get("username"));
         String pw = String.valueOf(data.get("password"));
         User user = User.builder().id(id).pw(pw).build();
-        JwtToken token = impl.login(user);
-//        UserDto result = impl.login(user);
-        return ResponseEntity.ok(token);
+        return impl.login(user);
     }
 
     @PostMapping("/signup")

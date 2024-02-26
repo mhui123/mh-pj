@@ -9,6 +9,6 @@ import org.springframework.stereotype.Service;
 import java.util.Map;
 
 public interface UserService {
-    JwtToken login(User user);
+    UserDto login(User user);
     UserDto signin(User user);
 }
