@@ -10,6 +10,7 @@ const routes = [
   { path: '/add', component: () => import('@/views/WordAddPage.vue'), meta: { auth: true } },
   { path: '/fetch', component: () => import('@/views/FetchPage.vue') },
   { path: '/word/:id', component: () => import('@/views/WordAddPage.vue'), meta: { auth: true } },
+  { path: '/mypage', component: () => import('@/views/MyPage.vue') },
   //fetchPage
   // { path: '*', component: () => import('@/views/NotFoundPage.vue') },
 ];

@@ -55,6 +55,7 @@ export default {
   justify-content: center;
   align-items: center;
   transition: transform 750ms ease-out;
+  z-index: 9999;
 }
 .toast.show {
   transform: translateY(-150px);

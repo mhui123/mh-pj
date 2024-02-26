@@ -11,4 +11,6 @@ import java.util.Map;
 public interface UserService {
     UserDto login(User user);
     UserDto signin(User user);
+
+    Map<String ,Object> changePw(Map<String, Object> data);
 }

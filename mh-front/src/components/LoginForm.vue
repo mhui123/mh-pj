@@ -55,7 +55,7 @@ export default {
       if (state === 200) {
         console.log('login');
         this.emitter.emit('show:toast', 'LOGIN SUCCESS');
-        // this.$router.push('/main');
+        this.$router.push('/main');
       } else if (state === 500) {
         this.emitter.emit('show:toast', 'PASSWORD IS NOT MATCHED');
       } else {

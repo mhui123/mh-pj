@@ -63,7 +63,7 @@
             <a href="#">
               <svg class="person">
                 <use xlink:href="#person"></use></svg
-              ><span>내 정보</span></a
+              ><span @click="goPage('mypage')">내 정보</span></a
             >
           </li>
           <!-- <li>
@@ -105,6 +105,11 @@ export default {
       return this.isLogin;
     },
     ...mapGetters(['isLogin', 'getUsername']),
+  },
+  methods: {
+    goPage(goto) {
+      this.$router.push(goto);
+    },
   },
 };
 </script>

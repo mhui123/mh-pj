@@ -110,4 +110,14 @@ public class ApiController {
     public List<InfoDto> getWordListByKeyword(@RequestParam String keyword){
         return wordImpl.getWordList(keyword);
     }
+
+    @PostMapping("/changePassword")
+    @ResponseBody
+    public Map<String, Object> changePassword(@RequestBody Map<String, Object> data){
+        Map<String, Object> result = null;
+        if(data.containsKey("id") && data.containsKey("asPw") && data.containsKey("newPw")){
+            result = impl.changePw(data);
+        }
+        return result;
+    }
 }

@@ -3,4 +3,9 @@ function validateEmail(email) {
   return re.test(String(email).toLowerCase());
 }
 
-export { validateEmail };
+function validatePw(pw) {
+  const reg = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
+  return reg.test(pw);
+}
+
+export { validateEmail, validatePw };

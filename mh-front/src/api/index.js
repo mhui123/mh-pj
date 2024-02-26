@@ -40,4 +40,7 @@ function searchWord(keyword) {
 function editWord(wordData) {
   return instance.put('edit', wordData);
 }
-export { registerUser, loginUser, addWord, getList, removeWord, editWord, getWord, searchWord, logoutUser };
+function changePw(data) {
+  return instance.post('changePassword', data);
+}
+export { registerUser, loginUser, addWord, getList, removeWord, editWord, getWord, searchWord, logoutUser, changePw };

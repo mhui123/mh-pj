@@ -102,4 +102,24 @@ public class UserServiceImpl implements UserService {
             return UserDto.builder().state(990L).build(); //에러
         }
     }
+
+    @Override
+    public Map<String, Object> changePw(Map<String, Object> data) {
+        Map<String, Object> resultMap = new HashMap<>();
+        String id = String.valueOf(data.get("id"));
+        String oldPw = String.valueOf(data.get("asPw"));
+        String newPw = String.valueOf(data.get("newPw"));
+        User foundUser = userRepo.findByid(id);
+        boolean result = encoder.matches(oldPw, foundUser.getPw());
+        if(result){
+            String encoderedPw = encoder.encode(newPw);
+            foundUser.setPw(encoderedPw);
+            resultMap.put("result", 200);
+            resultMap.put("result_description", "비밀번호 변경완료");
+        }else {
+            resultMap.put("result", 903);
+            resultMap.put("result_description", "기존 비밀번호가 다릅니다.");
+        }
+        return resultMap;
+    }
 }

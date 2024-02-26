@@ -12,6 +12,7 @@ import java.util.List;
 @Entity
 @NoArgsConstructor
 @Getter
+@Setter
 @ToString(of={"id", "pw"})
 public class User extends TimeEntity {
     @Id @Column(name="user_id")
