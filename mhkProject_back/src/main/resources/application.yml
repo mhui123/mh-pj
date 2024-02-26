@@ -2,7 +2,12 @@ server:
   port: 9900
 jwt:
   secret: 6158b0e1443afadfd0538986e2a135025349bd59045b6c11da7fdc04194f1043
-
+logging:
+  level:
+    root: info
+  console:
+    enabled: true
+    threshold: debug
 spring:
   datasource:
 #    #집

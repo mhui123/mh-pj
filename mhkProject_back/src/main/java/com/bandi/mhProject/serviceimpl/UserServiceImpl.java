@@ -11,9 +11,11 @@ import com.bandi.mhProject.service.UserService;
 import com.bandi.mhProject.util.Encoder;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -30,12 +32,21 @@ import java.util.Map;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
 @Transactional
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepo;
     private final AuthenticationManagerBuilder authBuilder;
     private final JwtTokenProvider jwtTokenProvider;
+    @Autowired private AuthenticationManager authenticationManager;
+
+    public UserServiceImpl(UserRepository userRepo, AuthenticationManagerBuilder authBuilder, JwtTokenProvider jwtTokenProvider, PasswordEncoder encoder
+    ) {
+        this.userRepo = userRepo;
+        this.authBuilder = authBuilder;
+        this.jwtTokenProvider = jwtTokenProvider;
+        this.encoder = encoder;
+    }
+
     @PersistenceContext
     EntityManager em;
     @Autowired
@@ -57,9 +68,9 @@ public class UserServiceImpl implements UserService {
 //                List<Info> infos = foundUser.getInfos();
                 dto = UserDto.builder().id(id).role(role).authorized(true).state(200L).build();
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(id, pw);
-                Authentication authentication = authBuilder.getObject().authenticate(authToken);
+                Authentication authentication = authBuilder.getObject().authenticate(authToken); //authenticationManager.authenticate(authToken);
                 token = jwtTokenProvider.generateToken(authentication);
-                log.info("generated token : ", token);
+                System.out.println("generated token : "+ token);
             }
             else {
                 //500 : PASSWORD NOT MATCHED
