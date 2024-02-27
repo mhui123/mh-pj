@@ -52,31 +52,47 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private PasswordEncoder encoder;
     @Override
-    public UserDto login(User user) {
-        String id = user.getId();
-        String pw = user.getPw();
-        User foundUser = userRepo.findByid(id);
-        JwtToken token = null;
+    public Map<String ,Object> login(User user) {
+        Map<String ,Object> result = new HashMap<>();
+        try{
+            String id = user.getId();
+            String pw = user.getPw();
+            User foundUser = userRepo.findByid(id);
+            JwtToken token = null;
 
-        UserDto dto = UserDto.builder().build();
-        if(foundUser != null){
+            UserDto dto = UserDto.builder().build();
+            if(foundUser != null){
 //            return encoder.matchPwWithCompare(pw, foundUser.getPw());
-            boolean result = encoder.matches(pw, foundUser.getPw());
-            if(result){
-                id = foundUser.getId();
-                String role = foundUser.getRole();
-                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(id, pw);
-                Authentication authentication = authBuilder.getObject().authenticate(authToken); //authenticationManager.authenticate(authToken);
-                token = jwtTokenProvider.generateToken(authentication);
-                dto = UserDto.builder().id(id).role(role).authorized(true).state(200L).token(token).build();
-                System.out.println("generated token : "+ token);
+                boolean chk = encoder.matches(pw, foundUser.getPw());
+                if(chk){
+                    id = foundUser.getId();
+                    String role = foundUser.getRole();
+                    String useYn = foundUser.getUseYn();
+                    if(useYn.equals("y")){
+                        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(id, pw);
+                        Authentication authentication = authBuilder.getObject().authenticate(authToken); //authenticationManager.authenticate(authToken);
+                        token = jwtTokenProvider.generateToken(authentication);
+                        dto = UserDto.builder().id(id).role(role).authorized(true).token(token).build();
+                        result.put("result", 200);
+                        result.put("result_description", "로그인성공");
+                        result.put("userInfo", dto);
+                    } else {
+                        result.put("result", 904);
+                        result.put("result_description", "사용중지상태인 계정입니다.");
+                    }
+                }
+                else {
+                    //500 : PASSWORD NOT MATCHED
+                    result.put("result", 905);
+                    result.put("result_description", "PASSWORD NOT MATCHED");
+                }
             }
-            else {
-                //500 : PASSWORD NOT MATCHED
-                dto = UserDto.builder().state(500L).build();
-            }
+        } catch(Exception e){
+            result.put("result", 900);
+            result.put("result_description", "에러발생. msg:" + e.getMessage());
         }
-        return dto;
+
+        return result;
     }
 
     @Override
@@ -126,5 +142,55 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserDto> getUserList() {
         return userRepo.findUserList();
+    }
+
+    @Override
+    public Map<String, Object> changeRole(Map<String, Object> data) {
+        Map<String, Object> result = new HashMap<>();
+        try{
+            String id = String.valueOf(data.get("id"));
+            String role = String.valueOf(data.get("role"));
+            String toChange = role.equals("ROLE_USER") ? "ROLE_ADMIN" : "ROLE_USER";
+            String toChangeTxt = toChange.equals("ROLE_USER") ? "유저" : "관리자";
+            User user = userRepo.findByid(id);
+            if(user != null){
+                user.setRole(toChange);
+                result.put("result", 200);
+                result.put("result_description", toChangeTxt + "로 권한변경되었습니다.");
+            } else {
+                result.put("result", 902);
+                result.put("result_description", "유저를 찾을 수 없습니다.");
+            }
+
+        }catch(Exception e){
+            result.put("result", 900);
+            result.put("result_description", "에러발생. msg:" + e.getMessage());
+        }
+
+        return result;
+    }
+
+    @Override
+    public Map<String, Object> changeUseYn(Map<String, Object> data) {
+        Map<String, Object> result = new HashMap<>();
+        try{
+            String id = String.valueOf(data.get("id"));
+            String useYn = String.valueOf(data.get("useYn")).toLowerCase();
+            String toChange = useYn.equals("y") ? "n" : "y";
+            String toChangeTxt = toChange.equals("y") ? "사용" : "중지";
+            User user = userRepo.findByid(id);
+            if(user != null){
+                user.setUseYn(toChange);
+                result.put("result", 200);
+                result.put("result_description", "유저사용 여부를 "+toChangeTxt+ "로 변경 하였습니다.");
+            } else {
+                result.put("result", 902);
+                result.put("result_description", "유저를 찾을 수 없습니다.");
+            }
+        } catch(Exception e){
+            result.put("result", 900);
+            result.put("result_description", "에러발생. msg:" + e.getMessage());
+        }
+        return result;
     }
 }

@@ -46,7 +46,7 @@ public class ApiController {
 
     @PostMapping("/login")
     @ResponseBody
-    public UserDto login(@RequestBody Map<String, Object> data){
+    public Map<String, Object> login(@RequestBody Map<String, Object> data){
         System.out.println("login ");
         String id = String.valueOf(data.get("username"));
         String pw = String.valueOf(data.get("password"));
@@ -128,5 +128,17 @@ public class ApiController {
         List<UserDto> userList = impl.getUserList();
         result.put("userList", userList);
         return result;
+    }
+
+    @PostMapping("/changeRole")
+    @ResponseBody
+    public Map<String, Object> changeRole(@RequestBody Map<String, Object> data){
+        return impl.changeRole(data);
+    }
+
+    @PostMapping("/changeUseYn")
+    @ResponseBody
+    public Map<String, Object> changeUseYn(@RequestBody Map<String, Object> data){
+        return impl.changeUseYn(data);
     }
 }

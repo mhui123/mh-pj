@@ -10,9 +10,11 @@ import java.util.List;
 import java.util.Map;
 
 public interface UserService {
-    UserDto login(User user);
+    Map<String ,Object> login(User user);
     UserDto signin(User user);
 
     Map<String ,Object> changePw(Map<String, Object> data);
     List<UserDto> getUserList();
+    Map<String ,Object> changeRole(Map<String, Object> data);
+    Map<String ,Object> changeUseYn(Map<String, Object> data);
 }

@@ -59,16 +59,17 @@ const getters = {
 const actions = {
   async LOGIN({ commit }, userData) {
     const { data } = await loginUser(userData);
+    const { userInfo, result } = data;
     console.log(data);
     if (data === null) {
       return null;
-    } else if (data.state === 200) {
-      commit('setUsername', data.id);
-      commit('setRole', data.role);
-      setAccessToken(data.token.accessToken);
-      setRefreshToken(data.token.refreshToken);
-      setItem('role', data.role);
-      saveUserToCookie(data.id);
+    } else if (result === 200) {
+      commit('setUsername', userInfo.id);
+      commit('setRole', userInfo.role);
+      setAccessToken(userInfo.token.accessToken);
+      setRefreshToken(userInfo.token.refreshToken);
+      setItem('role', userInfo.role);
+      saveUserToCookie(userInfo.id);
     }
     return data;
   },

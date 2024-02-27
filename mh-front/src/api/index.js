@@ -43,4 +43,14 @@ function editWord(wordData) {
 function changePw(data) {
   return instance.post('changePassword', data);
 }
-export { registerUser, loginUser, addWord, getList, removeWord, editWord, getWord, searchWord, logoutUser, changePw };
+function getUserList(data) {
+  return instance.post('getUserList', data);
+}
+function changeRole(data) {
+  return instance.post('changeRole', data);
+}
+function changeUseYn(data) {
+  return instance.post('changeUseYn', data);
+}
+
+export { registerUser, loginUser, addWord, getList, removeWord, editWord, getWord, searchWord, logoutUser, changePw, getUserList, changeRole, changeUseYn };
