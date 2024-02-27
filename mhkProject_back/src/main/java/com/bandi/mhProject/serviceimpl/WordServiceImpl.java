@@ -1,5 +1,6 @@
 package com.bandi.mhProject.serviceimpl;
 
+import com.bandi.mhProject.constants.ErrorCode;
 import com.bandi.mhProject.dto.InfoDto;
 import com.bandi.mhProject.entity.Info;
 import com.bandi.mhProject.entity.User;
@@ -59,8 +60,8 @@ public class WordServiceImpl implements WordService {
             }
         }catch (Exception e){
             String errMsg = e.getMessage();
-            result.put("result", 901);
-            result.put("result_description", errMsg);
+            result.put("result", 900);
+            result.put("result_description", ErrorCode.ERROR_CODE_900.getMessage()+":"+errMsg);
             return result;
         }
 
@@ -76,7 +77,7 @@ public class WordServiceImpl implements WordService {
             result.put("result_description", "delete complete");
         }catch(Exception e){
             String errMsg = e.getMessage();
-            result.put("result", 902);
+            result.put("result", 900);
             result.put("result_description", errMsg);
             return result;
         }
@@ -102,8 +103,8 @@ public class WordServiceImpl implements WordService {
             }
         }catch(Exception e){
             String errMsg = e.getMessage();
-            result.put("result", 903);
-            result.put("result_description", errMsg);
+            result.put("result", 900);
+            result.put("result_description", ErrorCode.ERROR_CODE_900.getMessage()+":"+errMsg);
             return result;
         }
         return result;

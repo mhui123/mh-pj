@@ -2,6 +2,7 @@ package com.bandi.mhProject.serviceimpl;
 
 import com.bandi.mhProject.component.JwtTokenProvider;
 import com.bandi.mhProject.config.auth.PrincipalDetail;
+import com.bandi.mhProject.constants.ErrorCode;
 import com.bandi.mhProject.dto.JwtToken;
 import com.bandi.mhProject.dto.UserDto;
 import com.bandi.mhProject.entity.Info;
@@ -9,11 +10,13 @@ import com.bandi.mhProject.entity.User;
 import com.bandi.mhProject.repository.UserRepository;
 import com.bandi.mhProject.service.UserService;
 import com.bandi.mhProject.util.Encoder;
+import com.nimbusds.jose.shaded.gson.JsonObject;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -26,6 +29,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -94,7 +98,7 @@ public class UserServiceImpl implements UserService {
 
         return result;
     }
-
+    // signin returnType Map<String, Object>로 통일해야함.
     @Override
     public UserDto signin(User user) {
         UserDto dto = UserDto.builder().build();
@@ -111,10 +115,12 @@ public class UserServiceImpl implements UserService {
                 em.persist(user1);
                 return UserDto.builder().state(201L).build(); //회원가입 성공
             } else {
+                String errorMsg = ErrorCode.ERROR_CODE_903.getMessage();
                 return UserDto.builder().state(501L).build(); //기존 아이디 존재
             }
         } catch(Exception e){
             e.printStackTrace();
+            String errorMsg = ErrorCode.ERROR_CODE_900.getMessage() + " : " + e.getMessage();
             return UserDto.builder().state(990L).build(); //에러
         }
     }
@@ -133,8 +139,8 @@ public class UserServiceImpl implements UserService {
             resultMap.put("result", 200);
             resultMap.put("result_description", "비밀번호 변경완료");
         }else {
-            resultMap.put("result", 903);
-            resultMap.put("result_description", "기존 비밀번호가 다릅니다.");
+            resultMap.put("result", 902);
+            resultMap.put("result_description", ErrorCode.ERROR_CODE_902.getMessage());
         }
         return resultMap;
     }
@@ -147,25 +153,54 @@ public class UserServiceImpl implements UserService {
     @Override
     public Map<String, Object> changeRole(Map<String, Object> data) {
         Map<String, Object> result = new HashMap<>();
+        List<String> ids = null;
+        List<String> failedId = new ArrayList<>();
+//        JsonObject obj = new JSONObject(jsonString)
         try{
-            String id = String.valueOf(data.get("id"));
-            String role = String.valueOf(data.get("role"));
-            String toChange = role.equals("ROLE_USER") ? "ROLE_ADMIN" : "ROLE_USER";
-            String toChangeTxt = toChange.equals("ROLE_USER") ? "유저" : "관리자";
-            User user = userRepo.findByid(id);
-            if(user != null){
-                user.setRole(toChange);
-                result.put("result", 200);
-                result.put("result_description", toChangeTxt + "로 권한변경되었습니다.");
-            } else {
-                result.put("result", 902);
-                result.put("result_description", "유저를 찾을 수 없습니다.");
+            if(data.containsKey("ids") && data.get("ids") instanceof ArrayList<?>){
+                ids = (List<String>) data.get("ids");
+                for(String id : ids){
+                    User user = userRepo.findByid(id);
+                    if(user != null){
+                        String toChange = user.getRole().equals("y") ? "n" : "y";
+                        user.setRole(toChange);
+                    } else {
+                        failedId.add(id);
+                    }
+                }
+                if(!failedId.isEmpty()){
+                    String errorMsg = ErrorCode.ERROR_CODE_901.getMessage() + failedId.toString();
+                    result.put("result", 901);
+                    result.put("result_description", errorMsg);
+                } else {
+                    result.put("result", 200);
+                    result.put("result_description", "권한변경 성공");
+                }
             }
-
-        }catch(Exception e){
-            result.put("result", 900);
-            result.put("result_description", "에러발생. msg:" + e.getMessage());
+        } catch(Exception e){
+            e.printStackTrace();
         }
+//        List<String> ids = new ArrayList<>();
+//        List<String> failedId = new ArrayList<>();
+//        try{
+//            String id = String.valueOf(data.get("id"));
+//            String role = String.valueOf(data.get("role"));
+//            String toChange = role.equals("ROLE_USER") ? "ROLE_ADMIN" : "ROLE_USER";
+//            String toChangeTxt = toChange.equals("ROLE_USER") ? "유저" : "관리자";
+//            User user = userRepo.findByid(id);
+//            if(user != null){
+//                user.setRole(toChange);
+//                result.put("result", 200);
+//                result.put("result_description", toChangeTxt + "로 권한변경되었습니다.");
+//            } else {
+//                result.put("result", 901);
+//                result.put("result_description", ErrorCode.ERROR_CODE_901.getMessage());
+//            }
+//
+//        }catch(Exception e){
+//            result.put("result", 900);
+//            result.put("result_description", "에러발생. msg:" + e.getMessage());
+//        }
 
         return result;
     }
@@ -173,24 +208,67 @@ public class UserServiceImpl implements UserService {
     @Override
     public Map<String, Object> changeUseYn(Map<String, Object> data) {
         Map<String, Object> result = new HashMap<>();
+        List<Object> users = null;
         try{
-            String id = String.valueOf(data.get("id"));
-            String useYn = String.valueOf(data.get("useYn")).toLowerCase();
-            String toChange = useYn.equals("y") ? "n" : "y";
-            String toChangeTxt = toChange.equals("y") ? "사용" : "중지";
-            User user = userRepo.findByid(id);
-            if(user != null){
-                user.setUseYn(toChange);
-                result.put("result", 200);
-                result.put("result_description", "유저사용 여부를 "+toChangeTxt+ "로 변경 하였습니다.");
-            } else {
-                result.put("result", 902);
-                result.put("result_description", "유저를 찾을 수 없습니다.");
+            if(data.containsKey("users") && data.get("users") instanceof ArrayList<?>){
             }
         } catch(Exception e){
+            e.printStackTrace();
+        }
+//
+//            String id = String.valueOf(data.get("id"));
+//            String useYn = String.valueOf(data.get("useYn")).toLowerCase();
+//            String toChange = useYn.equals("y") ? "n" : "y";
+//            String toChangeTxt = toChange.equals("y") ? "사용으" : "중지";
+//            User user = userRepo.findByid(id);
+//            if(user != null){
+//                user.setUseYn(toChange);
+//                result.put("result", 200);
+//                result.put("result_description", id+"의 유저사용 여부를 "+toChangeTxt+ "로 변경 하였습니다.");
+//            } else {
+//                result.put("result", 901);
+//                result.put("result_description", "유저를 찾을 수 없습니다.");
+//            }
+//        } catch(Exception e){
+//            result.put("result", 900);
+//            result.put("result_description", "에러발생. msg:" + e.getMessage());
+//        }
+        return result;
+    }
+
+    @Override
+    public Map<String, Object> initializePw(Map<String, Object> data) {
+        Map<String, Object> result = new HashMap<>();
+        List<String> ids = new ArrayList<>();
+        List<String> failedId = new ArrayList<>();
+
+        try{
+            if(data.containsKey("ids") && data.get("ids") instanceof ArrayList<?>){
+                ids = (List<String>) data.get("ids");
+                for(String id : ids){
+                    User user = userRepo.findByid(id);
+                    if(user != null){
+                        String initPw = "bandisnc01!";
+                        String encoderedPw = encoder.encode(initPw);
+                        user.setPw(encoderedPw);
+                    } else {
+                        failedId.add(id);
+                    }
+                }
+                if(!failedId.isEmpty()){
+                    String errorMsg = ErrorCode.ERROR_CODE_904.getMessage() + failedId.toString();
+                    result.put("result", 904);
+                    result.put("result_description", errorMsg);
+                } else {
+                    result.put("result", 200);
+                    result.put("result_description", "비밀번호 초기화 성공");
+                }
+            }
+        }catch(Exception e){
             result.put("result", 900);
             result.put("result_description", "에러발생. msg:" + e.getMessage());
         }
+
         return result;
     }
 }

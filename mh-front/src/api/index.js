@@ -52,5 +52,8 @@ function changeRole(data) {
 function changeUseYn(data) {
   return instance.post('changeUseYn', data);
 }
+function initPw(data) {
+  return instance.post('initializePw', data);
+}
 
-export { registerUser, loginUser, addWord, getList, removeWord, editWord, getWord, searchWord, logoutUser, changePw, getUserList, changeRole, changeUseYn };
+export { registerUser, loginUser, addWord, getList, removeWord, editWord, getWord, searchWord, logoutUser, changePw, getUserList, changeRole, changeUseYn, initPw };

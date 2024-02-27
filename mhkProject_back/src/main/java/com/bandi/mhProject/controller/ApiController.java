@@ -141,4 +141,10 @@ public class ApiController {
     public Map<String, Object> changeUseYn(@RequestBody Map<String, Object> data){
         return impl.changeUseYn(data);
     }
+
+    @PostMapping("/initializePw")
+    @ResponseBody
+    public Map<String, Object> initializePw(@RequestBody Map<String, Object> data){
+        return impl.initializePw(data);
+    }
 }
