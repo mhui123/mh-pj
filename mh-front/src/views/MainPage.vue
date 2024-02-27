@@ -20,7 +20,7 @@
         </li>
       </ul>
     </div>
-    <router-link to="/add" class="create-button">
+    <router-link to="/add" class="create-button" v-if="isLogin">
       <i class="ion-md-add"></i>
     </router-link>
   </div>
@@ -48,12 +48,15 @@ export default {
     this.fetchData();
   },
   computed: {
-    ...mapGetters(['getWordList', 'getKeyword']),
+    ...mapGetters(['getWordList', 'getKeyword', 'isLogin']),
     infoList() {
       return this.getWordList;
     },
     chkKeyword() {
       return this.getKeyword === '' ? false : true;
+    },
+    isUserLogin() {
+      return this.isLogin;
     },
   },
   methods: {

@@ -34,13 +34,13 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(['getUsername', 'getWordList']),
-    nowUser() {
-      return this.getUsername;
+    ...mapGetters(['getUsername', 'getWordList', 'isLogin']),
+    isLogin() {
+      return this.isLogin;
     },
   },
   methods: {
-    ...mapMutations(['spliceWordList']),
+    ...mapMutations(['spliceWordList', 'setWordId']),
     async onClikeRedirect(link, keyword) {
       let isValidURL = validateURL(link);
       if (link && !isValidURL) {
@@ -65,7 +65,8 @@ export default {
       }
     },
     async editWord(itemId) {
-      this.$router.push(`/word/${itemId}`, itemId);
+      this.setWordId(itemId);
+      this.$router.push(`/edit`);
     },
     callToast(msg) {
       this.emitter.emit('show:toast', msg);

@@ -20,6 +20,7 @@ import { mapGetters, mapMutations, mapActions } from 'vuex';
 export default {
   computed: {
     isUserLogin() {
+      console.log('is login?', this.isLogin);
       return this.isLogin;
     },
     logoLink() {

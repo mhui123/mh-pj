@@ -38,7 +38,7 @@ const mutations = {
 };
 const getters = {
   isLogin(state) {
-    return state.username !== '';
+    return state.accessToken;
   },
   getUsername(state) {
     return state.username;

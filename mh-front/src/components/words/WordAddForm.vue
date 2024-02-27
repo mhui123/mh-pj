@@ -31,7 +31,8 @@
 
 <script>
 import { addWord, getWord, editWord } from '@/api/index';
-import { mapGetters } from 'vuex';
+import { mapGetters, mapMutations } from 'vuex';
+import { sleep } from '@/utils/common';
 export default {
   data() {
     return {
@@ -52,10 +53,20 @@ export default {
     isTitleValid() {
       return this.title.length < 50;
     },
-    ...mapGetters(['getUsername']),
+    fetchWordId() {
+      return this.getWordId;
+    },
+    ...mapGetters(['getUsername', 'getWordId']),
   },
   async created() {
-    this.wordId = this.$route.params['id'];
+    // this.wordId = this.$route.params['id'];
+    this.wordId = this.getWordId;
+    if (!this.wordId) {
+      this.callToast('비정상적 접근입니다. 메인페이지로 돌아갑니다.');
+      await sleep(2000);
+      this.$router.push('/main');
+      return false;
+    }
     if (this.wordId) {
       this.mode = 'edit';
       this.pageTitle = '수정';
@@ -67,6 +78,7 @@ export default {
     }
   },
   methods: {
+    ...mapMutations(['clearWordId']),
     titleEvent() {
       if (!this.isTitleValid) {
         this.titleInvalid = false;
@@ -88,6 +100,7 @@ export default {
         // const { data } = await addWord({ id: this.getUsername, title: this.title, contents: this.contents });
         this.callToast(result.result_description);
         if (result.result === 200) {
+          this.clearWordId();
           this.$router.push('/main');
         }
         // this.callToast('작성완료');
