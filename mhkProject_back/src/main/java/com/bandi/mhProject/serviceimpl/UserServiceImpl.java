@@ -157,12 +157,12 @@ public class UserServiceImpl implements UserService {
         List<String> failedId = new ArrayList<>();
 //        JsonObject obj = new JSONObject(jsonString)
         try{
-            if(data.containsKey("ids") && data.get("ids") instanceof ArrayList<?>){
-                ids = (List<String>) data.get("ids");
+            if(data.containsKey("users") && data.get("users") instanceof ArrayList<?>){
+                ids = (List<String>) data.get("users");
                 for(String id : ids){
                     User user = userRepo.findByid(id);
                     if(user != null){
-                        String toChange = user.getRole().equals("y") ? "n" : "y";
+                        String toChange = user.getRole().equals("ROLE_USER") ? "ROLE_ADMIN" : "ROLE_USER";
                         user.setRole(toChange);
                     } else {
                         failedId.add(id);
@@ -180,59 +180,39 @@ public class UserServiceImpl implements UserService {
         } catch(Exception e){
             e.printStackTrace();
         }
-//        List<String> ids = new ArrayList<>();
-//        List<String> failedId = new ArrayList<>();
-//        try{
-//            String id = String.valueOf(data.get("id"));
-//            String role = String.valueOf(data.get("role"));
-//            String toChange = role.equals("ROLE_USER") ? "ROLE_ADMIN" : "ROLE_USER";
-//            String toChangeTxt = toChange.equals("ROLE_USER") ? "유저" : "관리자";
-//            User user = userRepo.findByid(id);
-//            if(user != null){
-//                user.setRole(toChange);
-//                result.put("result", 200);
-//                result.put("result_description", toChangeTxt + "로 권한변경되었습니다.");
-//            } else {
-//                result.put("result", 901);
-//                result.put("result_description", ErrorCode.ERROR_CODE_901.getMessage());
-//            }
-//
-//        }catch(Exception e){
-//            result.put("result", 900);
-//            result.put("result_description", "에러발생. msg:" + e.getMessage());
-//        }
-
         return result;
     }
 
     @Override
     public Map<String, Object> changeUseYn(Map<String, Object> data) {
         Map<String, Object> result = new HashMap<>();
-        List<Object> users = null;
+        List<String> ids = null;
+        List<String> failedId = new ArrayList<>();
+//        JsonObject obj = new JSONObject(jsonString)
         try{
             if(data.containsKey("users") && data.get("users") instanceof ArrayList<?>){
+                ids = (List<String>) data.get("users");
+                for(String id : ids){
+                    User user = userRepo.findByid(id);
+                    if(user != null){
+                        String toChange = user.getUseYn().equals("y") ? "n" : "y";
+                        user.setUseYn(toChange);
+                    } else {
+                        failedId.add(id);
+                    }
+                }
+                if(!failedId.isEmpty()){
+                    String errorMsg = ErrorCode.ERROR_CODE_901.getMessage() + failedId.toString();
+                    result.put("result", 901);
+                    result.put("result_description", errorMsg);
+                } else {
+                    result.put("result", 200);
+                    result.put("result_description", "사용여부 변경 완료");
+                }
             }
         } catch(Exception e){
             e.printStackTrace();
         }
-//
-//            String id = String.valueOf(data.get("id"));
-//            String useYn = String.valueOf(data.get("useYn")).toLowerCase();
-//            String toChange = useYn.equals("y") ? "n" : "y";
-//            String toChangeTxt = toChange.equals("y") ? "사용으" : "중지";
-//            User user = userRepo.findByid(id);
-//            if(user != null){
-//                user.setUseYn(toChange);
-//                result.put("result", 200);
-//                result.put("result_description", id+"의 유저사용 여부를 "+toChangeTxt+ "로 변경 하였습니다.");
-//            } else {
-//                result.put("result", 901);
-//                result.put("result_description", "유저를 찾을 수 없습니다.");
-//            }
-//        } catch(Exception e){
-//            result.put("result", 900);
-//            result.put("result_description", "에러발생. msg:" + e.getMessage());
-//        }
         return result;
     }
 

@@ -29,26 +29,23 @@
             <th class="chkBox"></th>
             <th>아이디</th>
             <th>권한</th>
-            <th></th>
-            <th>사용여부 변경</th>
+            <th>사용여부</th>
           </tr>
         </thead>
         <tbody>
           <tr v-for="user in userList" :key="user.id">
             <td class="chkBox"><input class="chkInput" type="checkbox" :name="user.id" :id="user.id" /></td>
-            <td>{{ user.id }}</td>
-            <td>{{ user.role === 'ROLE_USER' ? '유저' : '관리자' }}</td>
-            <td><button class="btn" @click="changeRole(user)">권한변경</button></td>
-            <td v-if="user.useYn === 'y'"><button class="btn" @click="changeUseYn(user)">중지</button></td>
-            <td v-else><button class="btn" @click="changeUseYn(user)">사용</button></td>
+            <td>{{ user['id'] }}</td>
+            <td>{{ user['role'] === 'ROLE_USER' ? '유저' : '관리자' }}</td>
+            <td>{{ user['useYn'] === 'y' ? '사용' : '중지' }}</td>
           </tr>
         </tbody>
       </table>
     </div>
     <div class="btn-groups">
       <button v-if="mode === 'user'" class="btn" @click="initializePw">비밀번호 초기화</button>
-      <button v-if="mode === 'user'" class="btn" @click="changeRole">권한변경</button>
-      <button v-if="mode === 'user'" class="btn" @click="changeUseYn">사용여부 변경</button>
+      <button v-if="mode === 'user'" class="btn" @click="changeStatus('role')">권한변경</button>
+      <button v-if="mode === 'user'" class="btn" @click="changeStatus('useYn')">사용여부 변경</button>
     </div>
     <Teleport to="body">
       <modal :showModal="showModal" @close="showModal = false">
@@ -111,32 +108,62 @@ export default {
     modeControl(mode) {
       this.mode = mode;
     },
-    async changeUseYn(user) {
-      const response = await changeUseYn(user);
-      const { status, data } = response;
-      const { result_description } = data;
-      if (status === 200) {
-        user['useYn'] = user['useYn'] === 'y' ? 'n' : 'y';
-      }
-      this.callToast(result_description);
-    },
-    async changeRole(user) {
+    async changeStatus(mode) {
       await this.getCheckedIds();
+      let result_description = '';
       if (this.checkedUsers.length > 0) {
         let filteredIds = this.checkedUsers.map(m => m.id);
-        const response = await changeRole({ users: filteredIds });
-        console.log(response);
-        const { status, data } = response;
-        const { result_description } = data;
-        status, user;
-        // if (status === 200) {
-        //   user['role'] = user['role'] === 'ROLE_USER' ? 'ROLE_ADMIN' : 'ROLE_USER';
-        // }
-        this.callToast(result_description);
+        if (mode === 'useYn') {
+          const response = await changeUseYn({ users: filteredIds });
+          const { status, data } = response;
+          result_description = data['result_description'];
+          console.log(status, data);
+          if (status === 200) {
+            console.log('사용여부 변경', filteredIds);
+            filteredIds.forEach(e => {
+              let user = this.userList.filter(x => x.id === e)[0];
+              user['useYn'] = user['useYn'] === 'y' ? 'n' : 'y';
+              this.initCheckboxes();
+            });
+          }
+        } else if (mode === 'role') {
+          const response = await changeRole({ users: filteredIds });
+          const { status, data } = response;
+          result_description = data['result_description'];
+          if (status === 200) {
+            filteredIds.forEach(e => {
+              let user = this.userList.filter(x => x.id === e)[0];
+              user['role'] = user['role'] === 'ROLE_USER' ? 'ROLE_ADMIN' : 'ROLE_USER';
+              this.initCheckboxes();
+            });
+          }
+        }
       } else {
         this.callToast('변경할 대상을 선택해주세요');
       }
+      this.callToast(result_description);
     },
+    // async changeRole() {
+    //   await this.getCheckedIds();
+    //   if (this.checkedUsers.length > 0) {
+    //     let filteredIds = this.checkedUsers.map(m => m.id);
+    //     const response = await changeRole({ users: filteredIds });
+    //     const { status, data } = response;
+    //     const { result_description } = data;
+    //     if (status === 200) {
+    //       filteredIds.forEach(e => {
+    //         let user = this.userList.filter(x => x.id === e)[0];
+    //         user['role'] = user['role'] === 'ROLE_USER' ? 'ROLE_ADMIN' : 'ROLE_USER';
+    //         this.initCheckboxes();
+    //       });
+
+    //       //   user['role'] = user['role'] === 'ROLE_USER' ? 'ROLE_ADMIN' : 'ROLE_USER';
+    //     }
+    //     this.callToast(result_description);
+    //   } else {
+    //     this.callToast('변경할 대상을 선택해주세요');
+    //   }
+    // },
     callToast(msg) {
       this.emitter.emit('show:toast', msg);
     },
@@ -147,6 +174,7 @@ export default {
         const { data } = await initPw({ ids: filteredIds });
         const { result_description } = data;
         this.callToast(result_description);
+        this.initCheckboxes();
       } else {
         this.callToast('비밀번호를 초기화할 대상을 선택해주세요');
       }
@@ -155,6 +183,15 @@ export default {
       let checkBoxes = document.getElementsByClassName('chkInput');
       checkBoxes = Array.from(checkBoxes);
       this.checkedUsers = checkBoxes.filter(x => x.checked);
+    },
+    initCheckboxes() {
+      let checkBoxes = document.getElementsByClassName('chkInput');
+      checkBoxes = Array.from(checkBoxes);
+      checkBoxes
+        .filter(x => x.checked)
+        .forEach(e => {
+          e.checked = false;
+        });
     },
   },
 };
