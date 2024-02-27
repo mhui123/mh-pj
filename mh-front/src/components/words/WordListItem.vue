@@ -2,6 +2,7 @@
   <li>
     <div class="post-title">{{ item['infokey'] }}</div>
     <!-- <div class="post-contents" value="item.contents">{{ item.contents }}</div> -->
+    <div class="post-creator">{{ item['updator'] }}</div>
     <textarea class="post-contents" disabled v-model="description"></textarea>
     <div class="post-time">
       <!-- {{ item['updateDate'] }} -->
@@ -11,13 +12,18 @@
         <i class="icon ion-md-trash" @click="deleteWord(item['id'])"></i>
       </span>
     </div>
-    <a @click="onClikeRedirect(item['link'], item['infokey'])" class="link">{{ item['link'] ?? '참고링크' }}</a>
+    <a @click="onClikeRedirect(item['link'], item['infokey'])" class="link">
+      {{ item['link'] === 'none' ? '위키에서 찾기' : item['link'] }}
+      <i class="icon ion-md-search"></i>
+    </a>
   </li>
 </template>
 
 <script>
 import { mapGetters, mapMutations } from 'vuex';
 import { removeWord } from '@/api/index';
+import { validateURL } from '@/utils/validation';
+import { sleep } from '@/utils/common';
 export default {
   props: {
     item: Object,
@@ -35,8 +41,13 @@ export default {
   },
   methods: {
     ...mapMutations(['spliceWordList']),
-    onClikeRedirect(link, keyword) {
-      link = link ?? `https://ko.wikipedia.org/wiki/${keyword}`;
+    async onClikeRedirect(link, keyword) {
+      let isValidURL = validateURL(link);
+      if (link && !isValidURL) {
+        this.callToast('유효하지 않은 링크입니다. 위키에서 검색합니다.');
+        await sleep(2000);
+      }
+      link = isValidURL ? link : `https://ko.wikipedia.org/wiki/${keyword}`;
       window.open(link, '_blank');
     },
     async deleteWord(itemId) {

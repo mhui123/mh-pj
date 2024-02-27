@@ -14,9 +14,14 @@
           <textarea type="text" id="contents" v-model="contents" rows="5" />
           <p class="validation-text warning" v-if="contents.length > 0 && !isContentsValid">Text is too long</p>
         </div>
+        <div>
+          <label for="contents">참고링크:</label>
+          <input type="text" id="linkField" v-model="link" placeholder="참고할 링크가 있다면 입력해주세요" />
+          <!-- <p class="validation-text warning" v-if="contents.length > 0 && !isContentsValid">Text is too long</p> -->
+        </div>
         <div class="btn-groups">
-          <button class="btn" :disabled="!title || !contents" v-if="mode === 'create'" @click="submitForm">Create</button>
-          <button class="btn" :disabled="!title || !contents" v-if="mode === 'edit'" @click="submitForm">Edit</button>
+          <button class="btn" :disabled="!title || !contents || !isContentsValid || !isTitleValid" v-if="mode === 'create'" @click="submitForm">Create</button>
+          <button class="btn" :disabled="!title || !contents || !isContentsValid || !isTitleValid" v-if="mode === 'edit'" @click="submitForm">Edit</button>
           <button class="btn2" @click="goBack">돌아가기</button>
         </div>
       </form>
@@ -37,6 +42,7 @@ export default {
       contentsValid: false,
       mode: 'create',
       wordId: '',
+      link: '',
     };
   },
   computed: {
@@ -71,11 +77,12 @@ export default {
     async submitForm() {
       let result;
       try {
+        this.link = this.link.length === 0 ? 'none' : this.link;
         if (this.mode === 'edit') {
-          let { data } = await editWord({ editor: this.getUsername, title: this.title, contents: this.contents, wordId: this.wordId });
+          let { data } = await editWord({ editor: this.getUsername, title: this.title, contents: this.contents, wordId: this.wordId, link: this.link });
           result = data;
         } else {
-          let { data } = await addWord({ id: this.getUsername, title: this.title, contents: this.contents });
+          let { data } = await addWord({ id: this.getUsername, title: this.title, contents: this.contents, link: this.link });
           result = data;
         }
         // const { data } = await addWord({ id: this.getUsername, title: this.title, contents: this.contents });

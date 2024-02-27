@@ -20,15 +20,15 @@ export default {
     },
   },
   methods: {
-    ...mapMutations(['clearWordList', 'pushToWordList']),
+    ...mapMutations(['clearWordList', 'pushToWordList', 'setKeyword']),
     async searchKeyword() {
-      console.log(`키워드 ${this.keyword}로 검색합니다.`);
       const res = await searchWord(this.keyword);
       const { data, status } = res;
       if (status === 200) {
         console.log(data);
         this.clearWordList();
         this.pushToWordList(data);
+        this.setKeyword(this.keyword);
         this.callToast(`검색결과 : ${data.length}건`);
       }
     },

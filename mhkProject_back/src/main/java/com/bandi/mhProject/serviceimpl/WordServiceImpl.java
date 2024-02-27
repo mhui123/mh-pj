@@ -48,8 +48,9 @@ public class WordServiceImpl implements WordService {
                 String writer = user.getId();
                 String title = String.valueOf(data.get("title"));
                 String contents = String.valueOf(data.get("contents"));
+                String link = data.containsKey("link") ? String.valueOf(data.get("link")) : "none";
                 Info info = Info.builder().infokey(title).description(contents).user(user)
-                        .creator(writer).editor(writer)
+                        .creator(writer).editor(writer).link(link)
                         .build();
                 em.persist(info);
                 result.put("result", 200);
@@ -91,15 +92,17 @@ public class WordServiceImpl implements WordService {
             String infoId = String.valueOf(data.get("wordId"));
             String title = String.valueOf(data.get("title"));
             String contents = String.valueOf(data.get("contents"));
+            String link = data.containsKey("link") ? String.valueOf(data.get("link")) : null;
             Info info = infoRepo.findById(infoId).orElse(null);
             if(info != null){
                 info.setInfokey(title);
                 info.setDescription(contents);
+                info.setLink(link);
                 result.put("result", 200);
                 result.put("result_description", "complete");
             } else {
-                result.put("result", 904);
-                result.put("result_description", "업데이트된 내용 없음");
+                result.put("result", 905);
+                result.put("result_description", ErrorCode.ERROR_CODE_905.getMessage()+":"+infoId);
             }
         }catch(Exception e){
             String errMsg = e.getMessage();

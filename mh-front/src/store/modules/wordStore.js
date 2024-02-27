@@ -1,5 +1,6 @@
 const state = {
   wordList: [],
+  keyword: '',
 };
 const mutations = {
   pushToWordList(state, arr) {
@@ -15,10 +16,16 @@ const mutations = {
   clearWordList(state) {
     state.wordList = [];
   },
+  setKeyword(state, value) {
+    state.keyword = value;
+  },
 };
 const getters = {
   getWordList(state) {
     return state.wordList;
+  },
+  getKeyword(state) {
+    return state.keyword;
   },
 };
 const actions = {};

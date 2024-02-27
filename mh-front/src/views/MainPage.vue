@@ -6,6 +6,13 @@
       <LoadingSpinner v-if="isLoading"></LoadingSpinner>
       <ul v-else>
         <WordListItem v-for="info in infoList" :key="info.id" :item="info" @change="changeData"></WordListItem>
+        <li v-if="infoList.length === 0">
+          <input value="검색결과가 없습니다." class="zero-result" />
+          <a @click="onClikeRedirect(null, getKeyword)" class="zero-result link">
+            {{ '위키에서 검색하기' }}
+            <i class="icon ion-md-search search-icon"></i>
+          </a>
+        </li>
       </ul>
     </div>
     <router-link to="/add" class="create-button">
@@ -36,7 +43,7 @@ export default {
     this.fetchData();
   },
   computed: {
-    ...mapGetters(['getWordList']),
+    ...mapGetters(['getWordList', 'getKeyword']),
     infoList() {
       return this.getWordList;
     },
@@ -54,8 +61,29 @@ export default {
     changeData() {
       console.log('changeData', this.getWordList);
     },
+    onClikeRedirect(link, keyword) {
+      console.log(`검색키워드 : ${keyword}`);
+      link = link ?? `https://ko.wikipedia.org/wiki/${keyword}`;
+      window.open(link, '_blank');
+    },
   },
 };
 </script>
 
-<style></style>
+<style scoped>
+.zero-result {
+  text-align: center;
+  width: 100%;
+  height: 50%;
+}
+.zero-result .link {
+  text-align: center;
+  color: lightblue;
+  display: flow;
+  width: 100%;
+  font-size: larger;
+}
+.search-icon {
+  font-size: 2rem;
+}
+</style>

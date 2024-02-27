@@ -12,4 +12,9 @@ function validatePw(pw) {
   return reg.test(pw);
 }
 
-export { validateEmail, validatePw };
+function validateURL(url) {
+  const reg = /^(http(s):\/\/.)[-a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_+.~#?&//=]*)$/;
+  return reg.test(url);
+}
+
+export { validateEmail, validatePw, validateURL };
