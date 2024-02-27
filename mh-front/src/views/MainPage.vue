@@ -7,9 +7,10 @@
       <ul v-else>
         <WordListItem v-for="info in infoList" :key="info.id" :item="info" @change="changeData"></WordListItem>
         <li v-if="infoList.length === 0 && chkKeyword">
+          <i class="icon ion-md-alert nothing-icon"></i>
           <input value="검색결과가 없습니다." class="zero-result" />
           <a @click="onClikeRedirect(null, getKeyword)" class="zero-result link">
-            {{ '위키에서 검색하기' }}
+            {{ '위키에서 키워드로 검색하기' }}
             <i class="icon ion-md-search search-icon"></i>
           </a>
         </li>
@@ -81,7 +82,7 @@ export default {
 .zero-result {
   text-align: center;
   width: 100%;
-  height: 50%;
+  height: 40%;
 }
 .zero-result .link {
   text-align: center;
@@ -94,7 +95,7 @@ export default {
   font-size: 2rem;
 }
 .nothing-icon {
-  font-size: 5rem;
+  font-size: 4rem;
   text-align: center;
   display: block;
 }

@@ -15,6 +15,11 @@
         </tbody>
       </table>
     </div>
+    <div class="btn-groups">
+      <button v-if="mode === 'user'" class="btn" @click="initializePw">비밀번호 초기화</button>
+      <button v-if="mode === 'user'" class="btn" @click="changeStatus('role')">권한변경</button>
+      <button v-if="mode === 'user'" class="btn" @click="changeStatus('useYn')">사용여부 변경</button>
+    </div>
     <div class="lower-container table-wrap" v-if="mode === 'user'">
       <table class="table">
         <!-- <colgroup>
@@ -41,11 +46,6 @@
           </tr>
         </tbody>
       </table>
-    </div>
-    <div class="btn-groups">
-      <button v-if="mode === 'user'" class="btn" @click="initializePw">비밀번호 초기화</button>
-      <button v-if="mode === 'user'" class="btn" @click="changeStatus('role')">권한변경</button>
-      <button v-if="mode === 'user'" class="btn" @click="changeStatus('useYn')">사용여부 변경</button>
     </div>
     <Teleport to="body">
       <modal :showModal="showModal" @close="showModal = false">
@@ -214,7 +214,7 @@ input {
   margin: 1rem auto auto;
 }
 .btn-groups [class^='btn'] {
-  margin: 0 0.5rem 0;
+  margin: 0 0.5rem 1rem;
 }
 .contents {
   padding-left: 83px;
@@ -228,6 +228,7 @@ input {
   background-color: white;
   max-width: 500px;
   margin: 0 auto 0;
+  box-shadow: 0 20px 20px rgba(0, 0, 0, 0.08);
 }
 .table-wrap .table {
   width: 100%;
