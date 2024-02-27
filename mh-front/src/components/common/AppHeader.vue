@@ -44,6 +44,7 @@ export default {
 <style scoped>
 .username {
   color: white;
+  margin: auto 3rem 0;
 }
 header {
   display: flex;

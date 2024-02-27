@@ -6,12 +6,16 @@
       <LoadingSpinner v-if="isLoading"></LoadingSpinner>
       <ul v-else>
         <WordListItem v-for="info in infoList" :key="info.id" :item="info" @change="changeData"></WordListItem>
-        <li v-if="infoList.length === 0">
+        <li v-if="infoList.length === 0 && chkKeyword">
           <input value="검색결과가 없습니다." class="zero-result" />
           <a @click="onClikeRedirect(null, getKeyword)" class="zero-result link">
             {{ '위키에서 검색하기' }}
             <i class="icon ion-md-search search-icon"></i>
           </a>
+        </li>
+        <li v-if="infoList.length === 0 && !chkKeyword">
+          <i class="icon ion-md-alert nothing-icon"></i>
+          <input value="등록된 용어가 없습니다." class="zero-result" />
         </li>
       </ul>
     </div>
@@ -46,6 +50,9 @@ export default {
     ...mapGetters(['getWordList', 'getKeyword']),
     infoList() {
       return this.getWordList;
+    },
+    chkKeyword() {
+      return this.getKeyword === '' ? false : true;
     },
   },
   methods: {
@@ -85,5 +92,10 @@ export default {
 }
 .search-icon {
   font-size: 2rem;
+}
+.nothing-icon {
+  font-size: 5rem;
+  text-align: center;
+  display: block;
 }
 </style>
