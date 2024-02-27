@@ -56,13 +56,16 @@ export default {
 </script>
 
 <style scoped>
-.btn-groups .link-narashi {
-  display: flex;
-  justify-content: center;
-}
 .gubun-bar {
   color: gray;
   margin-left: 0.1rem;
   margin-right: 0.1rem;
+}
+.btn-groups {
+  width: 100%;
+}
+[class^='btn'] {
+  width: 100%;
+  margin-bottom: 1rem;
 }
 </style>
