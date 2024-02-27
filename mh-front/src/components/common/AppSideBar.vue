@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="hide">
+    <!-- <div class="hide">
       <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
         <symbol viewBox="-167.4 267.7 257.7 257.7" id="facebook">
           <path
@@ -53,18 +53,17 @@
           />
         </symbol>
       </svg>
-    </div>
+    </div> -->
 
     <header class="main-head">
       <div><router-link to="/" class="logo">MH</router-link></div>
       <nav class="head-nav">
         <ul class="menu">
           <li v-if="isLogin">
-            <a href="#">
-              <svg class="person">
-                <use xlink:href="#person"></use></svg
-              ><span @click="goPage('mypage')">내 정보</span></a
-            >
+            <a href="#"> <i class="icon ion-md-person thumbnail"></i><span @click="goPage('mypage')">내 정보</span> </a>
+          </li>
+          <li v-if="this.getRole === 'ROLE_ADMIN' && isLogin">
+            <a href="#"> <i class="icon ion-md-build thumbnail"></i><span @click="goPage('adminPage')">관리자</span> </a>
           </li>
           <!-- <li>
             <a href="#">
@@ -73,6 +72,8 @@
               ><span>Work</span></a
             >
           </li>
+          
+
           <li>
             <a href="#">
               <svg class="speech-bubble">
@@ -102,9 +103,9 @@ import { mapGetters } from 'vuex';
 export default {
   computed: {
     isLogin() {
-      return this.isLogin;
+      return this.isLogin();
     },
-    ...mapGetters(['isLogin', 'getUsername']),
+    ...mapGetters(['isLogin', 'getRole']),
   },
   methods: {
     goPage(goto) {
@@ -123,5 +124,11 @@ a.logo {
 .logo > span {
   font-size: 14px;
   font-weight: normal;
+}
+.thumbnail {
+  padding-left: calc(1.5rem);
+  font-size: 36px;
+  color: white;
+  align-items: center;
 }
 </style>

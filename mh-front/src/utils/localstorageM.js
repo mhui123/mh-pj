@@ -15,4 +15,11 @@ function clearStorage() {
   localStorage.clear();
 }
 
-export { setAccessToken, setRefreshToken, getAccessToken, getRefreshToken, clearStorage };
+function setItem(key, item) {
+  localStorage.setItem(key, item);
+}
+function getItem(key) {
+  return localStorage.getItem(key);
+}
+
+export { setAccessToken, setRefreshToken, getAccessToken, getRefreshToken, clearStorage, setItem, getItem };

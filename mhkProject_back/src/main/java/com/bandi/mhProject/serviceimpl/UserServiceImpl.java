@@ -90,7 +90,7 @@ public class UserServiceImpl implements UserService {
                 String encoderedPw = encoder.encode(pw);
                 String role = user.getRole() == null ? "ROLE_USER" : user.getRole();
                 User user1 = User.builder()
-                        .id(id).pw(encoderedPw).role(role)
+                        .id(id).pw(encoderedPw).role(role).useYn("y")
                         .build();
                 em.persist(user1);
                 return UserDto.builder().state(201L).build(); //회원가입 성공

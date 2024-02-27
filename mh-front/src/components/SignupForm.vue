@@ -1,5 +1,5 @@
 <template>
-  <div class="contents">
+  <div class="form-container">
     <div class="form-wrapper form-wrapper-sm">
       <h1 class="page-header">회원가입</h1>
       <form @submit.prevent="submitForm" class="form">

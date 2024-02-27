@@ -21,6 +21,8 @@ public class User extends TimeEntity {
     private String pw;
     @Column(columnDefinition = "VARCHAR(255) DEFAULT 'ROLE_USER'")
     private String role;
+    @Column(columnDefinition = "VARCHAR(1) DEFAULT 'y'")
+    private String useYn;
 
     @OneToMany(mappedBy = "user")
     private List<Info> infos = new ArrayList<>();
@@ -30,9 +32,10 @@ public class User extends TimeEntity {
         this.pw = pw;
     }
     @Builder
-    public User(String id, String pw, String role) {
+    public User(String id, String pw, String role, String useYn) {
         this.id = id;
         this.pw = pw;
         this.role = role;
+        this.useYn = useYn;
     }
 }
