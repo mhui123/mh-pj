@@ -4,7 +4,7 @@ const instance = axios.create({
 });
 
 function registerUser(userData) {
-  return instance.post('signup', userData);
+  return instance.post('signin', userData);
 }
 
 function loginUser(userData) {

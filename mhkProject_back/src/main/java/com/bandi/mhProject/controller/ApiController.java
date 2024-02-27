@@ -60,15 +60,13 @@ public class ApiController {
         return "logout";
     }
 
-    @PostMapping("/signup")
+    @PostMapping("/signin")
     @ResponseBody
-    public UserDto signup(@RequestBody Map<String, Object> data){
-        System.out.println("signin : " + data);
+    public Map<String, Object> signin(@RequestBody Map<String, Object> data){
         String id = String.valueOf(data.get("id"));
         String pw = String.valueOf(data.get("pw"));
         User user = User.builder().id(id).pw(pw).build();
-        UserDto result = impl.signin(user);
-        return result;
+        return impl.signin(user);
     }
 
     @PostMapping("/addWord")

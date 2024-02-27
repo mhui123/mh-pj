@@ -88,7 +88,7 @@ public class UserServiceImpl implements UserService {
                 else {
                     //500 : PASSWORD NOT MATCHED
                     result.put("result", 905);
-                    result.put("result_description", "PASSWORD NOT MATCHED");
+                    result.put("result_description", "비밀번호를 확인해주세요");
                 }
             }
         } catch(Exception e){
@@ -100,8 +100,8 @@ public class UserServiceImpl implements UserService {
     }
     // signin returnType Map<String, Object>로 통일해야함.
     @Override
-    public UserDto signin(User user) {
-        UserDto dto = UserDto.builder().build();
+    public Map<String ,Object> signin(User user) {
+        Map<String ,Object> result = new HashMap<>();
         try {
             String id = user.getId();
             String pw = user.getPw(); //asdfasdfasdf
@@ -113,16 +113,20 @@ public class UserServiceImpl implements UserService {
                         .id(id).pw(encoderedPw).role(role).useYn("y")
                         .build();
                 em.persist(user1);
-                return UserDto.builder().state(201L).build(); //회원가입 성공
+                result.put("result", 200);
+                result.put("result_description", "회원가입 완료");
             } else {
                 String errorMsg = ErrorCode.ERROR_CODE_903.getMessage();
-                return UserDto.builder().state(501L).build(); //기존 아이디 존재
+                result.put("result", 903);
+                result.put("result_description", errorMsg);
             }
         } catch(Exception e){
             e.printStackTrace();
             String errorMsg = ErrorCode.ERROR_CODE_900.getMessage() + " : " + e.getMessage();
-            return UserDto.builder().state(990L).build(); //에러
+            result.put("result", 900);
+            result.put("result_description", errorMsg);
         }
+        return result;
     }
 
     @Override

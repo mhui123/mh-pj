@@ -11,7 +11,7 @@ import java.util.Map;
 
 public interface UserService {
     Map<String ,Object> login(User user);
-    UserDto signin(User user);
+    Map<String ,Object> signin(User user);
 
     Map<String ,Object> changePw(Map<String, Object> data);
     List<UserDto> getUserList();

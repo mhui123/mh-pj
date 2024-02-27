@@ -5,7 +5,7 @@ import { getItem } from '@/utils/localstorageM';
 const routes = [
   { path: '/', redirect: '/main' },
   { path: '/login', component: () => import('@/views/LoginPage.vue') },
-  { path: '/signup', component: () => import('@/views/SignupPage.vue') },
+  { path: '/signin', component: () => import('@/views/SigninPage.vue') },
   { path: '/user', component: () => import('@/views/UserPage.vue'), meta: { auth: true } },
   { path: '/main', component: () => import('@/views/MainPage.vue') },
   { path: '/add', component: () => import('@/views/WordAddPage.vue'), meta: { auth: true } },

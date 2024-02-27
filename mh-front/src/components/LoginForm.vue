@@ -18,7 +18,7 @@
             <span class="gubun-bar">|</span>
             <li class="suggestJoin" @click="fetchInfo('pw')">비밀번호 찾기</li>
             <span class="gubun-bar">|</span>
-            <router-link to="/signup" class="suggestJoin">회원가입</router-link>
+            <router-link to="/signin" class="suggestJoin">회원가입</router-link>
           </div>
         </div>
       </form>
@@ -53,6 +53,8 @@ export default {
       this.emitter.emit('show:toast', result_description);
       if (result === 200) {
         this.$router.push('/main');
+      } else if (result === 905) {
+        document.getElementById('password').focus();
       }
     },
     fetchInfo(value) {

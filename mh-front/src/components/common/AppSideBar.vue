@@ -59,11 +59,11 @@
       <div><router-link to="/" class="logo">MH</router-link></div>
       <nav class="head-nav">
         <ul class="menu">
-          <li v-if="isLogin">
-            <a href="#"> <i class="icon ion-md-person thumbnail"></i><span @click="goPage('mypage')">내 정보</span> </a>
+          <li v-if="isLogin" @click="goPage('mypage')">
+            <a href="#"> <i class="icon ion-md-person thumbnail"></i><span>내 정보</span> </a>
           </li>
-          <li v-if="this.getRole === 'ROLE_ADMIN' && isLogin">
-            <a href="#"> <i class="icon ion-md-build thumbnail"></i><span @click="goPage('adminPage')">관리자</span> </a>
+          <li v-if="this.getRole === 'ROLE_ADMIN' && isLogin" @click="goPage('adminPage')">
+            <a href="#"> <i class="icon ion-md-build thumbnail"></i><span>관리자</span> </a>
           </li>
           <!-- <li>
             <a href="#">

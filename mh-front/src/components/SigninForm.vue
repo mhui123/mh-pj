@@ -13,10 +13,13 @@
         <div>
           <label for="password">pw :</label>
           <input type="password" id="password" name="password" v-model="password" />
+          <p class="validation-text">
+            <span class="warning" v-if="!isPwValid && password.length > 3"> 비밀번호는 8자이상, 문자와 숫자, 특수문자를 포함해주세요 </span>
+          </p>
         </div>
         <div class="btn-groups">
-          <button @click="goBack" class="btn2">돌아가기</button>
           <button class="btn" type="submit" :disabled="!isUsernameValid || !password">회원가입</button>
+          <button @click="goBack" class="btn2">돌아가기</button>
         </div>
       </form>
     </div>
@@ -24,7 +27,7 @@
 </template>
 
 <script>
-import { validateEmail } from '@/utils/validation';
+import { validateEmail, validatePw } from '@/utils/validation';
 import { registerUser } from '@/api/index';
 export default {
   data() {
@@ -37,22 +40,24 @@ export default {
     isUsernameValid() {
       return validateEmail(this.username);
     },
+    isPwValid() {
+      return validatePw(this.password);
+    },
   },
   methods: {
     async submitForm() {
       if (this.isUsernameValid || this.password) {
         const { data } = await registerUser({ id: this.username, pw: this.password });
         console.log(data);
-        const statuses = {
-          201: 'SIGNIN SUCCESS',
-          501: 'DUPLICATE ID',
-          990: 'OTHER ERROR',
-        };
-        this.emitter.emit('show:toast', statuses[data.state]);
-        if (data.state === 201) {
+        const { result, result_description } = data;
+        if (result === 200) {
           this.$router.push('/login');
         }
+        this.callToast(result_description);
       }
+    },
+    callToast(msg) {
+      this.emitter.emit('show:toast', msg);
     },
     goBack() {
       this.$router.push('/login');
@@ -61,4 +66,9 @@ export default {
 };
 </script>
 
-<style></style>
+<style scoped>
+[class^='btn'] {
+  width: 100%;
+  margin-top: 1rem;
+}
+</style>
