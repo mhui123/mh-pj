@@ -19,9 +19,10 @@ public class UserDto {
     private JwtToken token = null;
     private String oldPw;
     private String newPw;
+    private String useYn;
     @Builder
     public UserDto(String id, String role, List<Info> infos, boolean authorized, Long state, JwtToken token
-    ,String oldPw, String newPw) {
+    ,String oldPw, String newPw, String useYn) {
         this.id = id;
         this.role = role;
         this.infos = infos;
@@ -30,5 +31,6 @@ public class UserDto {
         this.token = token;
         this.oldPw = oldPw;
         this.newPw = newPw;
+        this.useYn = useYn;
     }
 }

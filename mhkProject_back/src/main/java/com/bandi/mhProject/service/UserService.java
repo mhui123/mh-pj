@@ -6,6 +6,7 @@ import com.bandi.mhProject.entity.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
 
 public interface UserService {
@@ -13,4 +14,5 @@ public interface UserService {
     UserDto signin(User user);
 
     Map<String ,Object> changePw(Map<String, Object> data);
+    List<UserDto> getUserList();
 }

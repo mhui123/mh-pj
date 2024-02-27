@@ -120,4 +120,13 @@ public class ApiController {
         }
         return result;
     }
+
+    @PostMapping("/getUserList")
+    @ResponseBody
+    public Map<String, Object> changePassword(){
+        Map<String, Object> result = new HashMap<>();
+        List<UserDto> userList = impl.getUserList();
+        result.put("userList", userList);
+        return result;
+    }
 }

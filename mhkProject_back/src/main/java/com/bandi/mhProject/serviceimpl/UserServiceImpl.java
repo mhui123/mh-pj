@@ -122,4 +122,9 @@ public class UserServiceImpl implements UserService {
         }
         return resultMap;
     }
+
+    @Override
+    public List<UserDto> getUserList() {
+        return userRepo.findUserList();
+    }
 }
