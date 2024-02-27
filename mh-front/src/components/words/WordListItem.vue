@@ -43,7 +43,7 @@ export default {
     ...mapMutations(['spliceWordList', 'setWordId']),
     async onClikeRedirect(link, keyword) {
       let isValidURL = validateURL(link);
-      if (link && !isValidURL) {
+      if (link !== 'none' && !isValidURL) {
         this.callToast('유효하지 않은 링크입니다. 위키에서 검색합니다.');
         await sleep(2000);
       }
