@@ -27,6 +27,9 @@ public class User extends TimeEntity {
     @OneToMany(mappedBy = "user")
     private List<Info> infos = new ArrayList<>();
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<ManageKey> manageKeys = new ArrayList<>();
+
     public User(String id, String pw) {
         this.id = id;
         this.pw = pw;

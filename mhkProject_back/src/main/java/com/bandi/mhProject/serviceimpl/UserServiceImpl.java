@@ -3,14 +3,19 @@ package com.bandi.mhProject.serviceimpl;
 import com.bandi.mhProject.component.JwtTokenProvider;
 import com.bandi.mhProject.config.auth.PrincipalDetail;
 import com.bandi.mhProject.constants.ErrorCode;
+import com.bandi.mhProject.constants.ErrorCodes;
+import com.bandi.mhProject.constants.SystemConfigs;
 import com.bandi.mhProject.dto.JwtToken;
 import com.bandi.mhProject.dto.UserDto;
 import com.bandi.mhProject.entity.Info;
+import com.bandi.mhProject.entity.ManageKey;
 import com.bandi.mhProject.entity.User;
+import com.bandi.mhProject.repository.ManageKeyRepository;
 import com.bandi.mhProject.repository.UserRepository;
 import com.bandi.mhProject.service.UserService;
 import com.bandi.mhProject.util.Commons;
 import com.bandi.mhProject.util.Encoder;
+import com.bandi.mhProject.util.KeyGenerator;
 import com.nimbusds.jose.shaded.gson.JsonObject;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -18,6 +23,7 @@ import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONObject;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -38,14 +44,15 @@ import java.util.Map;
 @Slf4j
 @Service
 @Transactional
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl implements UserService, SystemConfigs {
     private final UserRepository userRepo;
+    @Autowired ManageKeyRepository keyRepo;
     private final AuthenticationManagerBuilder authBuilder;
     private final JwtTokenProvider jwtTokenProvider;
     @Autowired private AuthenticationManager authenticationManager;
 
-    public UserServiceImpl(UserRepository userRepo, AuthenticationManagerBuilder authBuilder, JwtTokenProvider jwtTokenProvider, PasswordEncoder encoder
-    ) {
+    public UserServiceImpl(UserRepository userRepo, AuthenticationManagerBuilder authBuilder, JwtTokenProvider jwtTokenProvider
+            , PasswordEncoder encoder) {
         this.userRepo = userRepo;
         this.authBuilder = authBuilder;
         this.jwtTokenProvider = jwtTokenProvider;
@@ -261,6 +268,28 @@ public class UserServiceImpl implements UserService {
             Commons.putMessage(result, 900, errorMsg);
         }
         result.put("list", dtoList);
+        return result;
+    }
+
+    @Override
+    public Map<String, Object> generateAuthKey(Map<String, Object> data) {
+        Map<String, Object> result = new HashMap<>();
+        String userId = String.valueOf(data.get("id"));
+        if(!userId.equals("null") && Strings.isNotEmpty(userId)){
+            List<ManageKey> foundKeyList = keyRepo.findValidKeyByUserId(userId);
+            if(foundKeyList.isEmpty()){
+                User user = userRepo.findByid(userId);
+                if(user != null){
+                    String authKey = KeyGenerator.generateKey().replaceAll("-", "").substring(0,6);
+                    ManageKey manageKey = ManageKey.builder().authKey(authKey).user(user).duration(AUTH_DURATION).build();
+                    em.persist(manageKey);
+                    Commons.setMessage(result, CODE_200);
+                }
+            } else {
+                Commons.setMessage(result, CODE_908);
+            }
+
+        }
         return result;
     }
 }

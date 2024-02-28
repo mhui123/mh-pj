@@ -176,4 +176,9 @@ public class ApiController {
     public Map<String, Object> getUserListByKeyword(@RequestBody Map<String, Object> data){
         return impl.getUserListByKeyword(data);
     }
+
+    @PostMapping("/generateAuthKey")
+    public Map<String, Object> generateAuthKey(@RequestBody Map<String, Object> data) {
+        return impl.generateAuthKey(data);
+    }
 }

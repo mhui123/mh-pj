@@ -20,4 +20,6 @@ public interface UserService {
 
     Map<String, Object> initializePw(Map<String, Object> data);
     Map<String, Object> getUserListByKeyword(Map<String, Object> data);
+
+    Map<String, Object> generateAuthKey(Map<String, Object> data);
 }

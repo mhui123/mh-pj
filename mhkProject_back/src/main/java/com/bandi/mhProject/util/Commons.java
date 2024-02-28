@@ -9,4 +9,10 @@ public class Commons {
 
         return map;
     }
+
+    public static Map<String, Object> setMessage(Map<String, Object> map, String description){
+        map.put("result_description", description);
+
+        return map;
+    }
 }
