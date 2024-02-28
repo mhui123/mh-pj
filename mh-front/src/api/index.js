@@ -4,11 +4,12 @@ const instance = axios.create({
 });
 
 function callApi(url, param) {
-  if (url.includes('getWordListByKeyword')) {
-    return instance.post(url, null, { params: { keyword: param } });
-  } else {
-    return instance.post(url, param);
-  }
+  // if (url.includes('getWordListByKeyword')) {
+  //   return instance.post(url, null, { params: { keyword: param } });
+  // } else {
+  //   return instance.post(url, param);
+  // }
+  return instance.post(url, param);
 }
 // function logoutUser() {
 //   return instance.post('logout');

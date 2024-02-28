@@ -6,6 +6,9 @@
         <div>
           <label for="username">id</label>
           <input type="text" id="username" v-model="username" />
+          <p class="validation-text">
+            <span class="warning" v-if="!isUsernameValid && username.length > 3"> 이메일 형식으로 입력해주세요 </span>
+          </p>
         </div>
         <div>
           <label for="password">pw</label>

@@ -15,8 +15,9 @@ public interface UserService {
 
     Map<String ,Object> changePw(Map<String, Object> data);
     List<UserDto> getUserList();
-    Map<String ,Object> changeRole(Map<String, Object> data);
-    Map<String ,Object> changeUseYn(Map<String, Object> data);
+    Map<String, Object> changeRole(Map<String, Object> data);
+    Map<String, Object> changeUseYn(Map<String, Object> data);
 
-    Map<String ,Object> initializePw(Map<String, Object> data);
+    Map<String, Object> initializePw(Map<String, Object> data);
+    Map<String, Object> getUserListByKeyword(Map<String, Object> data);
 }

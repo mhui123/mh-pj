@@ -14,4 +14,5 @@ import java.util.List;
 public interface UserRepository extends JpaRepository<User, String>, UserCustomRepo, JpaSpecificationExecutor<Info>, QuerydslPredicateExecutor<Info> {
     User findByid(String userId);
     List<UserDto> findUserList();
+    List<UserDto> findUserListByKeyword(String keyword);
 }

@@ -106,8 +106,8 @@ public class ApiController {
 
     @PostMapping("/getWordListByKeyword")
     @ResponseBody
-    public List<InfoDto> getWordListByKeyword(@RequestParam String keyword){
-        return wordImpl.getWordList(keyword);
+    public Map<String, Object> getWordListByKeyword(@RequestBody Map<String, Object> data){
+        return wordImpl.getWordListByKeyword(data);
     }
 
     @PostMapping("/changePassword")
@@ -169,5 +169,11 @@ public class ApiController {
     @ResponseBody
     public Map<String, Object> delWords(@RequestBody Map<String, Object> data){
         return wordImpl.delWords(data);
+    }
+
+    @PostMapping("/getUserListByKeyword")
+    @ResponseBody
+    public Map<String, Object> getUserListByKeyword(@RequestBody Map<String, Object> data){
+        return impl.getUserListByKeyword(data);
     }
 }

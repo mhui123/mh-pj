@@ -7,6 +7,7 @@ const state = {
   pageGubun: '',
   accessToken: getAccessToken(),
   refreshToken: getRefreshToken(),
+  userList: [],
 };
 const mutations = {
   setUsername(state, username) {
@@ -35,6 +36,9 @@ const mutations = {
     state.refreshToken = '';
     state.role = '';
   },
+  setUserList(state, arr) {
+    state.userList = arr;
+  },
 };
 const getters = {
   isLogin(state) {
@@ -54,6 +58,9 @@ const getters = {
   },
   getRole(state) {
     return state.role;
+  },
+  getUserList(state) {
+    return state.userList;
   },
 };
 const actions = {

@@ -4,4 +4,8 @@ function sleep(ms) {
   }
 }
 
-export { sleep };
+function getCurrentRoute() {
+  return location.pathname;
+}
+
+export { sleep, getCurrentRoute };

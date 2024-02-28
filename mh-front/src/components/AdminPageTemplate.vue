@@ -25,6 +25,7 @@
         <button class="btn" @click="changeStatus('delWord')">삭제</button>
       </div>
     </div>
+    <SearchForm :mode="mode"></SearchForm>
     <div class="lower-container table-wrap" v-if="mode === 'user'">
       <table class="table">
         <thead>
@@ -88,51 +89,53 @@ import modal from './common/ModalWin.vue';
 // import AdmUserList from './AdminUserListForm.vue';
 import { mapGetters, mapMutations } from 'vuex';
 import { callApi } from '@/api/index';
+import SearchForm from './SearchForm.vue';
+
 export default {
   components: {
     modal,
+    SearchForm,
   },
   data() {
     return {
       showModal: false,
       mode: '',
       modalTitle: '',
-      userList: [],
+      // userList: [],
       // wordList: [],
       checkedUsers: [],
     };
   },
   computed: {
-    ...mapGetters(['getUsername', 'getRole', 'getWordList']),
+    ...mapGetters(['getUsername', 'getRole', 'getWordList', 'getUserList']),
     wordList() {
       return this.getWordList;
+    },
+    userList() {
+      return this.getUserList;
     },
   },
   created() {
     this.manageUser();
   },
   methods: {
-    ...mapMutations(['spliceWordList']),
+    ...mapMutations(['spliceWordList', 'clearWordList', 'setUserList', 'setWordList']),
     async manageUser() {
-      this.userList = [];
+      this.setUserList([]);
       this.modeControl('user');
       const response = await callApi('getUserList', { pageIndex: 1 });
       const { status, data } = response;
       const list = data['userList'];
       if (status === 200) {
-        list.forEach(e => {
-          this.userList.push(e);
-        });
+        this.setUserList(list);
       }
     },
     async manageWord() {
-      this.wordList = [];
+      this.clearWordList();
       this.modeControl('word');
       const { data } = await callApi('getAllWordList');
       const { list } = data;
-      list.forEach(e => {
-        this.wordList.push(e);
-      });
+      this.setWordList(list);
     },
     modeControl(mode) {
       this.mode = mode;
@@ -298,5 +301,9 @@ tr {
 }
 .userTable {
   table-layout: fixed;
+}
+
+.search-form {
+  height: 3rem;
 }
 </style>

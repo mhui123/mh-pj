@@ -22,11 +22,26 @@ public class UserCustomRepoImpl implements UserCustomRepo{
         List<User> userList = factory.selectFrom(QUser.user).fetch();
         List<UserDto> dtoList = new ArrayList<>();
         for(User u : userList){
-            UserDto dto = UserDto.builder()
-                    .id(u.getId()).role(u.getRole()).useYn(u.getUseYn())
-                    .build();
-            dtoList.add(dto);
+            dtoList.add(setUserDto(u));
         }
         return dtoList;
+    }
+
+    @Override
+    public List<UserDto> findUserListByKeyword(String keyword) {
+        List<User> userList = factory.selectFrom(QUser.user)
+                .where(QUser.user.id.like("%"+keyword+"%"))
+                .fetch();
+        List<UserDto> dtoList = new ArrayList();
+        for(User u : userList){
+            dtoList.add(setUserDto(u));
+        }
+        return dtoList;
+    }
+
+    private UserDto setUserDto(User u){
+        return UserDto.builder()
+                .id(u.getId()).role(u.getRole()).useYn(u.getUseYn())
+                .build();
     }
 }

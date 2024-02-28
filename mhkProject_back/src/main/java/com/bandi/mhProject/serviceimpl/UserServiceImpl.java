@@ -9,6 +9,7 @@ import com.bandi.mhProject.entity.Info;
 import com.bandi.mhProject.entity.User;
 import com.bandi.mhProject.repository.UserRepository;
 import com.bandi.mhProject.service.UserService;
+import com.bandi.mhProject.util.Commons;
 import com.bandi.mhProject.util.Encoder;
 import com.nimbusds.jose.shaded.gson.JsonObject;
 import jakarta.persistence.EntityManager;
@@ -77,23 +78,20 @@ public class UserServiceImpl implements UserService {
                         Authentication authentication = authBuilder.getObject().authenticate(authToken); //authenticationManager.authenticate(authToken);
                         token = jwtTokenProvider.generateToken(authentication);
                         dto = UserDto.builder().id(id).role(role).authorized(true).token(token).build();
-                        result.put("result", 200);
-                        result.put("result_description", "로그인성공");
+                        Commons.putMessage(result, 200, "로그인성공");
                         result.put("userInfo", dto);
                     } else {
-                        result.put("result", 904);
-                        result.put("result_description", "사용중지상태인 계정입니다.");
+                        Commons.putMessage(result, 904, ErrorCode.ERROR_CODE_906.getMessage());
                     }
                 }
                 else {
-                    //500 : PASSWORD NOT MATCHED
-                    result.put("result", 905);
-                    result.put("result_description", "비밀번호를 확인해주세요");
+                    Commons.putMessage(result, 907, ErrorCode.ERROR_CODE_907.getMessage());
                 }
+            } else {
+                Commons.putMessage(result, 901, ErrorCode.ERROR_CODE_901.getMessage());
             }
         } catch(Exception e){
-            result.put("result", 900);
-            result.put("result_description", "에러발생. msg:" + e.getMessage());
+            Commons.putMessage(result, 900, ErrorCode.ERROR_CODE_900.getMessage());
         }
 
         return result;
@@ -113,40 +111,37 @@ public class UserServiceImpl implements UserService {
                         .id(id).pw(encoderedPw).role(role).useYn("y")
                         .build();
                 em.persist(user1);
-                result.put("result", 200);
-                result.put("result_description", "회원가입 완료");
+                Commons.putMessage(result, 200, "회원가입 완료");
             } else {
                 String errorMsg = ErrorCode.ERROR_CODE_903.getMessage();
-                result.put("result", 903);
-                result.put("result_description", errorMsg);
+                Commons.putMessage(result, 903, errorMsg);
             }
         } catch(Exception e){
             e.printStackTrace();
+
             String errorMsg = ErrorCode.ERROR_CODE_900.getMessage() + " : " + e.getMessage();
-            result.put("result", 900);
-            result.put("result_description", errorMsg);
+            Commons.putMessage(result, 900, errorMsg);
         }
         return result;
     }
 
     @Override
     public Map<String, Object> changePw(Map<String, Object> data) {
-        Map<String, Object> resultMap = new HashMap<>();
+        Map<String, Object> result = new HashMap<>();
         String id = String.valueOf(data.get("id"));
         String oldPw = String.valueOf(data.get("asPw"));
         String newPw = String.valueOf(data.get("newPw"));
         User foundUser = userRepo.findByid(id);
-        boolean result = encoder.matches(oldPw, foundUser.getPw());
-        if(result){
+        boolean isMatch = encoder.matches(oldPw, foundUser.getPw());
+        if(isMatch){
             String encoderedPw = encoder.encode(newPw);
             foundUser.setPw(encoderedPw);
-            resultMap.put("result", 200);
-            resultMap.put("result_description", "비밀번호 변경완료");
+            Commons.putMessage(result, 200, "비밀번호 변경완료");
         }else {
-            resultMap.put("result", 902);
-            resultMap.put("result_description", ErrorCode.ERROR_CODE_902.getMessage());
+            String errorMsg = ErrorCode.ERROR_CODE_902.getMessage();
+            Commons.putMessage(result, 902, errorMsg);
         }
-        return resultMap;
+        return result;
     }
 
     @Override
@@ -174,15 +169,14 @@ public class UserServiceImpl implements UserService {
                 }
                 if(!failedId.isEmpty()){
                     String errorMsg = ErrorCode.ERROR_CODE_901.getMessage() + failedId.toString();
-                    result.put("result", 901);
-                    result.put("result_description", errorMsg);
+                    Commons.putMessage(result, 901, errorMsg);
                 } else {
-                    result.put("result", 200);
-                    result.put("result_description", "권한변경 성공");
+                    Commons.putMessage(result, 200, "권한변경 성공");
                 }
             }
         } catch(Exception e){
-            e.printStackTrace();
+            String errorMsg = ErrorCode.ERROR_CODE_900.getMessage()+" : "+e.getMessage();
+            Commons.putMessage(result, 900, errorMsg);
         }
         return result;
     }
@@ -207,15 +201,14 @@ public class UserServiceImpl implements UserService {
                 }
                 if(!failedId.isEmpty()){
                     String errorMsg = ErrorCode.ERROR_CODE_901.getMessage() + failedId.toString();
-                    result.put("result", 901);
-                    result.put("result_description", errorMsg);
+                    Commons.putMessage(result, 901, errorMsg);
                 } else {
-                    result.put("result", 200);
-                    result.put("result_description", "사용여부 변경 완료");
+                    Commons.putMessage(result, 200, "사용여부 변경 완료");
                 }
             }
         } catch(Exception e){
-            e.printStackTrace();
+            String errorMsg = ErrorCode.ERROR_CODE_900.getMessage()+" : "+e.getMessage();
+            Commons.putMessage(result, 900, errorMsg);
         }
         return result;
     }
@@ -241,18 +234,33 @@ public class UserServiceImpl implements UserService {
                 }
                 if(!failedId.isEmpty()){
                     String errorMsg = ErrorCode.ERROR_CODE_904.getMessage() + failedId.toString();
-                    result.put("result", 904);
-                    result.put("result_description", errorMsg);
+                    Commons.putMessage(result, 904, errorMsg);
                 } else {
-                    result.put("result", 200);
-                    result.put("result_description", "비밀번호 초기화 성공");
+                    Commons.putMessage(result, 200, "비밀번호 초기화 성공");
                 }
             }
         }catch(Exception e){
-            result.put("result", 900);
-            result.put("result_description", "에러발생. msg:" + e.getMessage());
+            String errorMsg = ErrorCode.ERROR_CODE_900.getMessage() + " : " + e.getMessage();
+            Commons.putMessage(result, 900, errorMsg);
         }
 
+        return result;
+    }
+
+    @Override
+    public Map<String, Object> getUserListByKeyword(Map<String, Object> data) {
+        Map<String, Object> result = new HashMap<>();
+        String keyword = String.valueOf(data.get("keyword"));
+        List<UserDto> dtoList = null;
+        try{
+            dtoList = userRepo.findUserListByKeyword(keyword);
+            String msg = "검색결과: "+ dtoList.size() + "건";
+            Commons.putMessage(result, 200, msg);
+        } catch(Exception e){
+            String errorMsg = ErrorCode.ERROR_CODE_900.getMessage() + " : " + e.getMessage();
+            Commons.putMessage(result, 900, errorMsg);
+        }
+        result.put("list", dtoList);
         return result;
     }
 }

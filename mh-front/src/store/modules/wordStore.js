@@ -26,6 +26,9 @@ const mutations = {
   clearWordId(state) {
     state.wordId = '';
   },
+  setWordList(state, arr) {
+    state.wordList = arr;
+  },
 };
 const getters = {
   getWordList(state) {

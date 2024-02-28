@@ -7,6 +7,7 @@ import com.bandi.mhProject.entity.User;
 import com.bandi.mhProject.repository.InfoRepository;
 import com.bandi.mhProject.repository.UserRepository;
 import com.bandi.mhProject.service.WordService;
+import com.bandi.mhProject.util.Commons;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -53,13 +54,13 @@ public class WordServiceImpl implements WordService {
                         .creator(writer).editor(writer).link(link)
                         .build();
                 em.persist(info);
-                putMessage(result, 200, "작성완료");
+                Commons.putMessage(result, 200, "작성완료");
             } else {
-                putMessage(result, 903, ErrorCode.ERROR_CODE_901.getMessage()+":"+userId);
+                Commons.putMessage(result, 903, ErrorCode.ERROR_CODE_901.getMessage()+":"+userId);
             }
         }catch (Exception e){
             String errMsg = ErrorCode.ERROR_CODE_900.getMessage()+" : "+e.getMessage();
-            putMessage(result, 900, errMsg);
+            Commons.putMessage(result, 900, errMsg);
             return result;
         }
 
@@ -71,10 +72,10 @@ public class WordServiceImpl implements WordService {
         Map<String,Object> result = new HashMap();
         try{
             infoRepo.deleteById(id);
-            putMessage(result, 200, "삭제완료");
+            Commons.putMessage(result, 200, "삭제완료");
         }catch(Exception e){
             String errMsg = ErrorCode.ERROR_CODE_900.getMessage()+" : "+e.getMessage();
-            putMessage(result, 900, errMsg);
+            Commons.putMessage(result, 900, errMsg);
             return result;
         }
         return result;
@@ -93,14 +94,14 @@ public class WordServiceImpl implements WordService {
                 info.setInfokey(title);
                 info.setDescription(contents);
                 info.setLink(link);
-                putMessage(result, 200, "작성완료");
+                Commons.putMessage(result, 200, "작성완료");
             } else {
                 String errorMsg = ErrorCode.ERROR_CODE_905.getMessage()+":"+infoId;
-                putMessage(result, 905, errorMsg);
+                Commons.putMessage(result, 905, errorMsg);
             }
         }catch(Exception e){
             String errorMsg = ErrorCode.ERROR_CODE_900.getMessage()+" : "+e.getMessage();
-            putMessage(result, 900, errorMsg);
+            Commons.putMessage(result, 900, errorMsg);
             return result;
         }
         return result;
@@ -122,9 +123,11 @@ public class WordServiceImpl implements WordService {
     }
 
     @Override
-    public List<InfoDto> getWordList(String keyword) {
+    public Map<String, Object> getWordListByKeyword(Map<String, Object> data) {
+        Map<String, Object> result = new HashMap<>();
         List<InfoDto> infoList= new ArrayList<>();
         try{
+            String keyword = String.valueOf(data.get("keyword"));
             List<Info> rawList = new ArrayList<>();
             if(keyword.isBlank()){
                 rawList = infoRepo.findAll();
@@ -132,21 +135,17 @@ public class WordServiceImpl implements WordService {
                 rawList = infoRepo.findInfoByKeyword(keyword);
             }
             for(Info i : rawList){
-                System.out.println(i.getInfokey()+":"+i.getDescription());
-                InfoDto dto = InfoDto.builder()
-                        .id(i.getId())
-                        .infokey(i.getInfokey()).info_kr(i.getInfo_kr())
-                        .description(i.getDescription()).link(i.getLink())
-                        .creator(i.getCreator()).updator(i.getUpdator())
-                        .createDate(i.getCreateDate()).updateDate(i.getUpdateDate())
-                        .build();
-                infoList.add(dto);
+                infoList.add(setInfoDto(i));
             }
+            String msg = "검색결과 : "+infoList.size()+"건";
+            Commons.putMessage(result, 200, msg);
         }
         catch(Exception e){
-            e.printStackTrace();
+            String errorMsg = ErrorCode.ERROR_CODE_900.getMessage()+" : "+e.getMessage();
+            Commons.putMessage(result, 900, errorMsg);
         }
-        return infoList;
+        result.put("list", infoList);
+        return result;
     }
 
     @Override
@@ -187,10 +186,10 @@ public class WordServiceImpl implements WordService {
             for(String id : ids){
                 infoRepo.deleteById(id);
             }
-            putMessage(result, 200, "삭제완료");
+            Commons.putMessage(result, 200, "삭제완료");
         } catch(Exception e){
             String errorMsg = ErrorCode.ERROR_CODE_900.getMessage()+" : "+e.getMessage();
-            putMessage(result, 900, errorMsg);
+            Commons.putMessage(result, 900, errorMsg);
         }
         return result;
     }
@@ -201,10 +200,5 @@ public class WordServiceImpl implements WordService {
                 .creator(info.getCreator()).updator(info.getUpdator())
                 .createDate(info.getCreateDate()).updateDate(info.getUpdateDate())
                 .build();
-    }
-
-    private void putMessage(Map<String, Object> map, Integer code, String description){
-        map.put("result", code);
-        map.put("result_description", description);
     }
 }
