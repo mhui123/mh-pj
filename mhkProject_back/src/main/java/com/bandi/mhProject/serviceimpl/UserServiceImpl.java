@@ -280,8 +280,8 @@ public class UserServiceImpl implements UserService, SystemConfigs {
             if(foundKeyList.isEmpty()){
                 User user = userRepo.findByid(userId);
                 if(user != null){
-                    String authKey = KeyGenerator.generateKey().replaceAll("-", "").substring(0,6);
-                    ManageKey manageKey = ManageKey.builder().authKey(authKey).user(user).duration(AUTH_DURATION).build();
+                    String authKey = KeyGenerator.generateKey();
+                    ManageKey manageKey = ManageKey.builder().authKey(authKey).user(user).build();
                     em.persist(manageKey);
                     Commons.setMessage(result, CODE_200);
                 }

@@ -8,7 +8,7 @@ import java.util.UUID;
 
 public class KeyGenerator implements SystemConfigs {
     public static String generateKey(){
-        return UUID.randomUUID().toString();
+        return UUID.randomUUID().toString().replaceAll("-", "").substring(0,6);
     }
 
     public static boolean validateKey(String inputKey, String storedKey){

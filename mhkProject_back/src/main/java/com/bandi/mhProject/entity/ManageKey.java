@@ -20,12 +20,10 @@ public class ManageKey extends TimeEntity {
 
     @Column(columnDefinition = "VARCHAR(1) DEFAULT 'y'")
     private String useYn = "y";
-    private long duration;
 
     @Builder
-    public ManageKey(String authKey, User user, long duration) {
+    public ManageKey(String authKey, User user) {
         this.authKey = authKey;
         this.user = user;
-        this.duration = duration;
     }
 }
