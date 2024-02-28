@@ -13,4 +13,6 @@ import java.util.List;
 public interface InfoRepository extends JpaRepository<Info, String>, InfoCustomRepo, JpaSpecificationExecutor<Info>, QuerydslPredicateExecutor<Info> {
     Info findByCreator(String creator);
     List<Info> findInfoByKeyword(String keyword);
+    List<Info> findAllInfoList();
+    List<Info> findMyInfoList(String userId);
 }

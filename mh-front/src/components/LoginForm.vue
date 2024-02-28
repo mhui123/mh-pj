@@ -28,7 +28,6 @@
 
 <script>
 import { validateEmail } from '@/utils/validation';
-// import { testAPI, loginUser } from '@/api/index';
 import { mapActions, mapMutations } from 'vuex';
 export default {
   data() {

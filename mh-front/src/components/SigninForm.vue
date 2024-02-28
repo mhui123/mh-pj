@@ -28,7 +28,7 @@
 
 <script>
 import { validateEmail, validatePw } from '@/utils/validation';
-import { registerUser } from '@/api/index';
+import { callApi } from '@/api/index';
 export default {
   data() {
     return {
@@ -47,7 +47,7 @@ export default {
   methods: {
     async submitForm() {
       if (this.isUsernameValid || this.password) {
-        const { data } = await registerUser({ id: this.username, pw: this.password });
+        const { data } = await callApi('signin', { id: this.username, pw: this.password });
         console.log(data);
         const { result, result_description } = data;
         if (result === 200) {

@@ -21,7 +21,7 @@
 
 <script>
 import { mapGetters, mapMutations } from 'vuex';
-import { removeWord } from '@/api/index';
+import { callApi } from '@/api/index';
 import { validateURL } from '@/utils/validation';
 import { sleep } from '@/utils/common';
 export default {
@@ -56,7 +56,7 @@ export default {
       let arr = this.getWordList;
       let idx = arr.map(m => m.id).indexOf(itemId);
 
-      const { data } = await removeWord(itemId);
+      const { data } = await callApi(`delete/${itemId}`);
       if (data.result === 200) {
         console.log(data.result_description);
         this.spliceWordList(idx);

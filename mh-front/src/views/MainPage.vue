@@ -27,7 +27,7 @@
 </template>
 
 <script>
-import { getList } from '@/api/index';
+import { callApi } from '@/api/index';
 import WordListItem from '@/components/words/WordListItem.vue';
 import LoadingSpinner from '@/components/common/LoadingSpinner.vue';
 import SearchForm from '@/components/SearchForm.vue';
@@ -63,7 +63,7 @@ export default {
     ...mapMutations(['pushToWordList', 'clearWordList']),
     async fetchData() {
       this.isLoading = true;
-      const { data } = await getList();
+      const { data } = await callApi('getList');
       console.log('listData : ', data);
       this.isLoading = false;
       this.clearWordList();

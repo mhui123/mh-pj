@@ -53,7 +53,7 @@
 import modal from './common/ModalWin.vue';
 import { validatePw } from '@/utils/validation';
 import { mapGetters } from 'vuex';
-import { changePw } from '@/api/index';
+import { callApi } from '@/api/index';
 export default {
   components: {
     modal,
@@ -100,7 +100,7 @@ export default {
       let payload = { id: userId, asPw: this.asPw, newPw: this.newPw };
       if (this.chkPwState()) {
         if (this.isNewPwValid && this.isNewPw2Valid) {
-          const { data } = await changePw(payload);
+          const { data } = await callApi('changePassword', payload);
           const { result, result_description } = data;
           if (result === 200) {
             this.asPw = '';

@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface InfoCustomRepo {
     List<Info> findInfoByKeyword(String keyword);
+    List<Info> findAllInfoList();
+    List<Info> findMyInfoList(String userId);
 }

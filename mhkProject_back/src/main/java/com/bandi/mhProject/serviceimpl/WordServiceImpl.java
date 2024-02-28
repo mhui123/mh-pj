@@ -7,9 +7,13 @@ import com.bandi.mhProject.entity.User;
 import com.bandi.mhProject.repository.InfoRepository;
 import com.bandi.mhProject.repository.UserRepository;
 import com.bandi.mhProject.service.WordService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
+import org.apache.logging.log4j.util.Strings;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,11 +32,7 @@ public class WordServiceImpl implements WordService {
         List<InfoDto> infoList = new ArrayList<>();
         List<Info> originList = infoRepo.findAll();
         for(Info info: originList){
-            InfoDto dto = InfoDto.builder().id(info.getId()).infokey(info.getInfokey()).info_kr(info.getInfo_kr()).link(info.getLink())
-                    .description(info.getDescription())
-                    .creator(info.getCreator()).updator(info.getUpdator())
-                    .createDate(info.getCreateDate()).updateDate(info.getUpdateDate())
-                    .build();
+            InfoDto dto = setInfoDto(info);
             infoList.add(dto);
         }
         return infoList;
@@ -53,16 +53,13 @@ public class WordServiceImpl implements WordService {
                         .creator(writer).editor(writer).link(link)
                         .build();
                 em.persist(info);
-                result.put("result", 200);
-                result.put("result_description", "작성완료");
+                putMessage(result, 200, "작성완료");
             } else {
-                result.put("result", 300);
-                result.put("result_description", userId+"를 찾을 수 없습니다.");
+                putMessage(result, 903, ErrorCode.ERROR_CODE_901.getMessage()+":"+userId);
             }
         }catch (Exception e){
-            String errMsg = e.getMessage();
-            result.put("result", 900);
-            result.put("result_description", ErrorCode.ERROR_CODE_900.getMessage()+":"+errMsg);
+            String errMsg = ErrorCode.ERROR_CODE_900.getMessage()+" : "+e.getMessage();
+            putMessage(result, 900, errMsg);
             return result;
         }
 
@@ -74,12 +71,10 @@ public class WordServiceImpl implements WordService {
         Map<String,Object> result = new HashMap();
         try{
             infoRepo.deleteById(id);
-            result.put("result", 200);
-            result.put("result_description", "delete complete");
+            putMessage(result, 200, "삭제완료");
         }catch(Exception e){
-            String errMsg = e.getMessage();
-            result.put("result", 900);
-            result.put("result_description", errMsg);
+            String errMsg = ErrorCode.ERROR_CODE_900.getMessage()+" : "+e.getMessage();
+            putMessage(result, 900, errMsg);
             return result;
         }
         return result;
@@ -98,16 +93,14 @@ public class WordServiceImpl implements WordService {
                 info.setInfokey(title);
                 info.setDescription(contents);
                 info.setLink(link);
-                result.put("result", 200);
-                result.put("result_description", "complete");
+                putMessage(result, 200, "작성완료");
             } else {
-                result.put("result", 905);
-                result.put("result_description", ErrorCode.ERROR_CODE_905.getMessage()+":"+infoId);
+                String errorMsg = ErrorCode.ERROR_CODE_905.getMessage()+":"+infoId;
+                putMessage(result, 905, errorMsg);
             }
         }catch(Exception e){
-            String errMsg = e.getMessage();
-            result.put("result", 900);
-            result.put("result_description", ErrorCode.ERROR_CODE_900.getMessage()+":"+errMsg);
+            String errorMsg = ErrorCode.ERROR_CODE_900.getMessage()+" : "+e.getMessage();
+            putMessage(result, 900, errorMsg);
             return result;
         }
         return result;
@@ -119,9 +112,7 @@ public class WordServiceImpl implements WordService {
         try {
             Info rawInfo = infoRepo.findById(id).orElse(null);
             if(rawInfo != null){
-                dto = InfoDto.builder().id(rawInfo.getId()).infokey(rawInfo.getInfokey())
-                        .info_kr(rawInfo.getInfo_kr()).link(rawInfo.getLink())
-                        .description(rawInfo.getDescription()).build();
+                dto = setInfoDto(rawInfo);
             }
         } catch (Exception e){
             e.printStackTrace();
@@ -156,5 +147,64 @@ public class WordServiceImpl implements WordService {
             e.printStackTrace();
         }
         return infoList;
+    }
+
+    @Override
+    public List<InfoDto> getAllWordList() {
+        List<Info> rawData = infoRepo.findAllInfoList();
+        List<InfoDto> list = new ArrayList<>();
+        for(Info info : rawData){
+            InfoDto dto = setInfoDto(info);
+            list.add(dto);
+        }
+        return list;
+    }
+
+    @Override
+    public List<InfoDto> findMyInfoList(Map<String, Object> data) {
+        String userId = String.valueOf(data.get("id"));
+        List<InfoDto> list = new ArrayList<>();
+        if(!userId.equals("null") && Strings.isNotEmpty(userId)){
+            List<Info> raw = infoRepo.findMyInfoList(userId);
+            for(Info i : raw){
+                InfoDto dto = setInfoDto(i);
+                list.add(dto);
+            }
+        }
+
+        return list;
+    }
+
+    @Override
+    public Map<String, Object> delWords(Map<String, Object> data) {
+        Map<String, Object> result = new HashMap<>();
+        try{
+            JSONParser parser = new JSONParser();
+            ObjectMapper objMapper = new ObjectMapper();
+            String jsonStr = objMapper.writeValueAsString(data);
+            JSONObject jObj = (JSONObject) parser.parse(jsonStr);
+            List<String> ids = (List<String>) jObj.get("ids");
+            for(String id : ids){
+                infoRepo.deleteById(id);
+            }
+            putMessage(result, 200, "삭제완료");
+        } catch(Exception e){
+            String errorMsg = ErrorCode.ERROR_CODE_900.getMessage()+" : "+e.getMessage();
+            putMessage(result, 900, errorMsg);
+        }
+        return result;
+    }
+
+    private InfoDto setInfoDto(Info info){
+        return InfoDto.builder().id(info.getId()).infokey(info.getInfokey()).info_kr(info.getInfo_kr()).link(info.getLink())
+                .description(info.getDescription())
+                .creator(info.getCreator()).updator(info.getUpdator())
+                .createDate(info.getCreateDate()).updateDate(info.getUpdateDate())
+                .build();
+    }
+
+    private void putMessage(Map<String, Object> map, Integer code, String description){
+        map.put("result", code);
+        map.put("result_description", description);
     }
 }

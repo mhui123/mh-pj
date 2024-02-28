@@ -1,4 +1,4 @@
-import { loginUser } from '@/api/index';
+import { callApi } from '@/api/index';
 import { saveUserToCookie, getUserFromCookie, deleteCookie } from '@/utils/cookies';
 import { setAccessToken, setRefreshToken, clearStorage, getAccessToken, getRefreshToken, setItem, getItem } from '@/utils/localstorageM';
 const state = {
@@ -12,11 +12,11 @@ const mutations = {
   setUsername(state, username) {
     state.username = username;
   },
-  setAccessToken(state, username) {
-    state.username = username;
+  setAccessToken(state, accTkn) {
+    state.accessToken = accTkn;
   },
-  setRefreshToken(state, username) {
-    state.username = username;
+  setRefreshToken(state, refreshToken) {
+    state.refreshToken = refreshToken;
   },
   setGubun(state, gubun) {
     state.gubun = gubun;
@@ -58,7 +58,7 @@ const getters = {
 };
 const actions = {
   async LOGIN({ commit }, userData) {
-    const { data } = await loginUser(userData);
+    const { data } = await callApi('login', userData);
     const { userInfo, result } = data;
     console.log(data);
     if (data === null) {
@@ -66,8 +66,11 @@ const actions = {
     } else if (result === 200) {
       commit('setUsername', userInfo.id);
       commit('setRole', userInfo.role);
+      commit('setAccessToken', userInfo.token.accessToken);
+      commit('setRefreshToken', userInfo.token.refreshToken);
       setAccessToken(userInfo.token.accessToken);
       setRefreshToken(userInfo.token.refreshToken);
+
       setItem('role', userInfo.role);
       saveUserToCookie(userInfo.id);
     }

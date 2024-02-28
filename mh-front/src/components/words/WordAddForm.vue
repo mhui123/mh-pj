@@ -30,7 +30,7 @@
 </template>
 
 <script>
-import { addWord, getWord, editWord } from '@/api/index';
+import { callApi } from '@/api/index';
 import { mapGetters, mapMutations } from 'vuex';
 import { sleep } from '@/utils/common';
 export default {
@@ -60,8 +60,10 @@ export default {
   },
   async created() {
     // this.wordId = this.$route.params['id'];
+    const thisRoute = this.$router.currentRoute;
+    const isEditPage = thisRoute.value.fullPath.includes('edit');
     this.wordId = this.getWordId;
-    if (!this.wordId) {
+    if (isEditPage && !this.wordId) {
       this.callToast('비정상적 접근입니다. 메인페이지로 돌아갑니다.');
       await sleep(2000);
       this.$router.push('/main');
@@ -70,7 +72,7 @@ export default {
     if (this.wordId) {
       this.mode = 'edit';
       this.pageTitle = '수정';
-      const { data } = await getWord(this.wordId);
+      const { data } = await callApi('getWordById', this.wordId);
       this.setOrigin(data);
     } else {
       console.log('here is create page');
@@ -91,13 +93,12 @@ export default {
       try {
         this.link = this.link.length === 0 ? 'none' : this.link;
         if (this.mode === 'edit') {
-          let { data } = await editWord({ editor: this.getUsername, title: this.title, contents: this.contents, wordId: this.wordId, link: this.link });
+          let { data } = await callApi('edit', { editor: this.getUsername, title: this.title, contents: this.contents, wordId: this.wordId, link: this.link });
           result = data;
         } else {
-          let { data } = await addWord({ id: this.getUsername, title: this.title, contents: this.contents, link: this.link });
+          let { data } = await callApi('addWord', { id: this.getUsername, title: this.title, contents: this.contents, link: this.link });
           result = data;
         }
-        // const { data } = await addWord({ id: this.getUsername, title: this.title, contents: this.contents });
         this.callToast(result.result_description);
         if (result.result === 200) {
           this.clearWordId();
@@ -117,9 +118,6 @@ export default {
     setOrigin(data) {
       this.title = data.infokey;
       this.contents = data.description;
-    },
-    editWord() {
-      console.log('edit');
     },
   },
 };

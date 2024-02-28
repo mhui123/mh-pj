@@ -3,16 +3,17 @@ const instance = axios.create({
   baseURL: process.env.VUE_APP_API_URL,
 });
 
-function registerUser(userData) {
-  return instance.post('signin', userData);
+function callApi(url, param) {
+  if (url.includes('getWordListByKeyword')) {
+    return instance.post(url, null, { params: { keyword: param } });
+  } else {
+    return instance.post(url, param);
+  }
 }
+// function logoutUser() {
+//   return instance.post('logout');
+// }
 
-function loginUser(userData) {
-  return instance.post('login', userData);
-}
-function logoutUser() {
-  return instance.post('logout');
-}
 // const forSecure = axios.create({
 //   baseURL: process.env.VUE_APP_SEC_URL,
 // });
@@ -20,40 +21,12 @@ function logoutUser() {
 //   return forSecure.post('/loginProc', userData);
 // }
 
-function addWord(wordData) {
-  return instance.post('addWord', wordData);
-}
-
-function getList() {
-  return instance.post('getList');
-}
-
-function removeWord(id) {
-  return instance.delete(`delete/${id}`);
-}
-function getWord(id) {
-  return instance.post('getWordById', null, { params: { id: id } });
-}
-function searchWord(keyword) {
-  return instance.post('getWordListByKeyword', null, { params: { keyword: keyword } });
-}
-function editWord(wordData) {
-  return instance.put('edit', wordData);
-}
-function changePw(data) {
-  return instance.post('changePassword', data);
-}
-function getUserList(data) {
-  return instance.post('getUserList', data);
-}
-function changeRole(data) {
-  return instance.post('changeRole', data);
-}
-function changeUseYn(data) {
-  return instance.post('changeUseYn', data);
-}
 function initPw(data) {
   return instance.post('initializePw', data);
 }
 
-export { registerUser, loginUser, addWord, getList, removeWord, editWord, getWord, searchWord, logoutUser, changePw, getUserList, changeRole, changeUseYn, initPw };
+function getAllWordList() {
+  return instance.post('findAllWordList');
+}
+
+export { initPw, getAllWordList, callApi };

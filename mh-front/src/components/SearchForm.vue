@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import { searchWord } from '@/api/index';
+import { callApi } from '@/api/index';
 import { mapMutations } from 'vuex';
 export default {
   data() {
@@ -22,7 +22,7 @@ export default {
   methods: {
     ...mapMutations(['clearWordList', 'pushToWordList', 'setKeyword']),
     async searchKeyword() {
-      const res = await searchWord(this.keyword);
+      const res = await callApi('getWordListByKeyword', this.keyword);
       const { data, status } = res;
       if (status === 200) {
         console.log(data);

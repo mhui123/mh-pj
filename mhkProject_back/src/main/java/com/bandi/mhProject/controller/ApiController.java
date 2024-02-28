@@ -10,6 +10,7 @@ import com.bandi.mhProject.serviceimpl.WordServiceImpl;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
@@ -144,5 +145,29 @@ public class ApiController {
     @ResponseBody
     public Map<String, Object> initializePw(@RequestBody Map<String, Object> data){
         return impl.initializePw(data);
+    }
+
+//    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PostMapping("/getAllWordList")
+    @ResponseBody
+    public Map<String, Object> getAllWordList(){
+        Map<String, Object> result = new HashMap<>();
+        List<InfoDto> list = wordImpl.getAllWordList();
+        result.put("list", list);
+        return result;
+    }
+
+    @PostMapping("/getMyWordList")
+    @ResponseBody
+    public Map<String, Object> getMyWordList(@RequestBody Map<String, Object> data){
+        Map<String, Object> result = new HashMap<>();
+        result.put("list", wordImpl.findMyInfoList(data));
+        return result;
+    }
+
+    @PostMapping("/delWords")
+    @ResponseBody
+    public Map<String, Object> delWords(@RequestBody Map<String, Object> data){
+        return wordImpl.delWords(data);
     }
 }

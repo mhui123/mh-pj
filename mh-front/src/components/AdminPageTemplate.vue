@@ -16,19 +16,17 @@
       </table>
     </div>
     <div class="btn-groups">
-      <button v-if="mode === 'user'" class="btn" @click="initializePw">비밀번호 초기화</button>
-      <button v-if="mode === 'user'" class="btn" @click="changeStatus('role')">권한변경</button>
-      <button v-if="mode === 'user'" class="btn" @click="changeStatus('useYn')">사용여부 변경</button>
+      <div v-if="mode === 'user'">
+        <button class="btn" @click="changeStatus('initPw')">비밀번호 초기화</button>
+        <button class="btn" @click="changeStatus('role')">권한변경</button>
+        <button class="btn" @click="changeStatus('useYn')">사용여부 변경</button>
+      </div>
+      <div v-else>
+        <button class="btn" @click="changeStatus('delWord')">삭제</button>
+      </div>
     </div>
     <div class="lower-container table-wrap" v-if="mode === 'user'">
       <table class="table">
-        <!-- <colgroup>
-          <col />
-          <col />
-          <col />
-          <col />
-          <col />
-        </colgroup> -->
         <thead>
           <tr>
             <th class="chkBox"></th>
@@ -43,6 +41,26 @@
             <td>{{ user['id'] }}</td>
             <td>{{ user['role'] === 'ROLE_USER' ? '유저' : '관리자' }}</td>
             <td>{{ user['useYn'] === 'y' ? '사용' : '중지' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="lower-container table-wrap" v-if="mode === 'word'">
+      <table class="table">
+        <thead>
+          <tr>
+            <th class="chkBox"></th>
+            <th>키워드</th>
+            <th>작성자</th>
+            <th>수정일시</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="word in wordList" :key="word.id">
+            <td class="chkBox"><input class="chkInput" type="checkbox" :name="word.id" :id="word.id" /></td>
+            <td>{{ word['infokey'] }} {{ word['info_kr'] }}</td>
+            <td>{{ word['creator'] }}</td>
+            <td>{{ this.$filters.dateFilter(word['updateDate']) }}</td>
           </tr>
         </tbody>
       </table>
@@ -68,8 +86,8 @@
 <script>
 import modal from './common/ModalWin.vue';
 // import AdmUserList from './AdminUserListForm.vue';
-import { mapGetters } from 'vuex';
-import { getUserList, changeRole, changeUseYn, initPw } from '@/api/index';
+import { mapGetters, mapMutations } from 'vuex';
+import { callApi } from '@/api/index';
 export default {
   components: {
     modal,
@@ -80,20 +98,25 @@ export default {
       mode: '',
       modalTitle: '',
       userList: [],
+      // wordList: [],
       checkedUsers: [],
     };
   },
   computed: {
-    ...mapGetters(['getUsername', 'getRole']),
+    ...mapGetters(['getUsername', 'getRole', 'getWordList']),
+    wordList() {
+      return this.getWordList;
+    },
   },
   created() {
     this.manageUser();
   },
   methods: {
+    ...mapMutations(['spliceWordList']),
     async manageUser() {
       this.userList = [];
       this.modeControl('user');
-      const response = await getUserList({ pageIndex: 1 });
+      const response = await callApi('getUserList', { pageIndex: 1 });
       const { status, data } = response;
       const list = data['userList'];
       if (status === 200) {
@@ -102,8 +125,14 @@ export default {
         });
       }
     },
-    manageWord() {
+    async manageWord() {
+      this.wordList = [];
       this.modeControl('word');
+      const { data } = await callApi('getAllWordList');
+      const { list } = data;
+      list.forEach(e => {
+        this.wordList.push(e);
+      });
     },
     modeControl(mode) {
       this.mode = mode;
@@ -114,12 +143,10 @@ export default {
       if (this.checkedUsers.length > 0) {
         let filteredIds = this.checkedUsers.map(m => m.id);
         if (mode === 'useYn') {
-          const response = await changeUseYn({ users: filteredIds });
+          const response = await callApi('changeUseYn', { users: filteredIds });
           const { status, data } = response;
           result_description = data['result_description'];
-          console.log(status, data);
           if (status === 200) {
-            console.log('사용여부 변경', filteredIds);
             filteredIds.forEach(e => {
               let user = this.userList.filter(x => x.id === e)[0];
               user['useYn'] = user['useYn'] === 'y' ? 'n' : 'y';
@@ -127,7 +154,7 @@ export default {
             });
           }
         } else if (mode === 'role') {
-          const response = await changeRole({ users: filteredIds });
+          const response = await callApi('changeRole', { users: filteredIds });
           const { status, data } = response;
           result_description = data['result_description'];
           if (status === 200) {
@@ -137,33 +164,27 @@ export default {
               this.initCheckboxes();
             });
           }
+        } else if (mode === 'initPw') {
+          const { data } = await callApi('initializePw', { ids: filteredIds });
+          result_description = data['result_description'];
+          this.callToast(result_description);
+          this.initCheckboxes();
+        } else if (mode === 'delWord') {
+          const { data } = await callApi(`delWords`, { ids: filteredIds });
+          result_description = data['result_description'];
+          this.callToast(result_description);
+          this.initCheckboxes();
+          filteredIds.forEach(e => {
+            let arr = this.getWordList;
+            let idx = arr.map(m => m.id).indexOf(e);
+            this.spliceWordList(idx);
+          });
         }
+        this.callToast(result_description);
       } else {
         this.callToast('변경할 대상을 선택해주세요');
       }
-      this.callToast(result_description);
     },
-    // async changeRole() {
-    //   await this.getCheckedIds();
-    //   if (this.checkedUsers.length > 0) {
-    //     let filteredIds = this.checkedUsers.map(m => m.id);
-    //     const response = await changeRole({ users: filteredIds });
-    //     const { status, data } = response;
-    //     const { result_description } = data;
-    //     if (status === 200) {
-    //       filteredIds.forEach(e => {
-    //         let user = this.userList.filter(x => x.id === e)[0];
-    //         user['role'] = user['role'] === 'ROLE_USER' ? 'ROLE_ADMIN' : 'ROLE_USER';
-    //         this.initCheckboxes();
-    //       });
-
-    //       //   user['role'] = user['role'] === 'ROLE_USER' ? 'ROLE_ADMIN' : 'ROLE_USER';
-    //     }
-    //     this.callToast(result_description);
-    //   } else {
-    //     this.callToast('변경할 대상을 선택해주세요');
-    //   }
-    // },
     callToast(msg) {
       this.emitter.emit('show:toast', msg);
     },
@@ -171,7 +192,7 @@ export default {
       await this.getCheckedIds();
       let filteredIds = this.checkedUsers.map(m => m.id);
       if (filteredIds.length > 0) {
-        const { data } = await initPw({ ids: filteredIds });
+        const { data } = await callApi('initializePw', { ids: filteredIds });
         const { result_description } = data;
         this.callToast(result_description);
         this.initCheckboxes();
@@ -192,6 +213,10 @@ export default {
         .forEach(e => {
           e.checked = false;
         });
+      this.checkedUsers = [];
+    },
+    async delWord() {
+      await this.getCheckedIds();
     },
   },
 };
