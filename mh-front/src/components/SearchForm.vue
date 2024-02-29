@@ -7,7 +7,7 @@
 
 <script>
 import { callApi } from '@/api/index';
-import { mapMutations } from 'vuex';
+import { mapGetters, mapMutations } from 'vuex';
 import { getCurrentRoute } from '@/utils/common';
 export default {
   props: {
@@ -23,6 +23,10 @@ export default {
     isPossibleSearch() {
       return this.keyword.length > 0;
     },
+    getUsername() {
+      return this.getUsername;
+    },
+    ...mapGetters(['getUsername']),
   },
   updated() {
     if (this.currentRoute.includes('admin')) {
@@ -35,11 +39,22 @@ export default {
       const destinations = {
         main: 'getWordListByKeyword',
         admin: { user: 'getUserListByKeyword', word: 'getWordListByKeyword' },
+        mypage: 'getMyWordList',
       };
-
-      let route = this.currentRoute.includes('main') ? 'main' : 'admin';
+      let payload;
+      if (this.mode === 'mypage') {
+        payload = { id: this.getUsername, keyword: this.keyword };
+      } else {
+        payload = { keyword: this.keyword };
+      }
+      let routes = {
+        '/main': 'main',
+        '/adminPage': 'admin',
+        '/mypage': 'mypage',
+      };
+      let route = routes[this.currentRoute]; //this.currentRoute.includes('main') ? 'main' : 'admin';
       let path = route === 'admin' ? destinations[route][this.mode] : destinations[route];
-      const res = await callApi(path, { keyword: this.keyword });
+      const res = await callApi(path, payload);
       const { data, status } = res;
       const { list, result_description } = data;
 

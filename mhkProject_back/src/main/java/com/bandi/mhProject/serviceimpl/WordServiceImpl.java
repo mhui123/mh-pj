@@ -161,7 +161,8 @@ public class WordServiceImpl implements WordService {
     }
 
     @Override
-    public List<InfoDto> findMyInfoList(Map<String, Object> data) {
+    public Map<String, Object> findMyInfoList(Map<String, Object> data) {
+        Map<String, Object> result = new HashMap<>();
         String userId = String.valueOf(data.get("id"));
         String keyword = String.valueOf(data.get("keyword"));
         List<InfoDto> list = new ArrayList<>();
@@ -171,9 +172,12 @@ public class WordServiceImpl implements WordService {
                 InfoDto dto = setInfoDto(i);
                 list.add(dto);
             }
+            result.put("list", list);
+            String msg = "검색결과 : "+list.size()+"건";
+            Commons.putMessage(result, 200, msg);
         }
 
-        return list;
+        return result;
     }
 
     @Override

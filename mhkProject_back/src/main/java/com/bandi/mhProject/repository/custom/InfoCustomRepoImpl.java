@@ -37,7 +37,7 @@ public class InfoCustomRepoImpl implements InfoCustomRepo{
         String userId = String.valueOf(data.get("id"));
         String keyword = String.valueOf(data.get("keyword"));
         List<Info> list = null;
-        if(!keyword.isBlank()){
+        if(keyword.isBlank() || keyword.equals("null")){
             list = factory.selectFrom(QInfo.info)
                     .join(QInfo.info.user, QUser.user)
                     .where(QUser.user.id.eq(userId))

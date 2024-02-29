@@ -140,9 +140,7 @@ public class ApiController {
     @PostMapping("/getMyWordList")
     @ResponseBody
     public Map<String, Object> getMyWordList(@RequestBody Map<String, Object> data){
-        Map<String, Object> result = new HashMap<>();
-        result.put("list", wordImpl.findMyInfoList(data));
-        return result;
+        return wordImpl.findMyInfoList(data);
     }
 
     @PostMapping("/delWords")

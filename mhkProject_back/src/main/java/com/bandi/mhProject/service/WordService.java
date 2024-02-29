@@ -15,7 +15,7 @@ public interface WordService {
     InfoDto getWordById(Map<String, Object> data);
     Map<String, Object> getWordListByKeyword(Map<String, Object> data);
     List<InfoDto> getAllWordList();
-    List<InfoDto> findMyInfoList(Map<String, Object> data);
+    Map<String, Object> findMyInfoList(Map<String, Object> data);
 
     Map<String, Object> delWords(Map<String, Object> data);
 }

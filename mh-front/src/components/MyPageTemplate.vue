@@ -21,7 +21,7 @@
         <button class="btn" @click="deleteWords">삭제</button>
       </div>
     </div>
-    <div class="lower-container table-wrap" v-if="mode === 'word'">
+    <div class="lower-container table-wrap" v-if="mode === 'mypage'">
       <table class="table">
         <thead>
           <tr>
@@ -94,7 +94,7 @@ export default {
       showModal: false,
       warnInput: false,
       pw2Warn: '',
-      mode: 'word',
+      mode: 'mypage',
       checkedUsers: [],
     };
   },
@@ -151,13 +151,6 @@ export default {
     async fetchMyWords() {
       this.clearWordList();
       const { data } = await callApi('getMyWordList', { id: this.username });
-      const { list } = data;
-      this.setWordList(list);
-    },
-    async manageWord() {
-      this.clearWordList();
-      this.modeControl('word');
-      const { data } = await callApi('getAllWordList');
       const { list } = data;
       this.setWordList(list);
     },
