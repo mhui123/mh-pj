@@ -124,14 +124,14 @@ export default {
     async deleteWords() {
       await this.getCheckedIds();
       if (this.checkedUsers.length > 0) {
-        let filteredIds = this.checkedUsers.map(m => Number.parseInt(m.id));
+        let filteredIds = this.checkedUsers.map(m => m.id);
         const { data } = await callApi(`delWords`, { ids: filteredIds });
         let result_description = data['result_description'];
         this.callToast(result_description);
         this.initCheckboxes();
         filteredIds.forEach(e => {
           let arr = this.getWordList;
-          let idx = arr.map(m => m.id).indexOf(e);
+          let idx = arr.map(m => m.id).indexOf(Number.parseInt(e));
           this.spliceWordList(idx);
         });
       } else {
