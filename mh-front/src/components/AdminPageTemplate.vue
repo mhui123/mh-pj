@@ -86,7 +86,6 @@
 
 <script>
 import modal from './common/ModalWin.vue';
-// import AdmUserList from './AdminUserListForm.vue';
 import { mapGetters, mapMutations } from 'vuex';
 import { callApi } from '@/api/index';
 import SearchForm from './SearchForm.vue';
@@ -179,7 +178,7 @@ export default {
           this.initCheckboxes();
           filteredIds.forEach(e => {
             let arr = this.getWordList;
-            let idx = arr.map(m => m.id).indexOf(e);
+            let idx = arr.map(m => m.id).indexOf(Number.parseInt(e));
             this.spliceWordList(idx);
           });
         }

@@ -163,9 +163,10 @@ public class WordServiceImpl implements WordService {
     @Override
     public List<InfoDto> findMyInfoList(Map<String, Object> data) {
         String userId = String.valueOf(data.get("id"));
+        String keyword = String.valueOf(data.get("keyword"));
         List<InfoDto> list = new ArrayList<>();
-        if(!userId.equals("null") && Strings.isNotEmpty(userId)){
-            List<Info> raw = infoRepo.findMyInfoList(userId);
+        if(Strings.isNotEmpty(userId)){
+            List<Info> raw = infoRepo.findMyInfoList(data);
             for(Info i : raw){
                 InfoDto dto = setInfoDto(i);
                 list.add(dto);

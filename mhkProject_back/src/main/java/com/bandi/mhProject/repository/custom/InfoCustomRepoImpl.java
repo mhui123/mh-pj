@@ -8,6 +8,7 @@ import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
+import java.util.Map;
 
 @RequiredArgsConstructor
 public class InfoCustomRepoImpl implements InfoCustomRepo{
@@ -32,10 +33,26 @@ public class InfoCustomRepoImpl implements InfoCustomRepo{
     }
 
     @Override
-    public List<Info> findMyInfoList(String userId) {
-        return factory.selectFrom(QInfo.info)
-                .join(QInfo.info.user, QUser.user)
-                .where(QUser.user.id.eq(userId))
-                .fetch();
+    public List<Info> findMyInfoList(Map<String, Object> data) {
+        String userId = String.valueOf(data.get("id"));
+        String keyword = String.valueOf(data.get("keyword"));
+        List<Info> list = null;
+        if(!keyword.isBlank()){
+            list = factory.selectFrom(QInfo.info)
+                    .join(QInfo.info.user, QUser.user)
+                    .where(QUser.user.id.eq(userId))
+                    .fetch();
+        } else {
+            list = factory.selectFrom(QInfo.info)
+                    .join(QInfo.info.user, QUser.user)
+                    .where(QUser.user.id.eq(userId)
+                        .and(   QInfo.info.infokey.like("%"+keyword+"%")
+                            .or(QInfo.info.description.like("%"+keyword+"%"))
+                            )
+                    )
+                    .fetch();
+        }
+
+        return list;
     }
 }
