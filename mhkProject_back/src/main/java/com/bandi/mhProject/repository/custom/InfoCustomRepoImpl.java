@@ -16,9 +16,12 @@ public class InfoCustomRepoImpl implements InfoCustomRepo{
     @Override
     public List<Info> findInfoByKeyword(String keyword) {
         return factory.selectFrom(QInfo.info)
+                .join(QInfo.info.user, QUser.user)
                 .where(QInfo.info.infokey.like("%"+keyword+"%")
                         .or(QInfo.info.info_kr.like("%"+keyword+"%"))
-                        .or(QInfo.info.description.like("%"+keyword+"%"))
+                        .or(QInfo.info.description.like("%"+keyword+"%")
+                        .or(QUser.user.id.like("%"+keyword+"%"))
+                        )
         ).fetch();
     }
 

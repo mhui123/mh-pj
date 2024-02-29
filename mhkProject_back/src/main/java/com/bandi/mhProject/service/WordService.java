@@ -12,7 +12,7 @@ public interface WordService {
     Map<String, Object> deleteWord(String id);
     Map<String, Object> editWord(Map<String, Object> data);
 
-    InfoDto getWordById(String id);
+    InfoDto getWordById(Map<String, Object> data);
     Map<String, Object> getWordListByKeyword(Map<String, Object> data);
     List<InfoDto> getAllWordList();
     List<InfoDto> findMyInfoList(Map<String, Object> data);

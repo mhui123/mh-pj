@@ -13,7 +13,7 @@
       </span>
     </div>
     <a @click="onClikeRedirect(item['link'], item['infokey'])" class="link">
-      {{ item['link'] === 'none' ? '위키에서 찾기' : item['link'] }}
+      {{ item['link'] === 'none' ? '위키에서 찾기' : '참고링크' }}
       <i class="icon ion-md-search"></i>
     </a>
   </li>
@@ -47,7 +47,7 @@ export default {
         this.callToast('유효하지 않은 링크입니다. 위키에서 검색합니다.');
         await sleep(2000);
       }
-      link = isValidURL ? link : `https://ko.wikipedia.org/wiki/${keyword}`;
+      link = isValidURL ? `${link}` : `https://ko.wikipedia.org/wiki/${keyword}`;
       window.open(link, '_blank');
     },
     async deleteWord(itemId) {

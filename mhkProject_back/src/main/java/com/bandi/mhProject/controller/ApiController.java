@@ -32,19 +32,6 @@ public class ApiController {
         this.restTemplate = restTemplate;
     }
 
-
-    @PostMapping("/test")
-    @ResponseBody
-    public String test(@RequestBody Map<String, Object> obj){
-//        return restTemplate.getForObject("hahaha", String.class);
-        String id = String.valueOf(obj.get("username"));
-        String pw = String.valueOf(obj.get("password"));
-        User user = User.builder().id(id).pw(pw).role("ROLE_USER").build();
-        System.out.println(user);
-        impl.signin(user);
-        return "hahaha";
-    }
-
     @PostMapping("/login")
     @ResponseBody
     public Map<String, Object> login(@RequestBody Map<String, Object> data){
@@ -64,10 +51,7 @@ public class ApiController {
     @PostMapping("/signin")
     @ResponseBody
     public Map<String, Object> signin(@RequestBody Map<String, Object> data){
-        String id = String.valueOf(data.get("id"));
-        String pw = String.valueOf(data.get("pw"));
-        User user = User.builder().id(id).pw(pw).build();
-        return impl.signin(user);
+        return impl.signin(data);
     }
 
     @PostMapping("/addWord")
@@ -100,8 +84,8 @@ public class ApiController {
 
     @PostMapping("/getWordById")
     @ResponseBody
-    public InfoDto getWordById(@RequestParam String id){
-        return wordImpl.getWordById(id);
+    public InfoDto getWordById(@RequestBody Map<String, Object> data){
+        return wordImpl.getWordById(data);
     }
 
     @PostMapping("/getWordListByKeyword")
@@ -113,11 +97,7 @@ public class ApiController {
     @PostMapping("/changePassword")
     @ResponseBody
     public Map<String, Object> changePassword(@RequestBody Map<String, Object> data){
-        Map<String, Object> result = null;
-        if(data.containsKey("id") && data.containsKey("asPw") && data.containsKey("newPw")){
-            result = impl.changePw(data);
-        }
-        return result;
+        return impl.changePw(data);
     }
 
     @PostMapping("/getUserList")
@@ -178,7 +158,12 @@ public class ApiController {
     }
 
     @PostMapping("/generateAuthKey")
+    @ResponseBody
     public Map<String, Object> generateAuthKey(@RequestBody Map<String, Object> data) {
         return impl.generateAuthKey(data);
+    }
+    @PostMapping("/validateAuthKey")
+    public Map<String, Object> validateAuthKey(@RequestBody Map<String, Object> data){
+        return impl.validateAuthKey(data);
     }
 }

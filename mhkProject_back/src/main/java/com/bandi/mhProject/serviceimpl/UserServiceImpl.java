@@ -36,6 +36,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -105,19 +106,20 @@ public class UserServiceImpl implements UserService, SystemConfigs {
     }
     // signin returnType Map<String, Object>로 통일해야함.
     @Override
-    public Map<String ,Object> signin(User user) {
+    public Map<String ,Object> signin(Map<String, Object> data) {
         Map<String ,Object> result = new HashMap<>();
         try {
-            String id = user.getId();
-            String pw = user.getPw(); //asdfasdfasdf
+            String id = String.valueOf(data.get("id"));
+            String pw = String.valueOf(data.get("pw"));
+            String name = String.valueOf(data.get("name"));
             User foundUser = userRepo.findByid(id);
             if(foundUser == null){
                 String encoderedPw = encoder.encode(pw);
-                String role = user.getRole() == null ? "ROLE_USER" : user.getRole();
-                User user1 = User.builder()
+                String role = "ROLE_USER";
+                User user = User.builder()
                         .id(id).pw(encoderedPw).role(role).useYn("y")
                         .build();
-                em.persist(user1);
+                em.persist(user);
                 Commons.putMessage(result, 200, "회원가입 완료");
             } else {
                 String errorMsg = ErrorCode.ERROR_CODE_903.getMessage();
@@ -138,15 +140,22 @@ public class UserServiceImpl implements UserService, SystemConfigs {
         String id = String.valueOf(data.get("id"));
         String oldPw = String.valueOf(data.get("asPw"));
         String newPw = String.valueOf(data.get("newPw"));
+        String mode = String.valueOf(data.get("mode"));
         User foundUser = userRepo.findByid(id);
-        boolean isMatch = encoder.matches(oldPw, foundUser.getPw());
-        if(isMatch){
+        if(mode.equals("fetch")){
             String encoderedPw = encoder.encode(newPw);
             foundUser.setPw(encoderedPw);
-            Commons.putMessage(result, 200, "비밀번호 변경완료");
+            Commons.putMessage(result, 202, CODE_202);
         }else {
-            String errorMsg = ErrorCode.ERROR_CODE_902.getMessage();
-            Commons.putMessage(result, 902, errorMsg);
+            boolean isMatch = encoder.matches(oldPw, foundUser.getPw());
+            if(isMatch){
+                String encoderedPw = encoder.encode(newPw);
+                foundUser.setPw(encoderedPw);
+                Commons.putMessage(result, 200, "비밀번호 변경완료");
+            }else {
+                String errorMsg = ErrorCode.ERROR_CODE_902.getMessage();
+                Commons.putMessage(result, 902, errorMsg);
+            }
         }
         return result;
     }
@@ -275,21 +284,87 @@ public class UserServiceImpl implements UserService, SystemConfigs {
     public Map<String, Object> generateAuthKey(Map<String, Object> data) {
         Map<String, Object> result = new HashMap<>();
         String userId = String.valueOf(data.get("id"));
-        if(!userId.equals("null") && Strings.isNotEmpty(userId)){
-            List<ManageKey> foundKeyList = keyRepo.findValidKeyByUserId(userId);
-            if(foundKeyList.isEmpty()){
-                User user = userRepo.findByid(userId);
-                if(user != null){
-                    String authKey = KeyGenerator.generateKey();
-                    ManageKey manageKey = ManageKey.builder().authKey(authKey).user(user).build();
-                    em.persist(manageKey);
-                    Commons.setMessage(result, CODE_200);
+        try{
+            if(!userId.equals("null") && Strings.isNotEmpty(userId)){
+                ManageKey foundKey = keyRepo.findValidKeyByUserId(userId);
+                String isRetry = String.valueOf(data.get("retry"));
+                if(isRetry.equals("y") && foundKey != null){
+                    keyRepo.delete(foundKey);
+                    em.flush();
+                    em.clear();
+                    foundKey = null;
+                }
+                if(foundKey == null){
+                    User user = userRepo.findByid(userId);
+                    if(user != null){
+                        String authKey = KeyGenerator.generateKey();
+                        ManageKey manageKey = ManageKey.builder().authKey(authKey).user(user).build();
+                        em.persist(manageKey);
+                        result.put("authKey", authKey);
+                        Commons.putMessage(result,200, CODE_200);
+                    } else {
+                        Commons.putMessage(result,901, CODE_901);
+                    }
+                } else {
+                    //키는 존재. 유효기간이 지났는지 여부 체크
+                    if(isInTimeKey(foundKey)){
+                        Commons.putMessage(result,908, CODE_908); //아직 유효키 존재
+                    } else {
+                        //유효시간 경과. 기존키 제거 후새로발급
+                        keyRepo.delete(foundKey); //기존키 제거
+                        em.flush();
+                        em.clear();
+                        generateAuthKey(data);
+                    }
+
                 }
             } else {
-                Commons.setMessage(result, CODE_908);
+                Commons.setMessage(result, CODE_909);
             }
-
+        }catch(Exception e){
+            Commons.setMessage(result, CODE_900 +" : " +e.getMessage());
+            return result;
         }
+
+        return result;
+    }
+
+    private boolean isInTimeKey(ManageKey key){
+        LocalDateTime now = LocalDateTime.now();
+        return KeyGenerator.isInTimeAuthenticated(key.getCreateDate(), now);
+    }
+
+    @Override
+    public Map<String, Object> validateAuthKey(Map<String, Object> data) {
+        Map<String, Object> result = new HashMap<>();
+        String userId = String.valueOf(data.get("id"));
+        try{
+            if(!userId.equals("null") && Strings.isNotEmpty(userId)){
+                ManageKey storeKeyEntity = keyRepo.findValidKeyByUserId(userId);
+                if(storeKeyEntity != null && isInTimeKey(storeKeyEntity)){
+                    String storeKey = storeKeyEntity.getAuthKey();
+                    String inputKey = String.valueOf(data.get("inputKey"));
+                    boolean isValid = KeyGenerator.validateKey(inputKey, storeKey);
+                    if(isValid){
+                        //인증성공. 인증에
+                        Commons.putMessage(result, 201, CODE_201);
+                        keyRepo.delete(storeKeyEntity); //사용된 키 제거.
+                        em.flush();
+                        em.clear();
+                    } else {
+                        //인증실패
+                        Commons.putMessage(result, 910, CODE_910);
+                    }
+                }
+            } else {
+                Commons.setMessage(result, CODE_909);
+            }
+        }catch(Exception e){
+            Commons.setMessage(result, CODE_900 +" : " +e.getMessage());
+            return result;
+        }
+
+
         return result;
     }
 }

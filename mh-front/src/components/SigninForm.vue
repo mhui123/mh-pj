@@ -4,10 +4,10 @@
       <h1 class="page-header">회원가입</h1>
       <form @submit.prevent="submitForm" class="form">
         <div>
-          <label for="username">id :</label>
-          <input type="text" id="username" name="username" v-model="username" />
+          <label for="userid">id :</label>
+          <input type="text" id="userid" name="userid" v-model="userid" />
           <p class="validation-text">
-            <span class="warning" v-if="!isUsernameValid && username"> 이메일 형식으로 입력해주세요 </span>
+            <span class="warning" v-if="!isuseridValid && userid"> 이메일 형식으로 입력해주세요 </span>
           </p>
         </div>
         <div>
@@ -17,8 +17,15 @@
             <span class="warning" v-if="!isPwValid && password.length > 3"> 비밀번호는 8자이상, 문자와 숫자, 특수문자를 포함해주세요 </span>
           </p>
         </div>
+        <!-- <div>
+          <label for="username">이름 :</label>
+          <input type="text" id="username" name="username" v-model="username" />
+          <p class="validation-text">
+            <span class="warning" v-if="!isNameValid && username"> 이름은 한글로 2글자 이상 입력해주세요 </span>
+          </p>
+        </div> -->
         <div class="btn-groups">
-          <button class="btn" type="submit" :disabled="!isUsernameValid || !password">회원가입</button>
+          <button class="btn" type="submit" :disabled="!isuseridValid || !password">회원가입</button>
           <button @click="goBack" class="btn2">돌아가기</button>
         </div>
       </form>
@@ -27,27 +34,31 @@
 </template>
 
 <script>
-import { validateEmail, validatePw } from '@/utils/validation';
+import { validateEmail, validatePw, validateName } from '@/utils/validation';
 import { callApi } from '@/api/index';
 export default {
   data() {
     return {
-      username: '',
+      userid: '',
       password: '',
+      username: '',
     };
   },
   computed: {
-    isUsernameValid() {
-      return validateEmail(this.username);
+    isuseridValid() {
+      return validateEmail(this.userid);
     },
     isPwValid() {
       return validatePw(this.password);
     },
+    isNameValid() {
+      return validateName(this.username);
+    },
   },
   methods: {
     async submitForm() {
-      if (this.isUsernameValid || this.password) {
-        const { data } = await callApi('signin', { id: this.username, pw: this.password });
+      if (this.isuseridValid && this.isPwValid) {
+        const { data } = await callApi('signin', { id: this.userid, pw: this.password, name: this.username });
         console.log(data);
         const { result, result_description } = data;
         if (result === 200) {

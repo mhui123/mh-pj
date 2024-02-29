@@ -13,8 +13,12 @@ function validatePw(pw) {
 }
 
 function validateURL(url) {
-  const reg = /^(http(s):\/\/.)[-a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_+.~#?&//=]*)$/;
+  const reg = /^(http(s)?:\/\/.)?[-a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_+.~#?&//=]*)$/;
   return reg.test(url);
 }
+function validateName(name) {
+  const reg = /^[가-힣]{2,20}$/;
+  return reg.test(name);
+}
 
-export { validateEmail, validatePw, validateURL };
+export { validateEmail, validatePw, validateURL, validateName };

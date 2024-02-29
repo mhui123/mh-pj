@@ -3,8 +3,10 @@ package com.bandi.mhProject.constants;
 import lombok.Getter;
 
 public interface SystemConfigs {
-    public final Long AUTH_DURATION = 1000 * 60 * 10L;
+    public final Long AUTH_DURATION = 10L;
     public final String CODE_200 = "정상동작";
+    public final String CODE_201 = "인증 성공";
+    public final String CODE_202 = "비밀번호 변경완료";
 
     public final String CODE_900 = "에러발생";
     public final String CODE_901 = "유저를 찾을 수 없습니다.";
@@ -15,4 +17,6 @@ public interface SystemConfigs {
     public final String CODE_906 = "사용중지된 계정입니다.";
     public final String CODE_907 = "비밀번호를 확인해주세요.";
     public final String CODE_908 = "아직 유효한 인증키가 존재합니다.";
+    public final String CODE_909 = "파라미터가 올바르지 않습니다.";
+    public final String CODE_910 = "인증키값이 일치하지 않습니다.";
 }

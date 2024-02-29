@@ -15,12 +15,14 @@ public class ManageKeyCustomRepoImpl implements ManageKeyCustomRepo{
     private final EntityManager em;
     private final JPAQueryFactory factory;
     @Override
-    public List<ManageKey> findValidKeyByUserId(String userId) {
-        return factory.selectFrom(QManageKey.manageKey)
+    public ManageKey findValidKeyByUserId(String userId) {
+        List<ManageKey> list = factory.selectFrom(QManageKey.manageKey)
                 .join(QManageKey.manageKey.user, QUser.user)
                 .where(QManageKey.manageKey.useYn.eq("y")
                         .and(QUser.user.id.eq(userId))
                 )
+                .orderBy(QManageKey.manageKey.createDate.desc())
                 .fetch();
+        return list.isEmpty() ? null : list.get(0);
     }
 }

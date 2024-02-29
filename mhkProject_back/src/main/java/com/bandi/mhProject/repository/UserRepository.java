@@ -15,4 +15,5 @@ public interface UserRepository extends JpaRepository<User, String>, UserCustomR
     User findByid(String userId);
     List<UserDto> findUserList();
     List<UserDto> findUserListByKeyword(String keyword);
+//    List<UserDto> findUserListByUsername(String username);
 }

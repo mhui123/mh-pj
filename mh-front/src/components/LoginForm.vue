@@ -17,8 +17,8 @@
         <div class="btn-groups">
           <button class="btn" type="submit" :disabled="!isUsernameValid || !password">로그인</button>
           <div class="link-narashi">
-            <li class="suggestJoin" @click="fetchInfo('id')">아이디 찾기</li>
-            <span class="gubun-bar">|</span>
+            <!-- <li class="suggestJoin" @click="fetchInfo('id')">아이디 찾기</li>
+            <span class="gubun-bar">|</span> -->
             <li class="suggestJoin" @click="fetchInfo('pw')">비밀번호 찾기</li>
             <span class="gubun-bar">|</span>
             <router-link to="/signin" class="suggestJoin">회원가입</router-link>
@@ -31,7 +31,9 @@
 
 <script>
 import { validateEmail } from '@/utils/validation';
+import { setItem } from '@/utils/localstorageM';
 import { mapActions, mapMutations } from 'vuex';
+
 export default {
   data() {
     return {
@@ -60,6 +62,7 @@ export default {
       }
     },
     fetchInfo(value) {
+      setItem('gubun', value);
       this.setGubun(value);
       this.$router.push('/fetch');
       // testAPI({ username: 123, password: 456 });

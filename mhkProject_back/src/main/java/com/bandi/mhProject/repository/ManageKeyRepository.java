@@ -9,5 +9,5 @@ import java.util.List;
 
 public interface ManageKeyRepository extends JpaRepository<ManageKey, String>, ManageKeyCustomRepo {
     ManageKey findAuthKeyByUserId(String userId);
-    List<ManageKey>  findValidKeyByUserId(String userId);
+    ManageKey  findValidKeyByUserId(String userId);
 }

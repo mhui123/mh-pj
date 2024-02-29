@@ -108,7 +108,8 @@ public class WordServiceImpl implements WordService {
     }
 
     @Override
-    public InfoDto getWordById(String id) {
+    public InfoDto getWordById(Map<String, Object> data) {
+        String id = String.valueOf(data.get("id"));
         InfoDto dto = null;
         try {
             Info rawInfo = infoRepo.findById(id).orElse(null);

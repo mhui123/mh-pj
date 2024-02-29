@@ -39,6 +39,17 @@ public class UserCustomRepoImpl implements UserCustomRepo{
         return dtoList;
     }
 
+//    @Override
+//    public List<UserDto> findUserListByUsername(String username) {
+//        List<User> userList = factory.selectFrom(QUser.user)
+//                .where(QUser.user.name.eq(username)).fetch();
+//        List<UserDto> dtoList = new ArrayList();
+//        for(User u : userList){
+//            dtoList.add(setUserDto(u));
+//        }
+//        return dtoList;
+//    }
+
     private UserDto setUserDto(User u){
         return UserDto.builder()
                 .id(u.getId()).role(u.getRole()).useYn(u.getUseYn())

@@ -72,7 +72,7 @@ export default {
     if (this.wordId) {
       this.mode = 'edit';
       this.pageTitle = '수정';
-      const { data } = await callApi('getWordById', this.wordId);
+      const { data } = await callApi('getWordById', { id: this.wordId });
       this.setOrigin(data);
     } else {
       console.log('here is create page');
@@ -91,7 +91,7 @@ export default {
     async submitForm() {
       let result;
       try {
-        this.link = this.link.length === 0 ? 'none' : this.link;
+        this.link = this.link.length === 0 ? 'none' : this.link.startsWith('http') ? this.link : `http://${this.link}`;
         if (this.mode === 'edit') {
           let { data } = await callApi('edit', { editor: this.getUsername, title: this.title, contents: this.contents, wordId: this.wordId, link: this.link });
           result = data;
@@ -118,6 +118,7 @@ export default {
     setOrigin(data) {
       this.title = data.infokey;
       this.contents = data.description;
+      this.link = data.link === 'none' ? '' : data.link;
     },
   },
 };

@@ -5,5 +5,5 @@ import com.bandi.mhProject.entity.ManageKey;
 import java.util.List;
 
 public interface ManageKeyCustomRepo {
-    List<ManageKey> findValidKeyByUserId(String userId);
+    ManageKey findValidKeyByUserId(String userId);
 }

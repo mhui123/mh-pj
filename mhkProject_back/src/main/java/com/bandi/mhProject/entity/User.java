@@ -17,6 +17,8 @@ import java.util.List;
 public class User extends TimeEntity {
     @Id @Column(name="user_id")
     private String id;
+//    @Column(name="user_name")
+//    private String name;
     @Column(name="user_pw")
     private String pw;
     @Column(columnDefinition = "VARCHAR(255) DEFAULT 'ROLE_USER'")

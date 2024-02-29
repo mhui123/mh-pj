@@ -4,7 +4,7 @@ import { setAccessToken, setRefreshToken, clearStorage, getAccessToken, getRefre
 const state = {
   username: getUserFromCookie() || '',
   role: getItem('role') || '',
-  pageGubun: '',
+  pageGubun: getItem('gubun') || '',
   accessToken: getAccessToken(),
   refreshToken: getRefreshToken(),
   userList: [],
@@ -20,7 +20,7 @@ const mutations = {
     state.refreshToken = refreshToken;
   },
   setGubun(state, gubun) {
-    state.gubun = gubun;
+    state.pageGubun = gubun;
   },
   setRole(state, role) {
     state.role = role;
@@ -29,7 +29,7 @@ const mutations = {
     state.username = '';
   },
   clearGubun(state) {
-    state.gubun = '';
+    state.pageGubun = '';
   },
   clearToken(state) {
     state.accessToken = '';
@@ -48,7 +48,7 @@ const getters = {
     return state.username;
   },
   getGubun(state) {
-    return state.gubun;
+    return state.pageGubun;
   },
   getAccessToken(state) {
     return state.accessToken;

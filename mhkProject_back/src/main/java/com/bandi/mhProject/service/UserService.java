@@ -11,7 +11,7 @@ import java.util.Map;
 
 public interface UserService {
     Map<String ,Object> login(User user);
-    Map<String ,Object> signin(User user);
+    Map<String ,Object> signin(Map<String, Object> data);
 
     Map<String ,Object> changePw(Map<String, Object> data);
     List<UserDto> getUserList();
@@ -22,4 +22,5 @@ public interface UserService {
     Map<String, Object> getUserListByKeyword(Map<String, Object> data);
 
     Map<String, Object> generateAuthKey(Map<String, Object> data);
+    Map<String, Object> validateAuthKey(Map<String, Object> data);
 }

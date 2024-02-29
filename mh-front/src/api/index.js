@@ -9,7 +9,13 @@ function callApi(url, param) {
   // } else {
   //   return instance.post(url, param);
   // }
-  return instance.post(url, param);
+  if (url.startsWith('delete/')) {
+    return instance.delete(url);
+  } else if ('edit' === url) {
+    return instance.put(url, param);
+  } else {
+    return instance.post(url, param);
+  }
 }
 // function logoutUser() {
 //   return instance.post('logout');
