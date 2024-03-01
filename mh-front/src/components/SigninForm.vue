@@ -59,7 +59,6 @@ export default {
     async submitForm() {
       if (this.isuseridValid && this.isPwValid) {
         const { data } = await callApi('signin', { id: this.userid, pw: this.password, name: this.username });
-        console.log(data);
         const { result, result_description } = data;
         if (result === 200) {
           this.$router.push('/login');

@@ -67,7 +67,6 @@ const actions = {
   async LOGIN({ commit }, userData) {
     const { data } = await callApi('login', userData);
     const { userInfo, result } = data;
-    console.log(data);
     if (data === null) {
       return null;
     } else if (result === 200) {

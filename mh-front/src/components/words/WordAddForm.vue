@@ -56,14 +56,17 @@ export default {
     fetchWordId() {
       return this.getWordId;
     },
-    ...mapGetters(['getUsername', 'getWordId']),
+    getPageFrom() {
+      return this.getPageFrom;
+    },
+    ...mapGetters(['getUsername', 'getWordId', 'getPageFrom']),
   },
   async created() {
     // this.wordId = this.$route.params['id'];
     const thisRoute = this.$router.currentRoute;
     const isEditPage = thisRoute.value.fullPath.includes('edit');
-    this.wordId = this.getWordId;
-    if (isEditPage && !this.wordId) {
+    this.wordId = this.fetchWordId;
+    if (isEditPage && !this.fetchWordId) {
       this.callToast('비정상적 접근입니다. 메인페이지로 돌아갑니다.');
       await sleep(2000);
       this.$router.push('/main');
@@ -75,12 +78,11 @@ export default {
       const { data } = await callApi('getWordById', { id: this.wordId });
       this.setOrigin(data);
     } else {
-      console.log('here is create page');
       this.pageTitle = '생성';
     }
   },
   methods: {
-    ...mapMutations(['clearWordId']),
+    ...mapMutations(['clearWordId', 'setPageFrom']),
     titleEvent() {
       if (!this.isTitleValid) {
         this.titleInvalid = false;
@@ -89,18 +91,21 @@ export default {
       }
     },
     async submitForm() {
-      let result;
+      let result, result_description;
       try {
         this.link = this.link.length === 0 ? 'none' : this.link.startsWith('http') ? this.link : `http://${this.link}`;
         if (this.mode === 'edit') {
           let { data } = await callApi('edit', { editor: this.getUsername, title: this.title, contents: this.contents, wordId: this.wordId, link: this.link });
-          result = data;
+          result = data['result'];
+          result_description = data['result_description'];
         } else {
           let { data } = await callApi('addWord', { id: this.getUsername, title: this.title, contents: this.contents, link: this.link });
-          result = data;
+          result = data['result'];
+          result_description = data['result_description'];
         }
-        this.callToast(result.result_description);
-        if (result.result === 200) {
+        this.callToast(result_description);
+        if (result === 200) {
+          this.setPageFrom('');
           this.clearWordId();
           this.$router.push('/main');
         }
@@ -113,7 +118,8 @@ export default {
       this.emitter.emit('show:toast', msg);
     },
     goBack() {
-      this.$router.push('/main');
+      const goTo = this.getPageFrom === '' ? '/main' : this.getPageFrom;
+      this.$router.push(goTo);
     },
     setOrigin(data) {
       this.title = data.infokey;

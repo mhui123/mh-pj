@@ -102,7 +102,6 @@ export default {
         if (result === 201) {
           this.showModal = true;
         }
-        console.log(data);
       } else {
         this.callToast('이메일을 올바르게 입력해주세요');
       }

@@ -87,6 +87,7 @@
 <script>
 import modal from './common/ModalWin.vue';
 import { mapGetters, mapMutations } from 'vuex';
+import { getCheckedIds, initCheckboxes } from '@/utils/common';
 import { callApi } from '@/api/index';
 import SearchForm from './SearchForm.vue';
 
@@ -140,10 +141,9 @@ export default {
       this.mode = mode;
     },
     async changeStatus(mode) {
-      await this.getCheckedIds();
+      const filteredIds = await getCheckedIds();
       let result_description = '';
-      if (this.checkedUsers.length > 0) {
-        let filteredIds = this.checkedUsers.map(m => m.id);
+      if (filteredIds.length > 0) {
         if (mode === 'useYn') {
           const response = await callApi('changeUseYn', { users: filteredIds });
           const { status, data } = response;
@@ -152,8 +152,8 @@ export default {
             filteredIds.forEach(e => {
               let user = this.userList.filter(x => x.id === e)[0];
               user['useYn'] = user['useYn'] === 'y' ? 'n' : 'y';
-              this.initCheckboxes();
             });
+            initCheckboxes();
           }
         } else if (mode === 'role') {
           const response = await callApi('changeRole', { users: filteredIds });
@@ -163,19 +163,19 @@ export default {
             filteredIds.forEach(e => {
               let user = this.userList.filter(x => x.id === e)[0];
               user['role'] = user['role'] === 'ROLE_USER' ? 'ROLE_ADMIN' : 'ROLE_USER';
-              this.initCheckboxes();
             });
+            initCheckboxes();
           }
         } else if (mode === 'initPw') {
           const { data } = await callApi('initializePw', { ids: filteredIds });
           result_description = data['result_description'];
           this.callToast(result_description);
-          this.initCheckboxes();
+          initCheckboxes();
         } else if (mode === 'delWord') {
           const { data } = await callApi(`delWords`, { ids: filteredIds });
           result_description = data['result_description'];
           this.callToast(result_description);
-          this.initCheckboxes();
+          initCheckboxes();
           filteredIds.forEach(e => {
             let arr = this.getWordList;
             let idx = arr.map(m => m.id).indexOf(Number.parseInt(e));
@@ -191,31 +191,15 @@ export default {
       this.emitter.emit('show:toast', msg);
     },
     async initializePw() {
-      await this.getCheckedIds();
-      let filteredIds = this.checkedUsers.map(m => m.id);
+      let filteredIds = await getCheckedIds();
       if (filteredIds.length > 0) {
         const { data } = await callApi('initializePw', { ids: filteredIds });
         const { result_description } = data;
         this.callToast(result_description);
-        this.initCheckboxes();
+        initCheckboxes();
       } else {
         this.callToast('비밀번호를 초기화할 대상을 선택해주세요');
       }
-    },
-    async getCheckedIds() {
-      let checkBoxes = document.getElementsByClassName('chkInput');
-      checkBoxes = Array.from(checkBoxes);
-      this.checkedUsers = checkBoxes.filter(x => x.checked);
-    },
-    initCheckboxes() {
-      let checkBoxes = document.getElementsByClassName('chkInput');
-      checkBoxes = Array.from(checkBoxes);
-      checkBoxes
-        .filter(x => x.checked)
-        .forEach(e => {
-          e.checked = false;
-        });
-      this.checkedUsers = [];
     },
     async delWord() {
       await this.getCheckedIds();

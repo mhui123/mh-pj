@@ -26,7 +26,7 @@ router.beforeEach((to, from, next) => {
   }
 
   if (to.meta.auth && !userStore.getters.getAccessToken) {
-    console.log('인증이 필요한 페이지입니다.');
+    alert('인증이 필요한 페이지입니다.');
     next('/login');
     return false;
   }

@@ -18,6 +18,7 @@
     <SearchForm :mode="mode"></SearchForm>
     <div class="btn-groups">
       <div>
+        <button class="btn" @click="editWords">수정</button>
         <button class="btn" @click="deleteWords">삭제</button>
       </div>
     </div>
@@ -52,20 +53,20 @@
               <label for="">기존 비밀번호</label>
               <input type="password" class="{warn-input : !warnInput}" v-model="asPw" id="asPw" @keypress="warnInput = true" />
               <p class="validation-text">
-                <span class="warning" v-if="!isAsPwValid && asPw.length > 3"> 비밀번호는 8자이상, 문자와 숫자, 특수문자를 포함해주세요 </span>
+                <span class="warning" v-if="!isAsPwValid && asPw.length > 1"> 비밀번호는 8자이상, 문자와 숫자, 특수문자를 포함해주세요 </span>
               </p>
               <label for="">새 비밀번호</label>
               <input type="password" v-model="newPw" />
               <p class="validation-text">
-                <span class="warning" v-if="!isNewPwValid && newPw.length > 3"> 비밀번호는 8자이상, 문자와 숫자, 특수문자를 포함해주세요 </span>
+                <span class="warning" v-if="!isNewPwValid && this.newPw.length > 1"> 비밀번호는 8자이상, 문자와 숫자, 특수문자를 포함해주세요 </span>
               </p>
               <label for="">새 비밀번호 확인</label>
               <input type="password" v-model="newPw2" />
               <p class="validation-text">
-                <span class="warning" v-if="!isNewPw2Valid && newPw2.length > 3"> {{ pw2Warn }} </span>
+                <span class="warning" v-if="!isNewPw2Valid && this.newPw2.length > 1"> 비밀번호는 8자이상, 문자와 숫자, 특수문자를 포함해주세요 </span>
               </p>
               <div>
-                <button class="btn" @click="changePw">변경하기</button>
+                <button class="btn" @click="changePw" :disabled="!isAsPwValid || !isNewPwValid || !isNewPw2Valid">변경하기</button>
               </div>
             </form>
           </div>
@@ -78,6 +79,7 @@
 <script>
 import modal from './common/ModalWin.vue';
 import { validatePw } from '@/utils/validation';
+import { getCheckedIds, initCheckboxes } from '@/utils/common';
 import { mapGetters, mapMutations } from 'vuex';
 import { callApi } from '@/api/index';
 import SearchForm from './SearchForm.vue';
@@ -93,20 +95,19 @@ export default {
       newPw2: '',
       showModal: false,
       warnInput: false,
-      pw2Warn: '',
       mode: 'mypage',
       checkedUsers: [],
     };
   },
   computed: {
     isAsPwValid() {
-      return validatePw(this.asPw);
+      return validatePw(this.asPw) && this.asPw.length > 0;
     },
     isNewPwValid() {
-      return validatePw(this.newPw);
+      return validatePw(this.newPw) && this.newPw.length > 0;
     },
     isNewPw2Valid() {
-      return validatePw(this.newPw2);
+      return validatePw(this.newPw2) && this.newPw2.length > 0;
     },
     wordList() {
       return this.getWordList;
@@ -114,28 +115,46 @@ export default {
     username() {
       return this.getUsername;
     },
-    ...mapGetters(['getUsername', 'getWordList', 'getUsername']),
+    getWordId() {
+      return this.getWordId;
+    },
+    ...mapGetters(['getUsername', 'getWordList', 'getUsername', 'getWordId']),
   },
   created() {
+    this.setPageFrom('');
     this.fetchMyWords();
   },
   methods: {
-    ...mapMutations(['setWordList', 'clearWordList', 'spliceWordList']),
+    ...mapMutations(['setWordList', 'clearWordList', 'spliceWordList', 'setWordId', 'setPageFrom']),
     async deleteWords() {
-      await this.getCheckedIds();
-      if (this.checkedUsers.length > 0) {
-        let filteredIds = this.checkedUsers.map(m => m.id);
+      const filteredIds = await getCheckedIds();
+      if (filteredIds.length === 0) {
+        this.callToast('삭제할 대상을 선택해주세요.');
+        return false;
+      }
+      if (filteredIds.length > 0) {
         const { data } = await callApi(`delWords`, { ids: filteredIds });
         let result_description = data['result_description'];
         this.callToast(result_description);
-        this.initCheckboxes();
+        initCheckboxes();
         filteredIds.forEach(e => {
           let arr = this.getWordList;
           let idx = arr.map(m => m.id).indexOf(Number.parseInt(e));
           this.spliceWordList(idx);
         });
+      }
+    },
+    async editWords() {
+      const filteredIds = await getCheckedIds();
+      if (filteredIds.length === 0) {
+        this.callToast('수정할 대상을 선택해주세요.');
+      } else if (filteredIds.length > 1) {
+        this.callToast('수정은 1건만 진행할 수 있습니다.');
+        initCheckboxes();
       } else {
-        this.callToast('삭제할 대상을 선택해주세요');
+        this.setPageFrom('/mypage');
+        this.setWordId(filteredIds[0]);
+        this.$router.push(`/edit`);
       }
     },
     chkPwState() {
@@ -155,7 +174,6 @@ export default {
       this.setWordList(list);
     },
     async changePw() {
-      this.pw2Warn = '비밀번호는 8자이상, 문자와 숫자, 특수문자를 포함해주세요';
       const userId = this.getUsername;
       let payload = { id: userId, asPw: this.asPw, newPw: this.newPw };
       if (this.chkPwState()) {
@@ -177,21 +195,6 @@ export default {
     },
     callToast(msg) {
       this.emitter.emit('show:toast', msg);
-    },
-    async getCheckedIds() {
-      let checkBoxes = document.getElementsByClassName('chkInput');
-      checkBoxes = Array.from(checkBoxes);
-      this.checkedUsers = checkBoxes.filter(x => x.checked);
-    },
-    initCheckboxes() {
-      let checkBoxes = document.getElementsByClassName('chkInput');
-      checkBoxes = Array.from(checkBoxes);
-      checkBoxes
-        .filter(x => x.checked)
-        .forEach(e => {
-          e.checked = false;
-        });
-      this.checkedUsers = [];
     },
   },
 };

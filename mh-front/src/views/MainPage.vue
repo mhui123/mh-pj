@@ -5,7 +5,7 @@
       <SearchForm></SearchForm>
       <LoadingSpinner v-if="isLoading"></LoadingSpinner>
       <ul v-else>
-        <WordListItem v-for="info in infoList" :key="info.id" :item="info" @change="changeData"></WordListItem>
+        <WordListItem v-for="info in infoList" :key="info.id" :item="info"></WordListItem>
         <li v-if="infoList.length === 0 && chkKeyword">
           <i class="icon ion-md-alert nothing-icon"></i>
           <input value="검색결과가 없습니다." class="zero-result" />
@@ -64,16 +64,11 @@ export default {
     async fetchData() {
       this.isLoading = true;
       const { data } = await callApi('getList');
-      console.log('listData : ', data);
       this.isLoading = false;
       this.clearWordList();
       this.pushToWordList(data);
     },
-    changeData() {
-      console.log('changeData', this.getWordList);
-    },
     onClikeRedirect(link, keyword) {
-      console.log(`검색키워드 : ${keyword}`);
       link = link ?? `https://ko.wikipedia.org/wiki/${keyword}`;
       window.open(link, '_blank');
     },

@@ -51,16 +51,12 @@ export default {
       window.open(link, '_blank');
     },
     async deleteWord(itemId) {
-      itemId;
-      // console.log(this.getWordList);
       let arr = this.getWordList;
       let idx = arr.map(m => m.id).indexOf(itemId);
 
       const { data } = await callApi(`delete/${itemId}`);
       if (data.result === 200) {
-        console.log(data.result_description);
         this.spliceWordList(idx);
-        console.log(this.getWordList);
         this.callToast(data.result_description);
       }
     },
