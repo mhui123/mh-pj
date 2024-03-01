@@ -17,18 +17,7 @@
       <i class="icon ion-md-search"></i>
     </a>
     <Teleport to="body">
-      <modal :showModal="showModal" @close="showModal = false" @update:showModal="modalNo">
-        <template #header>
-          <i class="icon ion-md-alert"> 확인 </i>
-        </template>
-        <template #body>
-          <p>{{ modalMsg }}</p>
-          <div class="btn-groups">
-            <button class="btn" @click="modalOk" @ok="modalOk">확인</button>
-            <button class="btn2" @click="modalNo" @no="modalNo">취소</button>
-          </div>
-        </template>
-      </modal>
+      <ConfirmModal :showModal="showModal" @ok="modalOk" @no="modalNo" :modalMsg="modalMsg"></ConfirmModal>
     </Teleport>
   </li>
 </template>
@@ -38,13 +27,15 @@ import { mapGetters, mapMutations } from 'vuex';
 import { callApi } from '@/api/index';
 import { validateURL } from '@/utils/validation';
 import { sleep } from '@/utils/common';
-import modal from '@/components/common/ModalWin.vue';
+// import modal from '@/components/common/ModalWin.vue';
+import ConfirmModal from '../common/ConfirmModal.vue';
 export default {
   props: {
     item: Object,
   },
   components: {
-    modal,
+    // modal,
+    ConfirmModal,
   },
   data() {
     return {

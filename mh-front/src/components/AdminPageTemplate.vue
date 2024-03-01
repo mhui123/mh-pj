@@ -17,12 +17,12 @@
     </div>
     <div class="btn-groups">
       <div v-if="mode === 'user'">
-        <button class="btn" @click="changeStatus('initPw')">비밀번호 초기화</button>
-        <button class="btn" @click="changeStatus('role')">권한변경</button>
-        <button class="btn" @click="changeStatus('useYn')">사용여부 변경</button>
+        <button class="btn" @click="callModal('initPw')">비밀번호 초기화</button>
+        <button class="btn" @click="callModal('role')">권한변경</button>
+        <button class="btn" @click="callModal('useYn')">사용여부 변경</button>
       </div>
       <div v-else>
-        <button class="btn" @click="changeStatus('delWord')">삭제</button>
+        <button class="btn" @click="callModal('delWord')">삭제</button>
       </div>
     </div>
     <SearchForm :mode="mode"></SearchForm>
@@ -67,25 +67,13 @@
       </table>
     </div>
     <Teleport to="body">
-      <modal :showModal="showModal" @close="showModal = false">
-        <template #header>
-          <i class="icon ion-md-close closeModalBtn" @click="showModal = false"></i>
-        </template>
-        <template #body>
-          <div>
-            <form @submit.prevent class="form">
-              <h3>{{ modalTitle }}</h3>
-            </form>
-          </div>
-        </template>
-      </modal>
-      <!-- <AdmUserList :showModal="showModal" @close="showModal = false"></AdmUserList> -->
+      <ConfirmModal :showModal="showModal" @ok="modalOk" @no="modalNo" :modalMsg="modalMsg"></ConfirmModal>
     </Teleport>
   </div>
 </template>
 
 <script>
-import modal from './common/ModalWin.vue';
+import ConfirmModal from './common/ConfirmModal.vue';
 import { mapGetters, mapMutations } from 'vuex';
 import { getCheckedIds, initCheckboxes } from '@/utils/common';
 import { callApi } from '@/api/index';
@@ -93,16 +81,15 @@ import SearchForm from './SearchForm.vue';
 
 export default {
   components: {
-    modal,
     SearchForm,
+    ConfirmModal,
   },
   data() {
     return {
       showModal: false,
+      modalMsg: '',
+      reason: '',
       mode: '',
-      modalTitle: '',
-      // userList: [],
-      // wordList: [],
       checkedUsers: [],
     };
   },
@@ -203,6 +190,28 @@ export default {
     },
     async delWord() {
       await this.getCheckedIds();
+    },
+    callModal(reason) {
+      this.showModal = true;
+      this.reason = reason;
+      const reasons = {
+        initPw: '비밀번호를 초기화하시겠습니까?',
+        role: '권한을 변경하시겠습니까?',
+        useYn: '사용여부를 변경하시겠습니까?',
+        delWord: '삭제하시겠습니까?',
+      };
+      this.modalMsg = reasons[reason];
+    },
+    modalOk() {
+      if (this.reason != '') {
+        this.changeStatus(this.reason);
+        this.showModal = false;
+        this.reason = '';
+      }
+    },
+    modalNo() {
+      this.showModal = false;
+      this.reason = '';
     },
   },
 };
