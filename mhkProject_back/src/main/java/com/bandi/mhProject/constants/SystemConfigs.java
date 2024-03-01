@@ -7,6 +7,13 @@ public interface SystemConfigs {
     public final String CODE_200 = "정상동작";
     public final String CODE_201 = "인증 성공";
     public final String CODE_202 = "비밀번호 변경완료";
+    public final String CODE_203 = "로그인 성공";
+    public final String CODE_204 = "회원가입 완료";
+    public final String CODE_205 = "권한변경 완료";
+    public final String CODE_206 = "사용여부변경 완료";
+    public final String CODE_207 = "비밀번호 초기화 완료";
+    public final String CODE_208 = "작성 완료";
+    public final String CODE_209 = "삭제 완료";
 
     public final String CODE_900 = "에러발생";
     public final String CODE_901 = "유저를 찾을 수 없습니다.";

@@ -1,37 +1,25 @@
 package com.bandi.mhProject.serviceimpl;
 
 import com.bandi.mhProject.component.JwtTokenProvider;
-import com.bandi.mhProject.config.auth.PrincipalDetail;
-import com.bandi.mhProject.constants.ErrorCode;
-import com.bandi.mhProject.constants.ErrorCodes;
 import com.bandi.mhProject.constants.SystemConfigs;
 import com.bandi.mhProject.dto.JwtToken;
 import com.bandi.mhProject.dto.UserDto;
-import com.bandi.mhProject.entity.Info;
 import com.bandi.mhProject.entity.ManageKey;
 import com.bandi.mhProject.entity.User;
 import com.bandi.mhProject.repository.ManageKeyRepository;
 import com.bandi.mhProject.repository.UserRepository;
 import com.bandi.mhProject.service.UserService;
 import com.bandi.mhProject.util.Commons;
-import com.bandi.mhProject.util.Encoder;
 import com.bandi.mhProject.util.KeyGenerator;
-import com.nimbusds.jose.shaded.gson.JsonObject;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.minidev.json.JSONObject;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -86,20 +74,20 @@ public class UserServiceImpl implements UserService, SystemConfigs {
                         Authentication authentication = authBuilder.getObject().authenticate(authToken); //authenticationManager.authenticate(authToken);
                         token = jwtTokenProvider.generateToken(authentication);
                         dto = UserDto.builder().id(id).role(role).authorized(true).token(token).build();
-                        Commons.putMessage(result, 200, "로그인성공");
+                        Commons.putMessage(result, 200, CODE_203);
                         result.put("userInfo", dto);
                     } else {
-                        Commons.putMessage(result, 904, ErrorCode.ERROR_CODE_906.getMessage());
+                        Commons.putMessage(result, 906, CODE_906);
                     }
                 }
                 else {
-                    Commons.putMessage(result, 907, ErrorCode.ERROR_CODE_907.getMessage());
+                    Commons.putMessage(result, 907, CODE_907);
                 }
             } else {
-                Commons.putMessage(result, 901, ErrorCode.ERROR_CODE_901.getMessage());
+                Commons.putMessage(result, 901, CODE_901);
             }
         } catch(Exception e){
-            Commons.putMessage(result, 900, ErrorCode.ERROR_CODE_900.getMessage());
+            Commons.putMessage(result, 900, CODE_900);
         }
 
         return result;
@@ -120,15 +108,12 @@ public class UserServiceImpl implements UserService, SystemConfigs {
                         .id(id).pw(encoderedPw).role(role).useYn("y")
                         .build();
                 em.persist(user);
-                Commons.putMessage(result, 200, "회원가입 완료");
+                Commons.putMessage(result, 200, CODE_204);
             } else {
-                String errorMsg = ErrorCode.ERROR_CODE_903.getMessage();
-                Commons.putMessage(result, 903, errorMsg);
+                Commons.putMessage(result, 903, CODE_903);
             }
         } catch(Exception e){
-            e.printStackTrace();
-
-            String errorMsg = ErrorCode.ERROR_CODE_900.getMessage() + " : " + e.getMessage();
+            String errorMsg = CODE_900 + " : " + e.getMessage();
             Commons.putMessage(result, 900, errorMsg);
         }
         return result;
@@ -153,8 +138,7 @@ public class UserServiceImpl implements UserService, SystemConfigs {
                 foundUser.setPw(encoderedPw);
                 Commons.putMessage(result, 200, "비밀번호 변경완료");
             }else {
-                String errorMsg = ErrorCode.ERROR_CODE_902.getMessage();
-                Commons.putMessage(result, 902, errorMsg);
+                Commons.putMessage(result, 902, CODE_902);
             }
         }
         return result;
@@ -184,14 +168,14 @@ public class UserServiceImpl implements UserService, SystemConfigs {
                     }
                 }
                 if(!failedId.isEmpty()){
-                    String errorMsg = ErrorCode.ERROR_CODE_901.getMessage() + failedId.toString();
+                    String errorMsg = CODE_901 + failedId.toString();
                     Commons.putMessage(result, 901, errorMsg);
                 } else {
-                    Commons.putMessage(result, 200, "권한변경 성공");
+                    Commons.putMessage(result, 200, CODE_205);
                 }
             }
         } catch(Exception e){
-            String errorMsg = ErrorCode.ERROR_CODE_900.getMessage()+" : "+e.getMessage();
+            String errorMsg = CODE_900+" : "+e.getMessage();
             Commons.putMessage(result, 900, errorMsg);
         }
         return result;
@@ -216,14 +200,14 @@ public class UserServiceImpl implements UserService, SystemConfigs {
                     }
                 }
                 if(!failedId.isEmpty()){
-                    String errorMsg = ErrorCode.ERROR_CODE_901.getMessage() + failedId.toString();
+                    String errorMsg = CODE_901 + failedId.toString();
                     Commons.putMessage(result, 901, errorMsg);
                 } else {
-                    Commons.putMessage(result, 200, "사용여부 변경 완료");
+                    Commons.putMessage(result, 200, CODE_206);
                 }
             }
         } catch(Exception e){
-            String errorMsg = ErrorCode.ERROR_CODE_900.getMessage()+" : "+e.getMessage();
+            String errorMsg = CODE_900+" : "+e.getMessage();
             Commons.putMessage(result, 900, errorMsg);
         }
         return result;
@@ -249,14 +233,14 @@ public class UserServiceImpl implements UserService, SystemConfigs {
                     }
                 }
                 if(!failedId.isEmpty()){
-                    String errorMsg = ErrorCode.ERROR_CODE_904.getMessage() + failedId.toString();
+                    String errorMsg = CODE_904 + failedId.toString();
                     Commons.putMessage(result, 904, errorMsg);
                 } else {
-                    Commons.putMessage(result, 200, "비밀번호 초기화 성공");
+                    Commons.putMessage(result, 200, CODE_207);
                 }
             }
         }catch(Exception e){
-            String errorMsg = ErrorCode.ERROR_CODE_900.getMessage() + " : " + e.getMessage();
+            String errorMsg = CODE_900 + " : " + e.getMessage();
             Commons.putMessage(result, 900, errorMsg);
         }
 
@@ -273,7 +257,7 @@ public class UserServiceImpl implements UserService, SystemConfigs {
             String msg = "검색결과: "+ dtoList.size() + "건";
             Commons.putMessage(result, 200, msg);
         } catch(Exception e){
-            String errorMsg = ErrorCode.ERROR_CODE_900.getMessage() + " : " + e.getMessage();
+            String errorMsg = CODE_900 + " : " + e.getMessage();
             Commons.putMessage(result, 900, errorMsg);
         }
         result.put("list", dtoList);
