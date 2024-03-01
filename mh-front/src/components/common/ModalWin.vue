@@ -1,7 +1,7 @@
 <template>
   <Transition name="modal">
-    <div v-if="showModal" class="modal-mask">
-      <div class="modal-container">
+    <div v-if="showModal" class="modal-mask" @click="closeModal">
+      <div class="modal-container" @click.stop>
         <div class="modal-header">
           <slot name="header">default header</slot>
         </div>
@@ -18,6 +18,11 @@
 export default {
   props: {
     showModal: Boolean,
+  },
+  methods: {
+    closeModal() {
+      this.$emit('update:showModal', false);
+    },
   },
 };
 </script>
@@ -56,6 +61,14 @@ export default {
 
 .modal-default-button {
   float: right;
+}
+
+.btn-groups {
+  text-align: center;
+  margin: 1rem;
+}
+[class^='btn'] {
+  margin-inline: 0.5rem;
 }
 
 /*

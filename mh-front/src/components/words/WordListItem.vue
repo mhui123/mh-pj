@@ -8,14 +8,28 @@
       <!-- {{ item['updateDate'] }} -->
       {{ this.$filters.dateFilter(item['updateDate']) }}
       <span v-show="getUsername === item['creator']">
-        <i class="icon ion-md-create" @click="editWord(item['id'])"></i>
-        <i class="icon ion-md-trash" @click="deleteWord(item['id'])"></i>
+        <i class="icon ion-md-create" @click="callModal('edit', item['id'])"></i>
+        <i class="icon ion-md-trash" @click="callModal('delete', item['id'])"></i>
       </span>
     </div>
     <a @click="onClikeRedirect(item['link'], item['infokey'])" class="link">
       {{ item['link'] === 'none' ? '위키에서 찾기' : '참고링크' }}
       <i class="icon ion-md-search"></i>
     </a>
+    <Teleport to="body">
+      <modal :showModal="showModal" @close="showModal = false" @update:showModal="modalNo">
+        <template #header>
+          <i class="icon ion-md-alert"> 확인 </i>
+        </template>
+        <template #body>
+          <p>{{ modalMsg }}</p>
+          <div class="btn-groups">
+            <button class="btn" @click="modalOk" @ok="modalOk">확인</button>
+            <button class="btn2" @click="modalNo" @no="modalNo">취소</button>
+          </div>
+        </template>
+      </modal>
+    </Teleport>
   </li>
 </template>
 
@@ -24,13 +38,21 @@ import { mapGetters, mapMutations } from 'vuex';
 import { callApi } from '@/api/index';
 import { validateURL } from '@/utils/validation';
 import { sleep } from '@/utils/common';
+import modal from '@/components/common/ModalWin.vue';
 export default {
   props: {
     item: Object,
   },
+  components: {
+    modal,
+  },
   data() {
     return {
       description: this.item.description,
+      showModal: false,
+      modalMsg: '',
+      callItemId: '',
+      reason: '',
     };
   },
   computed: {
@@ -60,7 +82,29 @@ export default {
         this.callToast(data.result_description);
       }
     },
-    async editWord(itemId) {
+    callModal(reason, itemId) {
+      this.showModal = true;
+      this.reason = reason;
+      this.callItemId = itemId;
+      const reasons = {
+        edit: '수정하시겠습니까?',
+        delete: '삭제하시겠습니까?',
+      };
+      this.modalMsg = reasons[reason];
+    },
+    modalOk() {
+      if (this.reason === 'edit') {
+        this.editWord(this.callItemId);
+      } else {
+        this.deleteWord(this.callItemId);
+      }
+    },
+    modalNo() {
+      this.reason = '';
+      this.callItemId = '';
+      this.showModal = false;
+    },
+    editWord(itemId) {
       this.setWordId(itemId);
       this.$router.push(`/edit`);
     },

@@ -43,7 +43,7 @@
       </table>
     </div>
     <Teleport to="body">
-      <modal :showModal="showModal" @close="showModal = false">
+      <modal :showModal="showModal" @close="showModal = false" @update:showModal="showModal = false">
         <template #header>
           <i class="icon ion-md-close closeModalBtn" @click="showModal = false"></i>
         </template>
