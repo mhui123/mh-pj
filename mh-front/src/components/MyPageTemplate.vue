@@ -72,6 +72,7 @@
           </div>
         </template>
       </modal>
+      <ConfirmModal :showModal="showModal" @ok="modalOk" @no="modalNo" :modalMsg="modalMsg" v-if="modalstate === 'confirm'"></ConfirmModal>
     </Teleport>
   </div>
 </template>
@@ -97,6 +98,9 @@ export default {
       warnInput: false,
       mode: 'mypage',
       checkedUsers: [],
+      reason: '',
+      modalMsg: '',
+      modalstate: '',
     };
   },
   computed: {
@@ -195,6 +199,32 @@ export default {
     },
     callToast(msg) {
       this.emitter.emit('show:toast', msg);
+    },
+    callModal(reason) {
+      this.showModal = true;
+      this.reason = reason;
+      const reasons = {
+        initPw: '비밀번호를 초기화하시겠습니까?',
+        role: '권한을 변경하시겠습니까?',
+        useYn: '사용여부를 변경하시겠습니까?',
+        delWord: '삭제하시겠습니까?',
+      };
+      this.modalMsg = reasons[reason];
+    },
+    modalOk() {
+      if (this.reason != '') {
+        if (this.reason === 'edit') {
+          this.editWords();
+        } else if (this.reason === 'delete') {
+          this.deleteWords();
+        }
+        this.showModal = false;
+        this.reason = '';
+      }
+    },
+    modalNo() {
+      this.showModal = false;
+      this.reason = '';
     },
   },
 };

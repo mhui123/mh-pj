@@ -80,5 +80,6 @@ export default {
 [class^='btn'] {
   width: 100%;
   margin-top: 1rem;
+  margin-left: 0rem;
 }
 </style>
