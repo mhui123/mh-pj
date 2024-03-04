@@ -1,12 +1,12 @@
 # 도커파일 사용법
 
-## docker-compose down
+- docker-compose down
 
-## docker-compose up --build
+- docker-compose up --build
 
-## vim 없을 경우 apt-get update
-
-## apt-get install vim
+## 컨테이너에 vim 없을 경우
+  apt-get update
+  apt-get install vim
 
 ## db연동문제 해결
 
