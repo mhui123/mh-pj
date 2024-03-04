@@ -45,5 +45,5 @@ apt-get install -y iproute2
 - app container > server.xml 의 <Connector port="8080" ...> 을 port="9900"으로 수정
 
 - /usr/local/tomcat/conf/server.xml >
-  - <Host> 태그 아래에 <Context path="/" docBase="mhproject" reloadable="true" /> 속성을 추가하여
+  - #<Host> 태그 아래에 #<Context path="/" docBase="mhproject" reloadable="true" /> 속성을 추가하여
     /mhproject 대신 /로 접속하도록 contextPath 세팅 변경
