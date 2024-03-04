@@ -6,7 +6,10 @@
 
 ## vim 없을 경우 apt-get update
 
-## apt-get install vim
+apt-get update
+apt-get install vim
+apt-get install -y net-tools
+apt-get install -y iproute2
 
 ## db연동문제 해결
 
@@ -36,3 +39,10 @@
     username: root
     password: 1234
     driver-class-name: com.mysql.cj.jdbc.Driver #org.h2.Driver
+
+## 9900 접속시 아무반응 없음 :
+
+- app container > server.xml 의 <Connector port="8080" ...> 을 port="9900"으로 수정
+
+- /usr/local/tomcat/conf/server.xml >
+  # <Host> 태그 아래에 <Context path="/" docBase="mhproject" reloadable="true" /> 속성을 추가하여 /mhproject 대신 /로 접속하도록 contextPath 세팅 변경
