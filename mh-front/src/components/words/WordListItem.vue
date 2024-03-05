@@ -51,9 +51,6 @@ export default {
     isLogin() {
       return this.isLogin;
     },
-    getRole() {
-      return this.getRole;
-    },
   },
   methods: {
     ...mapMutations(['spliceWordList', 'setWordId']),
