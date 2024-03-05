@@ -105,9 +105,11 @@ export default {
         }
         this.callToast(result_description);
         if (result === 200) {
+          const goTo = this.getPageFrom === '/mypage' ? this.getPageFrom : '/main';
+          console.log(goTo);
           this.setPageFrom('');
           this.clearWordId();
-          this.$router.push('/main');
+          this.$router.push(goTo);
         }
         // this.callToast('작성완료');
       } catch (err) {

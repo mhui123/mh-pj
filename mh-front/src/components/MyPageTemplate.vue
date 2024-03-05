@@ -9,7 +9,7 @@
               <label for="pw">비밀번호 </label>
             </td>
             <td>
-              <button class="btn" @click="showModal = true">비밀번호 변경</button>
+              <button class="btn" @click="(showModal = true) && (modalstate = 'change')">비밀번호 변경</button>
             </td>
           </tr>
         </tbody>
@@ -18,8 +18,8 @@
     <SearchForm :mode="mode"></SearchForm>
     <div class="btn-groups">
       <div>
-        <button class="btn" @click="editWords">수정</button>
-        <button class="btn" @click="deleteWords">삭제</button>
+        <button class="btn" @click="callModal('edit')">수정</button>
+        <button class="btn" @click="callModal('delete')">삭제</button>
       </div>
     </div>
     <div class="lower-container table-wrap" v-if="mode === 'mypage'">
@@ -28,7 +28,7 @@
           <tr>
             <th class="chkBox"></th>
             <th>키워드</th>
-            <th>작성자</th>
+            <!-- <th>작성자</th> -->
             <th>수정일시</th>
           </tr>
         </thead>
@@ -36,14 +36,14 @@
           <tr v-for="word in wordList" :key="word.id">
             <td class="chkBox"><input class="chkInput" type="checkbox" :name="word.id" :id="word.id" /></td>
             <td>{{ word['infokey'] }} {{ word['info_kr'] }}</td>
-            <td>{{ word['creator'] }}</td>
+            <!-- <td>{{ word['creator'] }}</td> -->
             <td>{{ this.$filters.dateFilter(word['updateDate']) }}</td>
           </tr>
         </tbody>
       </table>
     </div>
     <Teleport to="body">
-      <modal :showModal="showModal" @close="showModal = false" @update:showModal="showModal = false">
+      <modal :showModal="showModal" @close="showModal = false" @update:showModal="showModal = false" v-if="modalstate === 'change'">
         <template #header>
           <i class="icon ion-md-close closeModalBtn" @click="showModal = false"></i>
         </template>
@@ -78,6 +78,7 @@
 </template>
 
 <script>
+import ConfirmModal from './common/ConfirmModal.vue';
 import modal from './common/ModalWin.vue';
 import { validatePw } from '@/utils/validation';
 import { getCheckedIds, initCheckboxes } from '@/utils/common';
@@ -88,6 +89,7 @@ export default {
   components: {
     modal,
     SearchForm,
+    ConfirmModal,
   },
   data() {
     return {
@@ -201,13 +203,12 @@ export default {
       this.emitter.emit('show:toast', msg);
     },
     callModal(reason) {
+      this.modalstate = 'confirm';
       this.showModal = true;
       this.reason = reason;
       const reasons = {
-        initPw: '비밀번호를 초기화하시겠습니까?',
-        role: '권한을 변경하시겠습니까?',
-        useYn: '사용여부를 변경하시겠습니까?',
-        delWord: '삭제하시겠습니까?',
+        edit: '수정하시겠습니까?',
+        delete: '삭제하시겠습니까?',
       };
       this.modalMsg = reasons[reason];
     },
