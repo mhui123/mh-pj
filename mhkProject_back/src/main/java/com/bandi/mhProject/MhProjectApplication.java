@@ -6,6 +6,8 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
+import java.util.TimeZone;
+
 @EnableJpaAuditing
 @SpringBootApplication
 public class MhProjectApplication extends SpringBootServletInitializer {
@@ -16,6 +18,7 @@ public class MhProjectApplication extends SpringBootServletInitializer {
 	}
 
 	public static void main(String[] args) {
+		TimeZone.setDefault(TimeZone.getTimeZone("Asia/Seoul"));
 		SpringApplication.run(MhProjectApplication.class, args);
 	}
 
