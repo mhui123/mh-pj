@@ -8,7 +8,7 @@
       <!-- {{ item['updateDate'] }} -->
       {{ this.$filters.dateFilter(item['updateDate']) }}
       <span v-show="getUsername === item['creator'] || getRole === 'ROLE_ADMIN'">
-        <i class="icon ion-md-create" @click="callModal('edit', item['id'])"></i>
+        <i class="icon ion-md-create" @click="callModal('edit', item['id'])" v-if="getRole === 'ROLE_USER'"></i>
         <i class="icon ion-md-trash" @click="callModal('delete', item['id'])"></i>
       </span>
     </div>
