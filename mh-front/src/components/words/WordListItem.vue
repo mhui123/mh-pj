@@ -7,7 +7,7 @@
     <div class="post-time">
       <!-- {{ item['updateDate'] }} -->
       {{ this.$filters.dateFilter(item['updateDate']) }}
-      <span v-show="getUsername === item['creator']">
+      <span v-show="getUsername === item['creator'] || getRole === 'ROLE_ADMIN'">
         <i class="icon ion-md-create" @click="callModal('edit', item['id'])"></i>
         <i class="icon ion-md-trash" @click="callModal('delete', item['id'])"></i>
       </span>
@@ -47,9 +47,12 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(['getUsername', 'getWordList', 'isLogin']),
+    ...mapGetters(['getUsername', 'getWordList', 'isLogin', 'getRole']),
     isLogin() {
       return this.isLogin;
+    },
+    getRole() {
+      return this.getRole;
     },
   },
   methods: {

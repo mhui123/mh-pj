@@ -26,7 +26,7 @@
       <table class="table">
         <thead>
           <tr>
-            <th class="chkBox"></th>
+            <th class="chkBox"><input class="checkInput2" type="checkbox" name="checkAll" id="checkAll" @click="checkAll" /></th>
             <th>키워드</th>
             <!-- <th>작성자</th> -->
             <th>수정일시</th>
@@ -84,7 +84,7 @@
 import ConfirmModal from './common/ConfirmModal.vue';
 import modal from './common/ModalWin.vue';
 import { validatePw } from '@/utils/validation';
-import { getCheckedIds, initCheckboxes } from '@/utils/common';
+import { getCheckedIds, initCheckboxes, checkAll } from '@/utils/common';
 import { mapGetters, mapMutations } from 'vuex';
 import { callApi } from '@/api/index';
 import SearchForm from './SearchForm.vue';
@@ -241,6 +241,9 @@ export default {
     goTop() {
       document.body.scrollTop = 0;
     },
+    checkAll() {
+      checkAll();
+    },
   },
 };
 </script>
@@ -322,16 +325,18 @@ tr {
   /* display: table-row; */
 }
 
-.chkBox,
-.chkInput {
-  width: 2rem;
-  margin: 0 0.1rem 0;
-}
 .userTable {
   table-layout: fixed;
 }
 
 .search-form {
   height: 3rem;
+}
+.chkBox,
+.chkInput,
+[class^='checkInput'] {
+  width: 2rem;
+  margin: 0 0.1rem 0;
+  text-align: left;
 }
 </style>
