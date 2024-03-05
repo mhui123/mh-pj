@@ -53,10 +53,11 @@ export default {
     this.fetchData();
   },
   mounted() {
-    document.body.addEventListener('scroll', this.scrollEvent);
-    // window.addEventListener('scroll', function () {
-    //   console.log(document.body.scrollTop);
-    // });
+    document.body.addEventListener('scroll', () => {
+      if (document.body.scrollTop > 0) {
+        this.topshow = true;
+      } else this.topshow = false;
+    });
   },
   computed: {
     ...mapGetters(['getWordList', 'getKeyword', 'isLogin']),
@@ -86,12 +87,6 @@ export default {
     goTop() {
       document.body.scrollTop = 0;
     },
-    scrollEvent() {
-      if (document.body.scrollTop > 0) {
-        this.topshow = true;
-      } else this.topshow = false;
-      //show & hide
-    },
   },
 };
 </script>
@@ -116,12 +111,5 @@ export default {
   font-size: 4rem;
   text-align: center;
   display: block;
-}
-.ion-md-arrow-up {
-  font-size: 1.3rem;
-  cursor: pointer;
-  color: #364f6b;
-  padding: 0;
-  /* padding-right: 0.4rem; */
 }
 </style>

@@ -66,6 +66,9 @@
         </tbody>
       </table>
     </div>
+    <button class="move-top-button" @click="goTop" v-if="topshow === true">
+      <i class="icon ion-md-arrow-up"></i>
+    </button>
     <Teleport to="body">
       <ConfirmModal :showModal="showModal" @ok="modalOk" @no="modalNo" :modalMsg="modalMsg"></ConfirmModal>
     </Teleport>
@@ -91,6 +94,7 @@ export default {
       reason: '',
       mode: '',
       checkedUsers: [],
+      topshow: false,
     };
   },
   computed: {
@@ -104,6 +108,13 @@ export default {
   },
   created() {
     this.manageUser();
+  },
+  mounted() {
+    document.body.addEventListener('scroll', () => {
+      if (document.body.scrollTop > 0) {
+        this.topshow = true;
+      } else this.topshow = false;
+    });
   },
   methods: {
     ...mapMutations(['spliceWordList', 'clearWordList', 'setUserList', 'setWordList']),
@@ -212,6 +223,9 @@ export default {
     modalNo() {
       this.showModal = false;
       this.reason = '';
+    },
+    goTop() {
+      document.body.scrollTop = 0;
     },
   },
 };

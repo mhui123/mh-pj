@@ -41,6 +41,9 @@
           </tr>
         </tbody>
       </table>
+      <button class="move-top-button" @click="goTop" v-if="topshow === true">
+        <i class="icon ion-md-arrow-up"></i>
+      </button>
     </div>
     <Teleport to="body">
       <modal :showModal="showModal" @close="showModal = false" @update:showModal="showModal = false" v-if="modalstate === 'change'">
@@ -103,6 +106,7 @@ export default {
       reason: '',
       modalMsg: '',
       modalstate: '',
+      topshow: false,
     };
   },
   computed: {
@@ -129,6 +133,13 @@ export default {
   created() {
     this.setPageFrom('');
     this.fetchMyWords();
+  },
+  mounted() {
+    document.body.addEventListener('scroll', () => {
+      if (document.body.scrollTop > 0) {
+        this.topshow = true;
+      } else this.topshow = false;
+    });
   },
   methods: {
     ...mapMutations(['setWordList', 'clearWordList', 'spliceWordList', 'setWordId', 'setPageFrom']),
@@ -226,6 +237,9 @@ export default {
     modalNo() {
       this.showModal = false;
       this.reason = '';
+    },
+    goTop() {
+      document.body.scrollTop = 0;
     },
   },
 };
