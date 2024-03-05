@@ -106,7 +106,9 @@ export default {
         this.callToast(result_description);
         if (result === 200) {
           const goTo = this.getPageFrom === '/mypage' ? this.getPageFrom : '/main';
-          console.log(goTo);
+          this.title = '';
+          this.contents = '';
+          this.link = '';
           this.setPageFrom('');
           this.clearWordId();
           this.$router.push(goTo);
@@ -120,6 +122,7 @@ export default {
       this.emitter.emit('show:toast', msg);
     },
     goBack() {
+      this.clearWordId();
       const goTo = this.getPageFrom === '' ? '/main' : this.getPageFrom;
       this.$router.push(goTo);
     },

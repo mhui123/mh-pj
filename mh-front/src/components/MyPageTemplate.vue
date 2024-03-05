@@ -192,7 +192,7 @@ export default {
             this.newPw2 = '';
             this.showModal = false;
             this.callToast(result_description);
-          } else if (result === 903) {
+          } else if (result === 902) {
             document.getElementById('asPw').focus();
             this.callToast(result_description);
           }

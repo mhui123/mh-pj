@@ -15,6 +15,7 @@ public class Info extends BaseEntity {
     private Long id;
     private String infokey;
     private String info_kr;
+    @Column(length = 2000)
     private String description;
 //    private String catg;
     private String link;

@@ -23,10 +23,14 @@
     <router-link to="/add" class="create-button" v-if="isLogin">
       <i class="ion-md-add"></i>
     </router-link>
+    <button class="move-top-button" @click="goTop" v-if="topshow === true">
+      <i class="icon ion-md-arrow-up"></i>
+    </button>
   </div>
 </template>
 
 <script>
+//document.body.scrollTop
 import { callApi } from '@/api/index';
 import WordListItem from '@/components/words/WordListItem.vue';
 import LoadingSpinner from '@/components/common/LoadingSpinner.vue';
@@ -37,6 +41,7 @@ export default {
     return {
       isLoading: false,
       // infoList: [],
+      topshow: false,
     };
   },
   components: {
@@ -46,6 +51,12 @@ export default {
   },
   created() {
     this.fetchData();
+  },
+  mounted() {
+    document.body.addEventListener('scroll', this.scrollEvent);
+    // window.addEventListener('scroll', function () {
+    //   console.log(document.body.scrollTop);
+    // });
   },
   computed: {
     ...mapGetters(['getWordList', 'getKeyword', 'isLogin']),
@@ -72,6 +83,15 @@ export default {
       link = link ?? `https://ko.wikipedia.org/wiki/${keyword}`;
       window.open(link, '_blank');
     },
+    goTop() {
+      document.body.scrollTop = 0;
+    },
+    scrollEvent() {
+      if (document.body.scrollTop > 0) {
+        this.topshow = true;
+      } else this.topshow = false;
+      //show & hide
+    },
   },
 };
 </script>
@@ -96,5 +116,12 @@ export default {
   font-size: 4rem;
   text-align: center;
   display: block;
+}
+.ion-md-arrow-up {
+  font-size: 1.3rem;
+  cursor: pointer;
+  color: #364f6b;
+  padding: 0;
+  /* padding-right: 0.4rem; */
 }
 </style>

@@ -157,8 +157,8 @@ body {
   .list-container > ul > li {
       position: relative;
       flex-grow: 1;
-      width: 320px;
-      height: 250px;
+      width: 100%;
+      height: 16rem;
       margin: 7px;
       padding: 10px 20px;
       background: white;
@@ -173,7 +173,7 @@ body {
   .post-contents {
       height: 8rem;
       overflow-y: auto;
-      font-size: 18px;
+      font-size: 14px;
       width: 80%;
       /* overflow-y:hidden;
       overflow-x:hidden; */
@@ -220,6 +220,21 @@ body {
     color: white;
     box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.1);
     background: #fe9616;
+    border: 3px solid white;
+  }
+  .move-top-button{
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    position: fixed;
+    right: 20px;
+    bottom: 0.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.1);
+    background: rgba(0,0,0, 0.1);
     border: 3px solid white;
   }
 
