@@ -273,6 +273,7 @@ public class UserServiceImpl implements UserService, SystemConfigs {
                 ManageKey foundKey = keyRepo.findValidKeyByUserId(userId);
                 String isRetry = String.valueOf(data.get("retry"));
                 if(isRetry.equals("y") && foundKey != null){
+                    //재인증요청. 기존에 존재하는 키 제거
                     keyRepo.delete(foundKey);
                     em.flush();
                     em.clear();
@@ -281,7 +282,7 @@ public class UserServiceImpl implements UserService, SystemConfigs {
                 if(foundKey == null){
                     User user = userRepo.findByid(userId);
                     if(user != null){
-                        String authKey = KeyGenerator.generateKey();
+                        String authKey = KeyGenerator.generateKey(); //키생성
                         ManageKey manageKey = ManageKey.builder().authKey(authKey).user(user).build();
                         em.persist(manageKey);
                         result.put("authKey", authKey);
@@ -290,26 +291,22 @@ public class UserServiceImpl implements UserService, SystemConfigs {
                         Commons.putMessage(result,901, CODE_901);
                     }
                 } else {
-                    //키는 존재. 유효기간이 지났는지 여부 체크
-                    if(isInTimeKey(foundKey)){
+                    if(isInTimeKey(foundKey)){ //유효시간 경과여부 체크
                         Commons.putMessage(result,908, CODE_908); //아직 유효키 존재
-                    } else {
-                        //유효시간 경과. 기존키 제거 후새로발급
-                        keyRepo.delete(foundKey); //기존키 제거
+                    } else { //유효시간 경과. 기존키 제거 후 메서드 재실행
+                        keyRepo.delete(foundKey);
                         em.flush();
                         em.clear();
                         generateAuthKey(data);
                     }
-
                 }
             } else {
-                Commons.setMessage(result, CODE_909);
+                Commons.setMessage(result, CODE_909); //파라미터 불완전
             }
         }catch(Exception e){
             Commons.setMessage(result, CODE_900 +" : " +e.getMessage());
             return result;
         }
-
         return result;
     }
 
@@ -325,30 +322,32 @@ public class UserServiceImpl implements UserService, SystemConfigs {
         try{
             if(!userId.equals("null") && Strings.isNotEmpty(userId)){
                 ManageKey storeKeyEntity = keyRepo.findValidKeyByUserId(userId);
-                if(storeKeyEntity != null && isInTimeKey(storeKeyEntity)){
-                    String storeKey = storeKeyEntity.getAuthKey();
-                    String inputKey = String.valueOf(data.get("inputKey"));
-                    boolean isValid = KeyGenerator.validateKey(inputKey, storeKey);
-                    if(isValid){
-                        //인증성공. 인증에
-                        Commons.putMessage(result, 201, CODE_201);
-                        keyRepo.delete(storeKeyEntity); //사용된 키 제거.
-                        em.flush();
-                        em.clear();
-                    } else {
-                        //인증실패
-                        Commons.putMessage(result, 910, CODE_910);
+                if(storeKeyEntity != null){
+                    if(isInTimeKey(storeKeyEntity)){
+                        String storeKey = storeKeyEntity.getAuthKey();
+                        String inputKey = String.valueOf(data.get("inputKey"));
+                        boolean isValid = KeyGenerator.validateKey(inputKey, storeKey);
+                        if(isValid){
+                            Commons.putMessage(result, 201, CODE_201); //인증성공
+                            keyRepo.delete(storeKeyEntity); //사용된 키 제거.
+                            em.flush();
+                            em.clear();
+                        } else {
+                            Commons.putMessage(result, 910, CODE_910); //인증키 불일치
+                        }
+                    } else if(!isInTimeKey(storeKeyEntity)){
+                        Commons.putMessage(result, 911, CODE_911); //인증키 유효시간경과
                     }
+                } else {
+                    Commons.putMessage(result, 912, CODE_912); //인증과정 오류
                 }
             } else {
-                Commons.setMessage(result, CODE_909);
+                Commons.setMessage(result, CODE_909); //파라미터 불완전.
             }
         }catch(Exception e){
             Commons.setMessage(result, CODE_900 +" : " +e.getMessage());
             return result;
         }
-
-
         return result;
     }
 }

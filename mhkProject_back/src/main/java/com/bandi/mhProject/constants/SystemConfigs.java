@@ -26,4 +26,7 @@ public interface SystemConfigs {
     public final String CODE_908 = "아직 유효한 인증키가 존재합니다.";
     public final String CODE_909 = "파라미터가 올바르지 않습니다.";
     public final String CODE_910 = "인증키값이 일치하지 않습니다.";
+    public final String CODE_911 = "인증키의 유효시간이 경과하였습니다.";
+
+    public final String CODE_912 = "인증과정에 오류가 발생하였습니다. 처음부터 다시 진행해주세요.";
 }

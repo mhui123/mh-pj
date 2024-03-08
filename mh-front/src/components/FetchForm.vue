@@ -86,7 +86,11 @@ export default {
         if (result === 200) {
           this.inputKey = authKey;
         } else {
-          this.state = 'fail';
+          if (result === 908) {
+            this.state = 'fail';
+          } else {
+            this.state = 'before';
+          }
           this.callToast(result_description);
         }
       } else {
@@ -126,6 +130,7 @@ export default {
 }
 .btn-groups {
   width: 100%;
+  margin-left: 0;
 }
 [class^='btn'] {
   width: 100%;
