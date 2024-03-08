@@ -6,7 +6,7 @@
         <div>
           <div>
             <label for="email">이메일 :</label>
-            <input type="text" id="email" v-model="userEmail" placeholder="이메일" />
+            <input type="text" id="email" v-model="userEmail" placeholder="이메일" :disabled="state === 'after'" />
           </div>
           <div class="auth-field">
             <input type="text" placeholder="인증번호" v-model="inputKey" id="authKey" :disabled="state === 'before'" />
