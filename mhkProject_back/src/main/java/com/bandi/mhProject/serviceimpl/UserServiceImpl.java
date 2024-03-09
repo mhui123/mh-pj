@@ -297,7 +297,7 @@ public class UserServiceImpl implements UserService, SystemConfigs {
                         keyRepo.delete(foundKey);
                         em.flush();
                         em.clear();
-                        generateAuthKey(data);
+                        result = generateAuthKey(data);
                     }
                 }
             } else {
