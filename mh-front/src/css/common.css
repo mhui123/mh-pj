@@ -256,3 +256,15 @@ body {
     padding: 0;
     /* padding-right: 0.4rem; */
   }
+  .zero-result {
+    text-align: center;
+    width: 100%;
+    height: 40%;
+  }
+  .zero-result .link {
+    text-align: center;
+    color: lightblue;
+    display: flow;
+    width: 100%;
+    font-size: larger;
+  }

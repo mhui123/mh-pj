@@ -15,6 +15,7 @@ const routes = [
   { path: '/adminPage', component: () => import('@/views/AdminPage.vue'), meta: { auth: true, role: ['ROLE_ADMIN'] } },
   //fetchPage
   // { path: '*', component: () => import('@/views/NotFoundPage.vue') },
+  { path: '/:pathMatch(.*)*', component: () => import('@/views/NotFoundPage.vue') },
 ];
 
 const router = createRouter({ history: createWebHistory(), routes });

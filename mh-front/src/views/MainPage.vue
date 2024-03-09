@@ -16,7 +16,7 @@
         </li>
         <li v-if="infoList.length === 0 && !chkKeyword">
           <i class="icon ion-md-alert nothing-icon"></i>
-          <input value="등록된 용어가 없습니다." class="zero-result" />
+          <p class="zero-result">등록된 용어가 없습니다.</p>
         </li>
       </ul>
     </div>
@@ -92,18 +92,6 @@ export default {
 </script>
 
 <style scoped>
-.zero-result {
-  text-align: center;
-  width: 100%;
-  height: 40%;
-}
-.zero-result .link {
-  text-align: center;
-  color: lightblue;
-  display: flow;
-  width: 100%;
-  font-size: larger;
-}
 .search-icon {
   font-size: 2rem;
 }
