@@ -127,9 +127,15 @@ public class UserServiceImpl implements UserService, SystemConfigs {
         String newPw = String.valueOf(data.get("newPw"));
         String mode = String.valueOf(data.get("mode"));
         User foundUser = userRepo.findByid(id);
+        ManageKey foundKey = keyRepo.findValidKeyByUserId(id);
         if(mode.equals("fetch")){
             String encoderedPw = encoder.encode(newPw);
             foundUser.setPw(encoderedPw);
+            if(foundKey != null){
+                keyRepo.delete(foundKey);
+                em.flush();
+                em.clear();
+            }
             Commons.putMessage(result, 202, CODE_202);
         }else {
             boolean isMatch = encoder.matches(oldPw, foundUser.getPw());
@@ -329,9 +335,6 @@ public class UserServiceImpl implements UserService, SystemConfigs {
                         boolean isValid = KeyGenerator.validateKey(inputKey, storeKey);
                         if(isValid){
                             Commons.putMessage(result, 201, CODE_201); //인증성공
-                            keyRepo.delete(storeKeyEntity); //사용된 키 제거.
-                            em.flush();
-                            em.clear();
                         } else {
                             Commons.putMessage(result, 910, CODE_910); //인증키 불일치
                         }

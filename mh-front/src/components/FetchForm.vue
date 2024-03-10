@@ -14,6 +14,7 @@
             <button class="btn" v-if="state === 'after'" @click="authenticate" :disabled="inputKey.length === 0">인증</button>
             <button class="btn" v-if="state === 'fail'" @click="requestAuthNum('y')">인증번호 재요청</button>
           </div>
+          <p class="time-field" v-if="showTime === true">남은시간 {{ remainTime }}</p>
         </div>
         <div class="btn-groups">
           <button @click="goBack" class="btn2">돌아가기</button>
@@ -51,6 +52,9 @@ export default {
       authSuccess: false,
       showModal: false,
       resultId: '',
+      remainTime: '00:00',
+      timer: null,
+      showTime: false,
     };
   },
   components: {
@@ -84,6 +88,7 @@ export default {
         const { result, result_description, authKey } = data;
         this.state = 'after';
         if (result === 200) {
+          this.count10Min();
           this.inputKey = authKey;
         } else {
           if (result === 908) {
@@ -105,6 +110,8 @@ export default {
         this.callToast(result_description);
         if (result === 201) {
           this.showModal = true;
+          this.showTime = false;
+          clearInterval(this.timer);
         }
       } else {
         this.callToast('이메일을 올바르게 입력해주세요');
@@ -117,6 +124,23 @@ export default {
       this.state = 'before';
       this.callToast('로그인페이지로 이동합니다.');
       this.$router.push('/login');
+    },
+    count10Min() {
+      let standard = new Date(new Date().getTime() + 10 * 60000).getTime();
+      this.showTime = true;
+      this.timer = setInterval(() => {
+        let now = new Date().getTime();
+        let distance = standard - now;
+        let min = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        let sec = Math.floor((distance % (1000 * 60)) / 1000);
+        min = min > 9 ? min : `0${min}`;
+        sec = sec > 9 ? sec : `0${sec}`;
+        this.remainTime = `${min} : ${sec}`;
+        if (distance < 0) {
+          clearInterval(this.timer);
+          this.showTime = false;
+        }
+      }, 1000);
     },
   },
 };
@@ -145,5 +169,9 @@ export default {
 }
 .auth-field .btn {
   width: 50%;
+}
+.time-field {
+  text-align: right;
+  margin-right: 1rem;
 }
 </style>
