@@ -19,15 +19,16 @@ spring:
 #        password: cos1234
 #        driver-class-name: com.mysql.cj.jdbc.Driver #org.h2.Driver
     #도커용.
-    url: jdbc:mysql://docker-mysql:3306/mh_db
-    username: root
-    password: 1234
-    driver-class-name: com.mysql.cj.jdbc.Driver #org.h2.Driver
+#    url: jdbc:mysql://docker-mysql:3306/mh_db
+#    username: root
+#    password: 1234
+#    driver-class-name: com.mysql.cj.jdbc.Driver #org.h2.Driver
     #회사
-  #    url: jdbc:mysql://192.168.11.135:3456/bdBase
-  #    username: mhui123
-  #    password: 1234
-  #    driver-class-name: com.mysql.cj.jdbc.Driver #org.h2.Driver
+#      url: jdbc:mysql://192.168.11.135:3456/bdBase
+      url: jdbc:mysql://localhost:3555/mh_db
+      username: root
+      password: 1234
+      driver-class-name: com.mysql.cj.jdbc.Driver #org.h2.Driver
   jpa:
     hibernate:
       ddl-auto: update #create create-drop, update, validate, none
