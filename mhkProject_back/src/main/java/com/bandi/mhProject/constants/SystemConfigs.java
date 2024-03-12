@@ -3,6 +3,8 @@ package com.bandi.mhProject.constants;
 import lombok.Getter;
 
 public interface SystemConfigs {
+    //pagination
+    Long PAGE_SIZE = 20L;
     Long AUTH_DURATION = 10L;
     String CODE_200 = "정상동작";
     String CODE_201 = "인증 성공";

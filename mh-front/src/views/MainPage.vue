@@ -26,6 +26,7 @@
     <button class="move-top-button" @click="goTop" v-if="topshow === true">
       <i class="icon ion-md-arrow-up"></i>
     </button>
+    <button class="more-btn" @click="getMoreData" v-if="moreshow === true">더보기</button>
   </div>
 </template>
 
@@ -42,6 +43,7 @@ export default {
       isLoading: false,
       // infoList: [],
       topshow: false,
+      moreshow: false,
     };
   },
   components: {
@@ -54,13 +56,22 @@ export default {
   },
   mounted() {
     document.body.addEventListener('scroll', () => {
+      let scrollPos = Math.floor((document.body.scrollTop / document.body.scrollHeight) * 100);
       if (document.body.scrollTop > 0) {
+        if (scrollPos > 80) {
+          this.moreshow = true;
+        } else {
+          this.moreshow = false;
+        }
         this.topshow = true;
-      } else this.topshow = false;
+      } else {
+        this.topshow = false;
+        this.moreshow = false;
+      }
     });
   },
   computed: {
-    ...mapGetters(['getWordList', 'getKeyword', 'isLogin']),
+    ...mapGetters(['getWordList', 'getKeyword', 'isLogin', 'getPageIdx']),
     infoList() {
       return this.getWordList;
     },
@@ -72,13 +83,15 @@ export default {
     },
   },
   methods: {
-    ...mapMutations(['pushToWordList', 'clearWordList']),
+    ...mapMutations(['pushToWordList', 'clearWordList', 'setPageIdx']),
     async fetchData() {
+      this.setPageIdx(0);
       this.isLoading = true;
-      const { data } = await callApi('getList');
+      // const { data } = await callApi('getList');
+      const { data } = await callApi('getMainWordList', { pageIdx: 0 });
       this.isLoading = false;
       this.clearWordList();
-      this.pushToWordList(data);
+      this.pushToWordList(data.list);
     },
     onClikeRedirect(link, keyword) {
       link = link ?? `https://ko.wikipedia.org/wiki/${keyword}`;
@@ -86,6 +99,19 @@ export default {
     },
     goTop() {
       document.body.scrollTop = 0;
+    },
+    async getMoreData() {
+      this.moreshow = false;
+      this.isLoading = true;
+      let pageIdx = this.getPageIdx + 1;
+      this.setPageIdx(pageIdx);
+      // localStorage.setItem('localPageIdx', pageIdx);
+      console.log(`now pageIdx : ${pageIdx}`);
+      this.isLoading = false;
+      const { data } = await callApi('getMainWordList', { pageIdx: pageIdx });
+      // console.log(data.list);
+      // this.clearWordList();
+      this.pushToWordList(data.list);
     },
   },
 };

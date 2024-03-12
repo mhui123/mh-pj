@@ -8,5 +8,6 @@ import java.util.Map;
 public interface InfoCustomRepo {
     List<Info> findInfoByKeyword(String keyword);
     List<Info> findAllInfoList();
+    List<Info> findMainInfoList(long pageIdx);
     List<Info> findMyInfoList(Map<String, Object> data);
 }

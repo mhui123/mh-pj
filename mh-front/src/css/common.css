@@ -153,6 +153,7 @@ body {
   .list-container > ul {
       display: flex;
       flex-wrap: wrap;
+      margin-bottom:2rem;
   }
   .list-container > ul > li {
       position: relative;
@@ -213,7 +214,7 @@ body {
     border-radius: 50%;
     position: fixed;
     right: 20px;
-    bottom: 70px;
+    bottom: 6rem;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -228,7 +229,7 @@ body {
     border-radius: 50%;
     position: fixed;
     right: 20px;
-    bottom: 0.1rem;
+    bottom: 2.1rem;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -267,4 +268,19 @@ body {
     display: flow;
     width: 100%;
     font-size: larger;
+  }
+  .more-btn {
+    width: 100%;
+    height: 2rem;
+    /* border-radius: 50%; */
+    position: fixed;
+    /* right: 20px; */
+    bottom: 0.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.1);
+    background: rgba(0,0,0, 1);
+    border: 3px solid white;
   }

@@ -28,12 +28,4 @@ function callApi(url, param) {
 //   return forSecure.post('/loginProc', userData);
 // }
 
-function initPw(data) {
-  return instance.post('initializePw', data);
-}
-
-function getAllWordList() {
-  return instance.post('findAllWordList');
-}
-
-export { initPw, getAllWordList, callApi };
+export { callApi };

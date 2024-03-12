@@ -1,8 +1,10 @@
 package com.bandi.mhProject.repository.custom;
 
+import com.bandi.mhProject.constants.SystemConfigs;
 import com.bandi.mhProject.entity.Info;
 import com.bandi.mhProject.entity.QInfo;
 import com.bandi.mhProject.entity.QUser;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
@@ -33,26 +35,30 @@ public class InfoCustomRepoImpl implements InfoCustomRepo{
     }
 
     @Override
+    public List<Info> findMainInfoList(long pageIdx) {
+        long offset = SystemConfigs.PAGE_SIZE * pageIdx;
+        return factory.selectFrom(QInfo.info).offset(offset).limit(SystemConfigs.PAGE_SIZE).fetch();
+    }
+
+    @Override
     public List<Info> findMyInfoList(Map<String, Object> data) {
         String userId = String.valueOf(data.get("id"));
         String keyword = String.valueOf(data.get("keyword"));
+        long pageIdx = Long.parseLong(String.valueOf(data.get("pageIdx")));
+        long offset = SystemConfigs.PAGE_SIZE * pageIdx;
         List<Info> list = null;
+        JPAQuery<Info> q = factory.selectFrom(QInfo.info)
+                .join(QInfo.info.user, QUser.user);
         if(keyword.isBlank() || "null".equals(keyword)){
-            list = factory.selectFrom(QInfo.info)
-                    .join(QInfo.info.user, QUser.user)
-                    .where(QUser.user.id.eq(userId))
-                    .fetch();
+           q.where(QUser.user.id.eq(userId)).offset(offset).limit(SystemConfigs.PAGE_SIZE);
         } else {
-            list = factory.selectFrom(QInfo.info)
-                    .join(QInfo.info.user, QUser.user)
-                    .where(QUser.user.id.eq(userId)
-                        .and(   QInfo.info.infokey.like("%"+keyword+"%")
+            q.where(QUser.user.id.eq(userId)
+                    .and(   QInfo.info.infokey.like("%"+keyword+"%")
                             .or(QInfo.info.description.like("%"+keyword+"%"))
-                            )
                     )
-                    .fetch();
+            );
         }
-
+        list = q.fetch();
         return list;
     }
 }

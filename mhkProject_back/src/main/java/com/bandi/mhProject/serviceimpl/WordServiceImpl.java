@@ -132,7 +132,8 @@ public class WordServiceImpl implements WordService, SystemConfigs {
             String keyword = String.valueOf(data.get("keyword"));
             List<Info> rawList = new ArrayList<>();
             if(keyword.isBlank()){
-                rawList = infoRepo.findAll();
+//                rawList = infoRepo.findAll();
+                rawList = infoRepo.findMainInfoList(0L);
             }else {
                 rawList = infoRepo.findInfoByKeyword(keyword);
             }
@@ -153,6 +154,17 @@ public class WordServiceImpl implements WordService, SystemConfigs {
     @Override
     public List<InfoDto> getAllWordList() {
         List<Info> rawData = infoRepo.findAllInfoList();
+        List<InfoDto> list = new ArrayList<>();
+        for(Info info : rawData){
+            InfoDto dto = setInfoDto(info);
+            list.add(dto);
+        }
+        return list;
+    }
+
+    @Override
+    public List<InfoDto> getInfoListWithPage(long pageIdx) {
+        List<Info> rawData = infoRepo.findMainInfoList(pageIdx);
         List<InfoDto> list = new ArrayList<>();
         for(Info info : rawData){
             InfoDto dto = setInfoDto(info);

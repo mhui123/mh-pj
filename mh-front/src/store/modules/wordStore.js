@@ -3,6 +3,7 @@ const state = {
   keyword: '',
   wordId: '',
   pageFrom: '',
+  pageIdx: 0,
 };
 const mutations = {
   pushToWordList(state, arr) {
@@ -33,6 +34,12 @@ const mutations = {
   setPageFrom(state, from) {
     state.pageFrom = from;
   },
+  setPageIdx(state, value) {
+    state.pageIdx = value;
+  },
+  initPageIdx(state) {
+    state.pageIdx = 0;
+  },
 };
 const getters = {
   getWordList(state) {
@@ -46,6 +53,9 @@ const getters = {
   },
   getPageFrom(state) {
     return state.pageFrom;
+  },
+  getPageIdx(state) {
+    return state.pageIdx;
   },
 };
 const actions = {};

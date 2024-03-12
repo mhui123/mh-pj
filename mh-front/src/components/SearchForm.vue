@@ -34,8 +34,9 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['clearWordList', 'pushToWordList', 'setKeyword', 'setUserList', 'setWordList']),
+    ...mapMutations(['clearWordList', 'pushToWordList', 'setKeyword', 'setUserList', 'setWordList', 'setPageIdx']),
     async searchKeyword() {
+      this.setPageIdx(0);
       const destinations = {
         main: 'getWordListByKeyword',
         admin: { user: 'getUserListByKeyword', word: 'getWordListByKeyword' },
