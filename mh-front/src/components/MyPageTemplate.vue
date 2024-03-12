@@ -41,7 +41,7 @@
           </tr>
         </tbody>
       </table>
-      <button class="more-btn" @click="getMoreData" v-if="moreshow === true">더보기</button>
+      <button class="more-btn" @click="getMoreData" v-if="moreshow === true && isLastPage === false">더보기</button>
       <button class="move-top-button" @click="goTop" v-if="topshow === true">
         <i class="icon ion-md-arrow-up"></i>
       </button>
@@ -109,6 +109,8 @@ export default {
       modalstate: '',
       topshow: false,
       moreshow: false,
+      totalCnt: 0,
+      isLastPage: false,
     };
   },
   computed: {
@@ -133,10 +135,12 @@ export default {
     ...mapGetters(['getUsername', 'getWordList', 'getUsername', 'getWordId', 'getPageIdx']),
   },
   created() {
+    this.setPageIdx(0);
     this.setPageFrom('');
     this.fetchMyWords();
   },
   mounted() {
+    //document.querySelector('.lower-container.table-wrap tbody').childElementCount
     document.body.addEventListener('scroll', () => {
       let scrollPos = Math.floor((document.body.scrollTop / document.body.scrollHeight) * 100);
       if (document.body.scrollTop > 0) {
@@ -146,6 +150,12 @@ export default {
           this.moreshow = false;
         }
         this.topshow = true;
+
+        let tbody = document.querySelector('.lower-container.table-wrap tbody');
+        let listCnt = tbody ? document.querySelector('.lower-container.table-wrap tbody').childElementCount : 0;
+        if (listCnt < this.totalCnt) {
+          this.isLastPage = false;
+        }
       } else {
         this.topshow = false;
         this.moreshow = false;
@@ -260,12 +270,11 @@ export default {
       this.isLoading = true;
       let pageIdx = this.getPageIdx + 1;
       this.setPageIdx(pageIdx);
-      // localStorage.setItem('localPageIdx', pageIdx);
       console.log(`now pageIdx : ${pageIdx}`);
       this.isLoading = false;
-      const { data } = await callApi('getMainWordList', { pageIdx: pageIdx });
-      // console.log(data.list);
-      // this.clearWordList();
+      this.isLastPage = 20 * (pageIdx + 1) > this.totalCnt ? true : false;
+      const { data } = await callApi('getMyWordList', { id: this.username, pageIdx: pageIdx });
+      this.totalCnt = data.totalCnt;
       this.pushToWordList(data.list);
     },
   },

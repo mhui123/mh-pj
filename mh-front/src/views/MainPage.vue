@@ -70,7 +70,6 @@ export default {
 
         let ul = document.querySelector('.main.list-container.contents ul');
         let listCnt = ul ? document.querySelector('.main.list-container.contents ul').childElementCount : 0;
-        console.log(listCnt, this.totalCnt);
         if (listCnt < this.totalCnt) {
           this.isLastPage = false;
         }
