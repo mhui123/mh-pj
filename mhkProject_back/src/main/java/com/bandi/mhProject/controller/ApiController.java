@@ -35,7 +35,6 @@ public class ApiController {
     @PostMapping("/login")
     @ResponseBody
     public Map<String, Object> login(@RequestBody Map<String, Object> data){
-        System.out.println("login ");
         String id = String.valueOf(data.get("username"));
         String pw = String.valueOf(data.get("password"));
         User user = User.builder().id(id).pw(pw).build();

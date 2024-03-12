@@ -23,6 +23,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -69,7 +70,7 @@ public class UserServiceImpl implements UserService, SystemConfigs {
                     id = foundUser.getId();
                     String role = foundUser.getRole();
                     String useYn = foundUser.getUseYn();
-                    if(useYn.equals("y")){
+                    if("y".equals(useYn)) {
                         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(id, pw);
                         Authentication authentication = authBuilder.getObject().authenticate(authToken); //authenticationManager.authenticate(authToken);
                         token = jwtTokenProvider.generateToken(authentication);
@@ -128,7 +129,7 @@ public class UserServiceImpl implements UserService, SystemConfigs {
         String mode = String.valueOf(data.get("mode"));
         User foundUser = userRepo.findByid(id);
         ManageKey foundKey = keyRepo.findValidKeyByUserId(id);
-        if(mode.equals("fetch")){
+        if("fetch".equals(mode)){
             String encoderedPw = encoder.encode(newPw);
             foundUser.setPw(encoderedPw);
             if(foundKey != null){
@@ -167,7 +168,7 @@ public class UserServiceImpl implements UserService, SystemConfigs {
                 for(String id : ids){
                     User user = userRepo.findByid(id);
                     if(user != null){
-                        String toChange = user.getRole().equals("ROLE_USER") ? "ROLE_ADMIN" : "ROLE_USER";
+                        String toChange = "ROLE_USER".equals(user.getRole()) ? "ROLE_ADMIN" : "ROLE_USER";
                         user.setRole(toChange);
                     } else {
                         failedId.add(id);
@@ -199,7 +200,7 @@ public class UserServiceImpl implements UserService, SystemConfigs {
                 for(String id : ids){
                     User user = userRepo.findByid(id);
                     if(user != null){
-                        String toChange = user.getUseYn().equals("y") ? "n" : "y";
+                        String toChange = "y".equals(user.getUseYn()) ? "n" : "y";
                         user.setUseYn(toChange);
                     } else {
                         failedId.add(id);
@@ -275,10 +276,10 @@ public class UserServiceImpl implements UserService, SystemConfigs {
         Map<String, Object> result = new HashMap<>();
         String userId = String.valueOf(data.get("id"));
         try{
-            if(!userId.equals("null") && Strings.isNotEmpty(userId)){
+            if(!"null".equals(userId)){
                 ManageKey foundKey = keyRepo.findValidKeyByUserId(userId);
                 String isRetry = String.valueOf(data.get("retry"));
-                if(isRetry.equals("y") && foundKey != null){
+                if("y".equals(isRetry) && foundKey != null){
                     //재인증요청. 기존에 존재하는 키 제거
                     keyRepo.delete(foundKey);
                     em.flush();
@@ -326,7 +327,7 @@ public class UserServiceImpl implements UserService, SystemConfigs {
         Map<String, Object> result = new HashMap<>();
         String userId = String.valueOf(data.get("id"));
         try{
-            if(!userId.equals("null") && Strings.isNotEmpty(userId)){
+            if(!"null".equals(userId) && Strings.isNotEmpty(userId)){
                 ManageKey storeKeyEntity = keyRepo.findValidKeyByUserId(userId);
                 if(storeKeyEntity != null){
                     if(isInTimeKey(storeKeyEntity)){

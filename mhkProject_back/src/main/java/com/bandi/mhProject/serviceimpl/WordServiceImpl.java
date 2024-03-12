@@ -26,6 +26,7 @@ import java.util.*;
 public class WordServiceImpl implements WordService, SystemConfigs {
     private final InfoRepository infoRepo;
     private final UserRepository userRepo;
+
     @PersistenceContext
     EntityManager em;
     @Override
@@ -164,7 +165,6 @@ public class WordServiceImpl implements WordService, SystemConfigs {
     public Map<String, Object> findMyInfoList(Map<String, Object> data) {
         Map<String, Object> result = new HashMap<>();
         String userId = String.valueOf(data.get("id"));
-        String keyword = String.valueOf(data.get("keyword"));
         List<InfoDto> list = new ArrayList<>();
         if(Strings.isNotEmpty(userId)){
             List<Info> raw = infoRepo.findMyInfoList(data);
