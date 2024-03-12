@@ -139,11 +139,8 @@ public class ApiController {
     @PostMapping("/getMainWordList")
     @ResponseBody
     public Map<String, Object> getMainWordList(@RequestBody Map<String, Object> data){
-        Map<String, Object> result = new HashMap<>();
         long pageIdx = Long.parseLong(String.valueOf(data.get("pageIdx")));
-        List<InfoDto> list = wordImpl.getInfoListWithPage(pageIdx);
-        result.put("list", list);
-        return result;
+        return wordImpl.getInfoListWithPage(pageIdx);
     }
 
     @PostMapping("/getMyWordList")

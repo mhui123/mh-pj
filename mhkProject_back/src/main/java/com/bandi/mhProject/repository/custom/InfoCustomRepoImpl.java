@@ -61,4 +61,9 @@ public class InfoCustomRepoImpl implements InfoCustomRepo{
         list = q.fetch();
         return list;
     }
+
+    @Override
+    public long getTotalCnt() {
+        return factory.selectFrom(QInfo.info).fetch().size();
+    }
 }

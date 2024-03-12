@@ -26,7 +26,7 @@ export default {
     getUsername() {
       return this.getUsername;
     },
-    ...mapGetters(['getUsername']),
+    ...mapGetters(['getUsername', 'getPageIdx']),
   },
   updated() {
     if (this.currentRoute.includes('admin')) {
@@ -44,7 +44,7 @@ export default {
       };
       let payload;
       if (this.mode === 'mypage') {
-        payload = { id: this.getUsername, keyword: this.keyword };
+        payload = { id: this.getUsername, keyword: this.keyword, pageIdx: this.getPageIdx };
       } else {
         payload = { keyword: this.keyword };
       }

@@ -17,4 +17,5 @@ public interface InfoRepository extends JpaRepository<Info, String>, InfoCustomR
     List<Info> findAllInfoList();
     List<Info> findMyInfoList(Map<String, Object> data);
     List<Info> findMainInfoList(long pageIdx);
+    long getTotalCnt();
 }

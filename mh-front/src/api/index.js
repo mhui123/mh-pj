@@ -4,11 +4,6 @@ const instance = axios.create({
 });
 
 function callApi(url, param) {
-  // if (url.includes('getWordListByKeyword')) {
-  //   return instance.post(url, null, { params: { keyword: param } });
-  // } else {
-  //   return instance.post(url, param);
-  // }
   if (url.startsWith('delete/')) {
     return instance.delete(url);
   } else if ('edit' === url) {
@@ -17,15 +12,5 @@ function callApi(url, param) {
     return instance.post(url, param);
   }
 }
-// function logoutUser() {
-//   return instance.post('logout');
-// }
-
-// const forSecure = axios.create({
-//   baseURL: process.env.VUE_APP_SEC_URL,
-// });
-// async function loginTest(userData) {
-//   return forSecure.post('/loginProc', userData);
-// }
 
 export { callApi };

@@ -26,7 +26,7 @@
     <button class="move-top-button" @click="goTop" v-if="topshow === true">
       <i class="icon ion-md-arrow-up"></i>
     </button>
-    <button class="more-btn" @click="getMoreData" v-if="moreshow === true">더보기</button>
+    <button class="more-btn" @click="getMoreData" v-if="moreshow === true && isLastPage === false">더보기</button>
   </div>
 </template>
 
@@ -44,6 +44,8 @@ export default {
       // infoList: [],
       topshow: false,
       moreshow: false,
+      totalCnt: 0,
+      isLastPage: false,
     };
   },
   components: {
@@ -61,9 +63,17 @@ export default {
         if (scrollPos > 80) {
           this.moreshow = true;
         } else {
+          // const ul = document.querySelector('.main.list-container.contents ul');
           this.moreshow = false;
         }
         this.topshow = true;
+
+        let ul = document.querySelector('.main.list-container.contents ul');
+        let listCnt = ul ? document.querySelector('.main.list-container.contents ul').childElementCount : 0;
+        console.log(listCnt, this.totalCnt);
+        if (listCnt < this.totalCnt) {
+          this.isLastPage = false;
+        }
       } else {
         this.topshow = false;
         this.moreshow = false;
@@ -89,6 +99,7 @@ export default {
       this.isLoading = true;
       // const { data } = await callApi('getList');
       const { data } = await callApi('getMainWordList', { pageIdx: 0 });
+      this.totalCnt = data.totalCnt;
       this.isLoading = false;
       this.clearWordList();
       this.pushToWordList(data.list);
@@ -105,8 +116,7 @@ export default {
       this.isLoading = true;
       let pageIdx = this.getPageIdx + 1;
       this.setPageIdx(pageIdx);
-      // localStorage.setItem('localPageIdx', pageIdx);
-      console.log(`now pageIdx : ${pageIdx}`);
+      this.isLastPage = 20 * (pageIdx + 1) > this.totalCnt ? true : false;
       this.isLoading = false;
       const { data } = await callApi('getMainWordList', { pageIdx: pageIdx });
       // console.log(data.list);

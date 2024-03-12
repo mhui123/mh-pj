@@ -41,6 +41,7 @@
           </tr>
         </tbody>
       </table>
+      <button class="more-btn" @click="getMoreData" v-if="moreshow === true">더보기</button>
       <button class="move-top-button" @click="goTop" v-if="topshow === true">
         <i class="icon ion-md-arrow-up"></i>
       </button>
@@ -107,6 +108,7 @@ export default {
       modalMsg: '',
       modalstate: '',
       topshow: false,
+      moreshow: false,
     };
   },
   computed: {
@@ -128,7 +130,7 @@ export default {
     getWordId() {
       return this.getWordId;
     },
-    ...mapGetters(['getUsername', 'getWordList', 'getUsername', 'getWordId']),
+    ...mapGetters(['getUsername', 'getWordList', 'getUsername', 'getWordId', 'getPageIdx']),
   },
   created() {
     this.setPageFrom('');
@@ -136,13 +138,22 @@ export default {
   },
   mounted() {
     document.body.addEventListener('scroll', () => {
+      let scrollPos = Math.floor((document.body.scrollTop / document.body.scrollHeight) * 100);
       if (document.body.scrollTop > 0) {
+        if (scrollPos > 30) {
+          this.moreshow = true;
+        } else {
+          this.moreshow = false;
+        }
         this.topshow = true;
-      } else this.topshow = false;
+      } else {
+        this.topshow = false;
+        this.moreshow = false;
+      }
     });
   },
   methods: {
-    ...mapMutations(['setWordList', 'clearWordList', 'spliceWordList', 'setWordId', 'setPageFrom']),
+    ...mapMutations(['setWordList', 'clearWordList', 'spliceWordList', 'setWordId', 'setPageFrom', 'setPageIdx', 'pushToWordList']),
     async deleteWords() {
       const filteredIds = await getCheckedIds();
       if (filteredIds.length === 0) {
@@ -186,7 +197,7 @@ export default {
     },
     async fetchMyWords() {
       this.clearWordList();
-      const { data } = await callApi('getMyWordList', { id: this.username });
+      const { data } = await callApi('getMyWordList', { id: this.username, pageIdx: 0 });
       const { list } = data;
       this.setWordList(list);
     },
@@ -244,6 +255,19 @@ export default {
     checkAll() {
       checkAll();
     },
+    async getMoreData() {
+      this.moreshow = false;
+      this.isLoading = true;
+      let pageIdx = this.getPageIdx + 1;
+      this.setPageIdx(pageIdx);
+      // localStorage.setItem('localPageIdx', pageIdx);
+      console.log(`now pageIdx : ${pageIdx}`);
+      this.isLoading = false;
+      const { data } = await callApi('getMainWordList', { pageIdx: pageIdx });
+      // console.log(data.list);
+      // this.clearWordList();
+      this.pushToWordList(data.list);
+    },
   },
 };
 </script>
@@ -288,6 +312,7 @@ input {
   max-width: 500px;
   margin: 0 auto 0;
   box-shadow: 0 20px 20px rgba(0, 0, 0, 0.08);
+  margin-bottom: 3rem;
 }
 .table-wrap .table {
   width: 100%;

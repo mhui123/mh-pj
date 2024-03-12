@@ -163,14 +163,18 @@ public class WordServiceImpl implements WordService, SystemConfigs {
     }
 
     @Override
-    public List<InfoDto> getInfoListWithPage(long pageIdx) {
+    public Map<String, Object> getInfoListWithPage(long pageIdx) {
+        Map<String, Object> result = new HashMap<>();
         List<Info> rawData = infoRepo.findMainInfoList(pageIdx);
         List<InfoDto> list = new ArrayList<>();
         for(Info info : rawData){
             InfoDto dto = setInfoDto(info);
             list.add(dto);
         }
-        return list;
+        long totalCnt = infoRepo.getTotalCnt();
+        result.put("list", list);
+        result.put("totalCnt", totalCnt);
+        return result;
     }
 
     @Override
@@ -184,7 +188,9 @@ public class WordServiceImpl implements WordService, SystemConfigs {
                 InfoDto dto = setInfoDto(i);
                 list.add(dto);
             }
+            long totalCnt = infoRepo.getTotalCnt();
             result.put("list", list);
+            result.put("totalCnt", totalCnt);
             String msg = "검색결과 : "+list.size()+"건";
             Commons.putMessage(result, 200, msg);
         }

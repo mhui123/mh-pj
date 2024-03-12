@@ -19,5 +19,5 @@ public interface WordService {
 
     Map<String, Object> delWords(Map<String, Object> data);
 
-    List<InfoDto> getInfoListWithPage(long pageIdx);
+    Map<String, Object> getInfoListWithPage(long pageIdx);
 }
