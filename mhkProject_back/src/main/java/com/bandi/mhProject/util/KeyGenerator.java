@@ -6,7 +6,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-public class KeyGenerator implements SystemConfigs {
+public class KeyGenerator {
     public static String generateKey(){
         return UUID.randomUUID().toString().replaceAll("-", "").substring(0,6);
     }
@@ -17,7 +17,7 @@ public class KeyGenerator implements SystemConfigs {
 
     public static boolean isInTimeAuthenticated(LocalDateTime keyGenTime, LocalDateTime authTime){
         long betweenMin = Duration.between(keyGenTime, authTime).toMinutes();
-        return AUTH_DURATION - betweenMin > 0;
+        return SystemConfigs.AUTH_DURATION - betweenMin > 0;
     }
 
 

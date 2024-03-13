@@ -25,7 +25,7 @@ spring:
 #    driver-class-name: com.mysql.cj.jdbc.Driver #org.h2.Driver
     #회사
 #      url: jdbc:mysql://192.168.11.135:3456/bdBase
-      url: jdbc:mysql://localhost:3555/mh_db
+      url: jdbc:mysql://192.168.11.155:3555/mh_db
       username: root
       password: 1234
       driver-class-name: com.mysql.cj.jdbc.Driver #org.h2.Driver

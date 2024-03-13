@@ -23,7 +23,7 @@ import java.util.*;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class WordServiceImpl implements WordService, SystemConfigs {
+public class WordServiceImpl implements WordService {
     private final InfoRepository infoRepo;
     private final UserRepository userRepo;
 
@@ -55,12 +55,12 @@ public class WordServiceImpl implements WordService, SystemConfigs {
                         .creator(writer).editor(writer).link(link)
                         .build();
                 em.persist(info);
-                Commons.putMessage(result, 200, CODE_208);
+                Commons.putMessage(result, 200, SystemConfigs.CODE_208);
             } else {
-                Commons.putMessage(result, 903, CODE_901+":"+userId);
+                Commons.putMessage(result, 903, SystemConfigs.CODE_901+":"+userId);
             }
         }catch (Exception e){
-            String errMsg = CODE_900+" : "+e.getMessage();
+            String errMsg = SystemConfigs.CODE_900+" : "+e.getMessage();
             Commons.putMessage(result, 900, errMsg);
             return result;
         }
@@ -73,9 +73,9 @@ public class WordServiceImpl implements WordService, SystemConfigs {
         Map<String,Object> result = new HashMap();
         try{
             infoRepo.deleteById(id);
-            Commons.putMessage(result, 200, CODE_209);
+            Commons.putMessage(result, 200, SystemConfigs.CODE_209);
         }catch(Exception e){
-            String errMsg = CODE_900+" : "+e.getMessage();
+            String errMsg = SystemConfigs.CODE_900+" : "+e.getMessage();
             Commons.putMessage(result, 900, errMsg);
             return result;
         }
@@ -95,13 +95,13 @@ public class WordServiceImpl implements WordService, SystemConfigs {
                 info.setInfokey(title);
                 info.setDescription(contents);
                 info.setLink(link);
-                Commons.putMessage(result, 200, CODE_208);
+                Commons.putMessage(result, 200, SystemConfigs.CODE_208);
             } else {
-                String errorMsg = CODE_905+":"+infoId;
+                String errorMsg = SystemConfigs.CODE_905+":"+infoId;
                 Commons.putMessage(result, 905, errorMsg);
             }
         }catch(Exception e){
-            String errorMsg = CODE_900+" : "+e.getMessage();
+            String errorMsg = SystemConfigs.CODE_900+" : "+e.getMessage();
             Commons.putMessage(result, 900, errorMsg);
             return result;
         }
@@ -144,7 +144,7 @@ public class WordServiceImpl implements WordService, SystemConfigs {
             Commons.putMessage(result, 200, msg);
         }
         catch(Exception e){
-            String errorMsg = CODE_900+" : "+e.getMessage();
+            String errorMsg = SystemConfigs.CODE_900+" : "+e.getMessage();
             Commons.putMessage(result, 900, errorMsg);
         }
         result.put("list", infoList);
@@ -212,7 +212,7 @@ public class WordServiceImpl implements WordService, SystemConfigs {
             }
             Commons.putMessage(result, 200, "삭제완료");
         } catch(Exception e){
-            String errorMsg = CODE_900+" : "+e.getMessage();
+            String errorMsg = SystemConfigs.CODE_900+" : "+e.getMessage();
             Commons.putMessage(result, 900, errorMsg);
         }
         return result;

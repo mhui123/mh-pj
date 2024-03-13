@@ -23,7 +23,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -34,7 +33,7 @@ import java.util.Map;
 @Slf4j
 @Service
 @Transactional
-public class UserServiceImpl implements UserService, SystemConfigs {
+public class UserServiceImpl implements UserService {
     private final UserRepository userRepo;
     @Autowired ManageKeyRepository keyRepo;
     private final AuthenticationManagerBuilder authBuilder;
@@ -75,20 +74,20 @@ public class UserServiceImpl implements UserService, SystemConfigs {
                         Authentication authentication = authBuilder.getObject().authenticate(authToken); //authenticationManager.authenticate(authToken);
                         token = jwtTokenProvider.generateToken(authentication);
                         dto = UserDto.builder().id(id).role(role).authorized(true).token(token).build();
-                        Commons.putMessage(result, 200, CODE_203);
+                        Commons.putMessage(result, 200, SystemConfigs.CODE_203);
                         result.put("userInfo", dto);
                     } else {
-                        Commons.putMessage(result, 906, CODE_906);
+                        Commons.putMessage(result, 906, SystemConfigs.CODE_906);
                     }
                 }
                 else {
-                    Commons.putMessage(result, 907, CODE_907);
+                    Commons.putMessage(result, 907, SystemConfigs.CODE_907);
                 }
             } else {
-                Commons.putMessage(result, 901, CODE_901);
+                Commons.putMessage(result, 901, SystemConfigs.CODE_901);
             }
         } catch(Exception e){
-            Commons.putMessage(result, 900, CODE_900);
+            Commons.putMessage(result, 900, SystemConfigs.CODE_900);
         }
 
         return result;
@@ -109,12 +108,12 @@ public class UserServiceImpl implements UserService, SystemConfigs {
                         .id(id).pw(encoderedPw).role(role).useYn("y")
                         .build();
                 em.persist(user);
-                Commons.putMessage(result, 200, CODE_204);
+                Commons.putMessage(result, 200, SystemConfigs.CODE_204);
             } else {
-                Commons.putMessage(result, 903, CODE_903);
+                Commons.putMessage(result, 903, SystemConfigs.CODE_903);
             }
         } catch(Exception e){
-            String errorMsg = CODE_900 + " : " + e.getMessage();
+            String errorMsg = SystemConfigs.CODE_900 + " : " + e.getMessage();
             Commons.putMessage(result, 900, errorMsg);
         }
         return result;
@@ -137,7 +136,7 @@ public class UserServiceImpl implements UserService, SystemConfigs {
                 em.flush();
                 em.clear();
             }
-            Commons.putMessage(result, 202, CODE_202);
+            Commons.putMessage(result, 202, SystemConfigs.CODE_202);
         }else {
             boolean isMatch = encoder.matches(oldPw, foundUser.getPw());
             if(isMatch){
@@ -145,7 +144,7 @@ public class UserServiceImpl implements UserService, SystemConfigs {
                 foundUser.setPw(encoderedPw);
                 Commons.putMessage(result, 200, "비밀번호 변경완료");
             }else {
-                Commons.putMessage(result, 902, CODE_902);
+                Commons.putMessage(result, 902, SystemConfigs.CODE_902);
             }
         }
         return result;
@@ -175,14 +174,14 @@ public class UserServiceImpl implements UserService, SystemConfigs {
                     }
                 }
                 if(!failedId.isEmpty()){
-                    String errorMsg = CODE_901 + failedId.toString();
+                    String errorMsg = SystemConfigs.CODE_901 + failedId.toString();
                     Commons.putMessage(result, 901, errorMsg);
                 } else {
-                    Commons.putMessage(result, 200, CODE_205);
+                    Commons.putMessage(result, 200, SystemConfigs.CODE_205);
                 }
             }
         } catch(Exception e){
-            String errorMsg = CODE_900+" : "+e.getMessage();
+            String errorMsg = SystemConfigs.CODE_900+" : "+e.getMessage();
             Commons.putMessage(result, 900, errorMsg);
         }
         return result;
@@ -207,14 +206,14 @@ public class UserServiceImpl implements UserService, SystemConfigs {
                     }
                 }
                 if(!failedId.isEmpty()){
-                    String errorMsg = CODE_901 + failedId.toString();
+                    String errorMsg = SystemConfigs.CODE_901 + failedId.toString();
                     Commons.putMessage(result, 901, errorMsg);
                 } else {
-                    Commons.putMessage(result, 200, CODE_206);
+                    Commons.putMessage(result, 200, SystemConfigs.CODE_206);
                 }
             }
         } catch(Exception e){
-            String errorMsg = CODE_900+" : "+e.getMessage();
+            String errorMsg = SystemConfigs.CODE_900+" : "+e.getMessage();
             Commons.putMessage(result, 900, errorMsg);
         }
         return result;
@@ -240,14 +239,14 @@ public class UserServiceImpl implements UserService, SystemConfigs {
                     }
                 }
                 if(!failedId.isEmpty()){
-                    String errorMsg = CODE_904 + failedId.toString();
+                    String errorMsg = SystemConfigs.CODE_904 + failedId.toString();
                     Commons.putMessage(result, 904, errorMsg);
                 } else {
-                    Commons.putMessage(result, 200, CODE_207);
+                    Commons.putMessage(result, 200, SystemConfigs.CODE_207);
                 }
             }
         }catch(Exception e){
-            String errorMsg = CODE_900 + " : " + e.getMessage();
+            String errorMsg = SystemConfigs.CODE_900 + " : " + e.getMessage();
             Commons.putMessage(result, 900, errorMsg);
         }
 
@@ -264,7 +263,7 @@ public class UserServiceImpl implements UserService, SystemConfigs {
             String msg = "검색결과: "+ dtoList.size() + "건";
             Commons.putMessage(result, 200, msg);
         } catch(Exception e){
-            String errorMsg = CODE_900 + " : " + e.getMessage();
+            String errorMsg = SystemConfigs.CODE_900 + " : " + e.getMessage();
             Commons.putMessage(result, 900, errorMsg);
         }
         result.put("list", dtoList);
@@ -293,13 +292,13 @@ public class UserServiceImpl implements UserService, SystemConfigs {
                         ManageKey manageKey = ManageKey.builder().authKey(authKey).user(user).build();
                         em.persist(manageKey);
                         result.put("authKey", authKey);
-                        Commons.putMessage(result,200, CODE_200);
+                        Commons.putMessage(result,200, SystemConfigs.CODE_200);
                     } else {
-                        Commons.putMessage(result,901, CODE_901);
+                        Commons.putMessage(result,901, SystemConfigs.CODE_901);
                     }
                 } else {
                     if(isInTimeKey(foundKey)){ //유효시간 경과여부 체크
-                        Commons.putMessage(result,908, CODE_908); //아직 유효키 존재
+                        Commons.putMessage(result,908, SystemConfigs.CODE_908); //아직 유효키 존재
                     } else { //유효시간 경과. 기존키 제거 후 메서드 재실행
                         keyRepo.delete(foundKey);
                         em.flush();
@@ -308,10 +307,10 @@ public class UserServiceImpl implements UserService, SystemConfigs {
                     }
                 }
             } else {
-                Commons.setMessage(result, CODE_909); //파라미터 불완전
+                Commons.setMessage(result, SystemConfigs.CODE_909); //파라미터 불완전
             }
         }catch(Exception e){
-            Commons.setMessage(result, CODE_900 +" : " +e.getMessage());
+            Commons.setMessage(result, SystemConfigs.CODE_900 +" : " +e.getMessage());
             return result;
         }
         return result;
@@ -335,21 +334,21 @@ public class UserServiceImpl implements UserService, SystemConfigs {
                         String inputKey = String.valueOf(data.get("inputKey"));
                         boolean isValid = KeyGenerator.validateKey(inputKey, storeKey);
                         if(isValid){
-                            Commons.putMessage(result, 201, CODE_201); //인증성공
+                            Commons.putMessage(result, 201, SystemConfigs.CODE_201); //인증성공
                         } else {
-                            Commons.putMessage(result, 910, CODE_910); //인증키 불일치
+                            Commons.putMessage(result, 910, SystemConfigs.CODE_910); //인증키 불일치
                         }
                     } else if(!isInTimeKey(storeKeyEntity)){
-                        Commons.putMessage(result, 911, CODE_911); //인증키 유효시간경과
+                        Commons.putMessage(result, 911, SystemConfigs.CODE_911); //인증키 유효시간경과
                     }
                 } else {
-                    Commons.putMessage(result, 912, CODE_912); //인증과정 오류
+                    Commons.putMessage(result, 912, SystemConfigs.CODE_912); //인증과정 오류
                 }
             } else {
-                Commons.setMessage(result, CODE_909); //파라미터 불완전.
+                Commons.setMessage(result, SystemConfigs.CODE_909); //파라미터 불완전.
             }
         }catch(Exception e){
-            Commons.setMessage(result, CODE_900 +" : " +e.getMessage());
+            Commons.setMessage(result, SystemConfigs.CODE_900 +" : " +e.getMessage());
             return result;
         }
         return result;
